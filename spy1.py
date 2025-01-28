@@ -79,12 +79,61 @@ def main():
     degree = st.slider("Select Polynomial Degree", min_value=2, max_value=10, value=9)  # Default degree set to 9
     X, y, y_pred_poly, r2_poly, _ = perform_regression(data, degree=degree)
 
+    # Calculate residuals and standard deviation for the polynomial model
+    residuals = y - y_pred_poly
+    std_dev = np.std(residuals)
+
+    # Calculate exponential moving averages
+    data_recent['EMA_9'] = data_recent['Close'].ewm(span=9, adjust=False).mean()
+    data_recent['EMA_20'] = data_recent['Close'].ewm(span=20, adjust=False).mean()
+
+    # Determine the trend message
+    if current_price > data_recent['EMA_9'].iloc[-1] and data_recent['EMA_9'].iloc[-1] > data_recent['EMA_20'].iloc[-1]:
+        trend_message = f"{ticker} trend is UP"
+        trend_color = "green"
+    elif current_price < data_recent['EMA_9'].iloc[-1] and data_recent['EMA_9'].iloc[-1] < data_recent['EMA_20'].iloc[-1]:
+        trend_message = f"{ticker} trend is DOWN"
+        trend_color = "red"
+    else:
+        trend_message = f"{ticker} trend is NEUTRAL"
+        trend_color = "gray"
+
     # Plot both linear and polynomial regression results on the same graph
     st.write("### Combined Regression Plot (Most Recent 300 Points)")
     fig, ax = plt.subplots()
-    ax.plot(X, y, color="blue", label="Actual Prices")  # Actual prices as a line plot
+    ax.plot(X, y, color="gray", label="Actual Prices")  # Actual prices as a gray line plot
     ax.plot(X, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.4f})")
     ax.plot(X, y_pred_poly, color="green", label=f"P.R. (Degree {degree}, R² = {r2_poly:.4f})")
+
+    # Draw bands for 1, 2, and 3 standard deviations from the polynomial model
+    ax.fill_between(X.flatten(), y_pred_poly - std_dev, y_pred_poly + std_dev, color="lightgreen", alpha=0.3, label="")
+    ax.fill_between(X.flatten(), y_pred_poly - 2*std_dev, y_pred_poly + 2*std_dev, color="green", alpha=0.2, label="")
+    ax.fill_between(X.flatten(), y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="darkgreen", alpha=0.1, label="")
+
+    # Draw horizontal lines from the lowest and highest points
+    min_price = np.min(y)
+    max_price = np.max(y)
+    ax.axhline(y=min_price, color="green", linestyle="--", label="")
+    ax.axhline(y=max_price, color="red", linestyle="--", label="")
+
+    # Add price labels for the highest and lowest prices
+    ax.text(X[-1], min_price, f'Low: {min_price:.2f}', color='green', verticalalignment='top')
+    ax.text(X[-1], max_price, f'High: {max_price:.2f}', color='red', verticalalignment='bottom')
+
+    # Draw exponential moving averages with dashed lines
+    ax.plot(X, data_recent['EMA_9'], color="blue", linestyle="-", label="EMA 9/20_blue")
+    ax.plot(X, data_recent['EMA_20'], color="navy", linestyle="-", label="")
+
+    # Add arrows for EMA crossovers
+    for i in range(1, len(data_recent)):
+        if data_recent['EMA_9'].iloc[i] > data_recent['EMA_20'].iloc[i] and data_recent['EMA_9'].iloc[i-1] <= data_recent['EMA_20'].iloc[i-1]:
+            ax.plot(X[i], data_recent['Close'].iloc[i], '^', markersize=5, color='blue', lw=0)
+        elif data_recent['EMA_9'].iloc[i] < data_recent['EMA_20'].iloc[i] and data_recent['EMA_9'].iloc[i-1] >= data_recent['EMA_20'].iloc[i-1]:
+            ax.plot(X[i], data_recent['Close'].iloc[i], 'v', markersize=5, color='red', lw=0)
+
+    # Add trend message on top of the plot
+    ax.text(0.5, 0.9, trend_message, transform=ax.transAxes, fontsize=12, color=trend_color, ha='center')
+
     ax.set_xlabel("Time (Minutes)")
     ax.set_ylabel(f"{ticker} Price")
     ax.set_title(f"Combined Linear and Polynomial Regression for {ticker} (Most Recent 300 Points)")
@@ -92,8 +141,8 @@ def main():
     st.pyplot(fig)
 
     # Display the minute-level data table at the bottom (most recent 300 points)
-    st.write(f"### {ticker} Minute-Level Data (Most Recent 300 Points)")
-    st.write(data_recent)
+    #st.write(f"### {ticker} Minute-Level Data (Most Recent 300 Points)")
+    #st.write(data_recent)
 
 if __name__ == "__main__":
     main()
