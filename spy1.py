@@ -7,11 +7,11 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 
-# Function to fetch stock data
-def fetch_stock_data(ticker):
-    # Fetch minute-level data for the specified stock (including premarket)
+# Function to fetch stock data with a specified interval
+def fetch_stock_data(ticker, interval="1m"):
+    # Fetch data for the specified stock with the given interval (including premarket)
     stock = yf.Ticker(ticker)
-    data = stock.history(period="1d", interval="1m", prepost=True)  # Include premarket data
+    data = stock.history(period="1d", interval=interval, prepost=True)  # Include premarket data
     return data
 
 # Function to perform regression analysis
@@ -40,17 +40,20 @@ def calculate_percentage_change(current_price, previous_close):
 # Streamlit app
 def main():
     st.title("Stock Price Regression Analysis")
-    st.write("This app fetches minute-level stock prices (including premarket data) and performs linear and polynomial regression analysis.")
+    st.write("This app fetches stock prices at different intervals (including premarket data) and performs linear and polynomial regression analysis.")
 
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
+
+    # Dropdown for interval selection
+    interval = st.selectbox("Select Interval", ["1m", "5m", "30m"], index=0)
 
     # Add a button to refresh data
     if st.button("Refresh Data"):
         st.cache_data.clear()  # Clear cached data to force a fresh fetch
 
-    # Fetch data for the user-specified stock
-    data = fetch_stock_data(ticker)
+    # Fetch data for the user-specified stock and interval
+    data = fetch_stock_data(ticker, interval=interval)
     if data.empty:
         st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
         return
