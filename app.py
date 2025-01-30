@@ -222,23 +222,29 @@ def main():
     ax.text(x_values[-1], current_price, f'{current_price:.2f}', color='gray', verticalalignment='top')
     
     ## prevoius close
-    ax.axhline(y=previous_close, color="gray", linestyle="-", label="")
+    ax.axhline(y=previous_close, color="navy", linestyle="--", label="")
     
     # Add price label for the previous_price
-    ax.text(0, previous_close, f'{previous_close:.2f}', color='gray', verticalalignment='top')
+    ax.text(0, previous_close, f'{previous_close:.2f}__c1', color='navy', verticalalignment='top')
 
     ## d2 close
     d2_close = fetch_d2_close(ticker)
     ax.axhline(y=d2_close, color="navy", linestyle="--", label="")
     
     # Add price label for the d2_close
-    ax.text(0, d2_close, f'{d2_close:.2f}', color='navy', verticalalignment='top')
+    ax.text(0, d2_close, f'{d2_close:.2f}__c2', color='navy', verticalalignment='top')
 
     ##########
 
     # Draw exponential moving averages with dashed lines
-    ax.plot(x_values, data_recent['EMA_9'], color="blue", linestyle="-", label="EMA 9/20_orange")
-    ax.plot(x_values, data_recent['EMA_20'], color="orange", linestyle="-", label="")
+    ax.plot(x_values, data_recent['EMA_9'], color="blue", linestyle="--", label="EMA 9/20_orange")
+    ax.plot(x_values, data_recent['EMA_20'], color="orange", linestyle="--", label="")
+    ax.axhline(y=data_recent['EMA_9'].iloc[-1], color="blue", linestyle="-", label="")
+    ax.axhline(y=data_recent['EMA_20'].iloc[-1], color="orange", linestyle="-", label="")
+    
+    # Add price label for emas
+    #ax.text(x_values[-1], data_recent['EMA_9'].iloc[-1], f'e9__{data_recent['EMA_9'].iloc[-1]:.2f}', color='blue', verticalalignment='top')
+    #ax.text(x_values[-1], data_recent['EMA_20'].iloc[-1], f'e20_{data_recent['EMA_20'].iloc[-1]:.2f}', color='orange', verticalalignment='top')
 
     # Add arrows for EMA crossovers
     for i in range(1, len(data_recent)):
