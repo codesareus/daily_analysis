@@ -201,9 +201,9 @@ def main():
     ax.plot(x_values, y_pred_poly, color="green", label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
 
     # Draw bands for 1, 2, and 3 standard deviations from the polynomial model
-    ax.fill_between(x_values, y_pred_poly - std_dev, y_pred_poly + std_dev, color="lightgreen", alpha=0.3, label="")
+    ax.fill_between(x_values, y_pred_poly - std_dev, y_pred_poly + std_dev, color="blue", alpha=0.3, label="")
     ax.fill_between(x_values, y_pred_poly - 2*std_dev, y_pred_poly + 2*std_dev, color="green", alpha=0.2, label="")
-    ax.fill_between(x_values, y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="darkgreen", alpha=0.1, label="")
+    ax.fill_between(x_values, y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="red", alpha=0.1, label="")
 
     # Draw horizontal lines from the lowest and highest points
     min_price = np.min(y)
@@ -243,8 +243,8 @@ def main():
     ax.axhline(y=data_recent['EMA_20'].iloc[-1], color="orange", linestyle="-", label="")
     
     # Add price label for emas
-    #ax.text(x_values[-1], data_recent['EMA_9'].iloc[-1], f'e9__{data_recent['EMA_9'].iloc[-1]:.2f}', color='blue', verticalalignment='top')
-    #ax.text(x_values[-1], data_recent['EMA_20'].iloc[-1], f'e20_{data_recent['EMA_20'].iloc[-1]:.2f}', color='orange', verticalalignment='top')
+    ax.text(x_values[-1], data_recent['EMA_9'].iloc[-1], f'^^^^^^e9', color='blue', verticalalignment='top')
+    ax.text(x_values[-1], data_recent['EMA_20'].iloc[-1], f'^^^^^^^^e20', color='orange', verticalalignment='top')
 
     # Add arrows for EMA crossovers
     for i in range(1, len(data_recent)):
