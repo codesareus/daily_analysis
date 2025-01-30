@@ -7,6 +7,8 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from datetime import datetime
+import pytz
 
 # Function to fetch stock data with a specified interval
 def fetch_stock_data(ticker, interval="1m"):
@@ -15,14 +17,69 @@ def fetch_stock_data(ticker, interval="1m"):
     data = stock.history(period="5d", interval=interval, prepost=True)  # Include premarket data
     return data
 
-# Function to fetch the previous day's close price
-def fetch_previous_close(ticker):
+
+###########
+# Function to fetch the previous 5 day's close price
+def fetch_daily5(ticker):
     stock = yf.Ticker(ticker)
-    previous_day_data = stock.history(period="5d")  # Fetch last 5 days of data
-    if len(previous_day_data) >= 2:
-        return previous_day_data['Close'].iloc[-2]  # Second-to-last close is the previous day's close
+    daily5 = stock.history(period="5d")  # Fetch last 5 days of data
+    if len(daily5) >= 2:
+        return daily5['Close'] 
     else:
         return None  # Handle cases where there isn't enough data
+
+###########
+
+def fetch_previous_close(ticker):
+    close_prices = fetch_daily5(ticker)
+    if close_prices is None:
+        return None  # Handle cases where there isn't enough data
+    
+    # Get current time in NY (US Eastern Time)
+    midwest = pytz.timezone("America/chicago")
+    now = datetime.now(midwest)
+
+    # Define US market hours
+    market_open = now.replace(hour=8, minute=30, second=0, microsecond=0)
+    market_close = now.replace(hour=15, minute=0, second=0, microsecond=0)
+
+    if now < market_open or now > market_close:  # Pre-market or post-market
+        previous_close = close_prices[-1]  # Use the previous day's close
+    else:
+        previous_close = close_prices[-2]  # Use the most recent close
+
+    return previous_close
+
+def fetch_d2_close(ticker):
+    close_prices = fetch_daily5(ticker)
+    if close_prices is None:
+        return None  # Handle cases where there isn't enough data
+    
+    # Get current time in NY (US Eastern Time)
+    midwest = pytz.timezone("America/chicago")
+    now = datetime.now(midwest)
+
+    # Define US market hours
+    market_open = now.replace(hour=8, minute=30, second=0, microsecond=0)
+    market_close = now.replace(hour=15, minute=0, second=0, microsecond=0)
+
+    if now < market_open or now > market_close:  # Pre-market or post-market
+        d2_close = close_prices[-2]  # Use the previous day's close
+    else:
+        d2_close = close_prices[-3]  # Use the most recent close
+
+    return d2_close
+
+##############
+
+# Function to fetch the previous day's close price
+#def fetch_previous_close(ticker):
+ #   stock = yf.Ticker(ticker)
+ #   previous_day_data = stock.history(period="5d")  # Fetch last 5 days of data
+ #   if len(previous_day_data) >= 2:
+ #       return previous_day_data['Close'].iloc[-2]  # Second-to-last close is the previous day's close
+ #   else:
+  #      return None  # Handle cases where there isn't enough data
 
 # Function to perform regression analysis
 def perform_regression(data, degree=1):
@@ -71,6 +128,10 @@ def main():
     # Get the current price (last available price in the data)
     current_price = data['Close'].iloc[-1]
 
+    ##### fetch daily5
+    daily5 = fetch_daily5(ticker)
+    print("spy:::::",  daily5)
+    
     # Fetch the previous day's close price
     previous_close = fetch_previous_close(ticker)
     if previous_close is None:
@@ -78,7 +139,7 @@ def main():
         return
 
     change = current_price - previous_close
-
+    
     # Calculate percentage change
     percentage_change = calculate_percentage_change(current_price, previous_close)
 
@@ -161,11 +222,18 @@ def main():
     ax.text(x_values[-1], current_price, f'{current_price:.2f}', color='gray', verticalalignment='top')
     
     ## prevoius close
-    ax.axhline(y=previous_close, color="navy", linestyle="--", label="")
+    ax.axhline(y=previous_close, color="gray", linestyle="-", label="")
     
     # Add price label for the previous_price
-    ax.text(x_values[-1], previous_close, f'{previous_close:.2f}', color='navy', verticalalignment='top')
+    ax.text(0, previous_close, f'{previous_close:.2f}', color='gray', verticalalignment='top')
+
+    ## d2 close
+    d2_close = fetch_d2_close(ticker)
+    ax.axhline(y=d2_close, color="navy", linestyle="--", label="")
     
+    # Add price label for the d2_close
+    ax.text(0, d2_close, f'{d2_close:.2f}', color='navy', verticalalignment='top')
+
     ##########
 
     # Draw exponential moving averages with dashed lines
