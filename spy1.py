@@ -6,12 +6,13 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 # Function to fetch stock data with a specified interval
 def fetch_stock_data(ticker, interval="1m"):
     # Fetch data for the specified stock with the given interval (including premarket)
     stock = yf.Ticker(ticker)
-    data = stock.history(period="1d", interval=interval, prepost=True)  # Include premarket data
+    data = stock.history(period="5d", interval=interval, prepost=True)  # Include premarket data
     return data
 
 # Function to perform regression analysis
@@ -64,16 +65,18 @@ def main():
     # Get the previous day's close price
     previous_close = data['Close'].iloc[0]  # First price in the dataset (previous day's close)
 
+    change = current_price - previous_close
+
     # Calculate percentage change
     percentage_change = calculate_percentage_change(current_price, previous_close)
 
     # Display the percentage change message
-    st.write("### Current Price vs Previous Close")
+    st.write("### Current Price vs Previous Close___" f"{ticker}")
     if percentage_change >= 0:
-        st.success(f"🟢 The current price is **{current_price:.2f}**, which is **+{percentage_change:.2f}%** higher than the previous close price of **{previous_close:.2f}**.")
+        st.success(f"🟢 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, previous_close **{previous_close:.2f}**)")
     else:
-        st.error(f"🔴 The current price is **{current_price:.2f}**, which is **{percentage_change:.2f}%** lower than the previous close price of **{previous_close:.2f}**.")
-
+        st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)")
+ 
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data, degree=1)
 
@@ -101,17 +104,33 @@ def main():
         trend_message = f"{ticker} trend is NEUTRAL"
         trend_color = "gray"
 
+    # Extract time (hours and minutes) for the x-axis
+    time_labels = data_recent.index.strftime('%H:%M')  # Format time as HH:MM
+
+    # Simplify x-axis labels based on the interval
+    if interval == "30m":
+        # For 30-minute interval, show only every 3 hours (e.g., 09:00, 12:00, 15:00)
+        simplified_time_labels = [label if label.endswith('00') and int(label.split(':')[0]) % 3 == 0 else '' for label in time_labels]
+    else:
+        # For 1-minute and 5-minute intervals, show only hours (e.g., 09:00, 10:00)
+        simplified_time_labels = [label if label.endswith('00') else '' for label in time_labels]
+
     # Plot both linear and polynomial regression results on the same graph
     st.write("### Combined Regression Plot (Most Recent 300 Points)")
     fig, ax = plt.subplots()
-    ax.plot(X, y, color="gray", label="Actual Prices")  # Actual prices as a gray line plot
-    ax.plot(X, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.4f})")
-    ax.plot(X, y_pred_poly, color="green", label=f"P.R. (Degree {degree}, R² = {r2_poly:.4f})")
+
+    # Use numeric x-axis for plotting to avoid duplicate time issues
+    x_values = np.arange(len(data_recent))  # Numeric x-axis
+
+    # Plot actual prices and regression lines
+    ax.plot(x_values, y, color="gray", label="Actual Prices")  # Actual prices as a gray line plot
+    ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
+    ax.plot(x_values, y_pred_poly, color="green", label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
 
     # Draw bands for 1, 2, and 3 standard deviations from the polynomial model
-    ax.fill_between(X.flatten(), y_pred_poly - std_dev, y_pred_poly + std_dev, color="lightgreen", alpha=0.3, label="")
-    ax.fill_between(X.flatten(), y_pred_poly - 2*std_dev, y_pred_poly + 2*std_dev, color="green", alpha=0.2, label="")
-    ax.fill_between(X.flatten(), y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="darkgreen", alpha=0.1, label="")
+    ax.fill_between(x_values, y_pred_poly - std_dev, y_pred_poly + std_dev, color="lightgreen", alpha=0.3, label="")
+    ax.fill_between(x_values, y_pred_poly - 2*std_dev, y_pred_poly + 2*std_dev, color="green", alpha=0.2, label="")
+    ax.fill_between(x_values, y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="darkgreen", alpha=0.1, label="")
 
     # Draw horizontal lines from the lowest and highest points
     min_price = np.min(y)
@@ -120,32 +139,32 @@ def main():
     ax.axhline(y=max_price, color="red", linestyle="--", label="")
 
     # Add price labels for the highest and lowest prices
-    ax.text(X[-1], min_price, f'Low: {min_price:.2f}', color='green', verticalalignment='top')
-    ax.text(X[-1], max_price, f'High: {max_price:.2f}', color='red', verticalalignment='bottom')
+    ax.text(x_values[-1], min_price, f'Low: {min_price:.2f}', color='green', verticalalignment='top')
+    ax.text(x_values[-1], max_price, f'High: {max_price:.2f}', color='red', verticalalignment='bottom')
 
     # Draw exponential moving averages with dashed lines
-    ax.plot(X, data_recent['EMA_9'], color="blue", linestyle="-", label="EMA 9/20_blue")
-    ax.plot(X, data_recent['EMA_20'], color="navy", linestyle="-", label="")
+    ax.plot(x_values, data_recent['EMA_9'], color="blue", linestyle="-", label="EMA 9/20_orange")
+    ax.plot(x_values, data_recent['EMA_20'], color="orange", linestyle="-", label="")
 
     # Add arrows for EMA crossovers
     for i in range(1, len(data_recent)):
         if data_recent['EMA_9'].iloc[i] > data_recent['EMA_20'].iloc[i] and data_recent['EMA_9'].iloc[i-1] <= data_recent['EMA_20'].iloc[i-1]:
-            ax.plot(X[i], data_recent['Close'].iloc[i], '^', markersize=5, color='blue', lw=0)
+            ax.plot(x_values[i], data_recent['Close'].iloc[i], '^', markersize=5, color='blue', lw=0)
         elif data_recent['EMA_9'].iloc[i] < data_recent['EMA_20'].iloc[i] and data_recent['EMA_9'].iloc[i-1] >= data_recent['EMA_20'].iloc[i-1]:
-            ax.plot(X[i], data_recent['Close'].iloc[i], 'v', markersize=5, color='red', lw=0)
+            ax.plot(x_values[i], data_recent['Close'].iloc[i], 'v', markersize=5, color='red', lw=0)
 
     # Add trend message on top of the plot
     ax.text(0.5, 0.9, trend_message, transform=ax.transAxes, fontsize=12, color=trend_color, ha='center')
 
-    ax.set_xlabel("Time (Minutes)")
+    # Format x-axis to show only hours (or every 3 hours for 30-minute interval)
+    ax.set_xticks(x_values)  # Set ticks for all time points
+    ax.set_xticklabels(simplified_time_labels)  # Show only hours or every 3 hours
+    ax.set_xlabel("Time (HH:MM)")
     ax.set_ylabel(f"{ticker} Price")
     ax.set_title(f"Combined Linear and Polynomial Regression for {ticker} (Most Recent 300 Points)")
     ax.legend()
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
     st.pyplot(fig)
-
-    # Display the minute-level data table at the bottom (most recent 300 points)
-    #st.write(f"### {ticker} Minute-Level Data (Most Recent 300 Points)")
-    #st.write(data_recent)
 
 if __name__ == "__main__":
     main()
