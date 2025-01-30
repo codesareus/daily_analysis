@@ -149,9 +149,9 @@ def main():
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data, degree=1)
 
-    # Perform polynomial regression with default degree 9 (using only the most recent 300 points)
+    # Perform polynomial regression with default degree 3 (using only the most recent 300 points)
     st.write("### Polynomial Regression Analysis")
-    degree = st.slider("Select Polynomial Degree", min_value=2, max_value=10, value=9)  # Default degree set to 9
+    degree = st.slider("Select Polynomial Degree", min_value=2, max_value=3, value=3)  # Default degree set to 3
     X, y, y_pred_poly, r2_poly, _ = perform_regression(data, degree=degree)
 
     # Calculate residuals and standard deviation for the polynomial model
@@ -192,21 +192,26 @@ def main():
 
     # Add a message above the plot showing the price deviation
     if deviation_in_std >= 2:
-        deviation_message = f"Deviation from PR: +{deviation_in_std:.2f} std_dev"
+        deviation_message = f"{ticker}_Deviation from PR: +{deviation_in_std:.2f} std_dev"
         deviation_color = "red"  # Red for >= +2 std_dev
     elif deviation_in_std <= -2:
-        deviation_message = f"Deviation from PR: {deviation_in_std:.2f} std_dev"
+        deviation_message = f"{ticker}_Deviation from PR: {deviation_in_std:.2f} std_dev"
         deviation_color = "green"  # Green for <= -2 std_dev
     else:
-        deviation_message = f"Deviation from PR: {deviation_in_std:.2f} std_dev"
+        deviation_message = f"{ticker}_Deviation from PR: {deviation_in_std:.2f} std_dev"
         deviation_color = "gray"  # Default color for other cases
 
     # Display the deviation message with the appropriate color
     st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message}</h3>", unsafe_allow_html=True)
 
+    # Add a message above the plot showing the trend
+    st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message}</h3>", unsafe_allow_html=True)
+    
+
     # Plot both linear and polynomial regression results on the same graph
-    st.write("### Combined Regression Plot (Most Recent 300 Points)")
+    st.write(f"### Combined Regression Plot ({interval})")
     fig, ax = plt.subplots()
+    print(interval)
 
     # Use numeric x-axis for plotting to avoid duplicate time issues
     x_values = np.arange(len(data_recent))  # Numeric x-axis
