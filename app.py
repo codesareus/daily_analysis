@@ -160,6 +160,12 @@ def main():
     # Add price label for the current_price
     ax.text(x_values[-1], current_price, f'{current_price:.2f}', color='gray', verticalalignment='top')
     
+    ## prevoius close
+    ax.axhline(y=previous_close, color="navy", linestyle="--", label="")
+    
+    # Add price label for the previous_price
+    ax.text(x_values[-1], previous_close, f'{previous_close:.2f}', color='navy', verticalalignment='top')
+    
     ##########
 
     # Draw exponential moving averages with dashed lines
