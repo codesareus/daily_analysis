@@ -17,8 +17,6 @@ def fetch_stock_data(ticker, interval="1m"):
     data = stock.history(period="5d", interval=interval, prepost=True)  # Include premarket data
     return data
 
-
-###########
 # Function to fetch the previous 5 day's close price
 def fetch_daily5(ticker):
     stock = yf.Ticker(ticker)
@@ -28,8 +26,7 @@ def fetch_daily5(ticker):
     else:
         return None  # Handle cases where there isn't enough data
 
-###########
-
+# Function to fetch the previous day's close price
 def fetch_previous_close(ticker):
     close_prices = fetch_daily5(ticker)
     if close_prices is None:
@@ -50,6 +47,7 @@ def fetch_previous_close(ticker):
 
     return previous_close
 
+# Function to fetch the day before yesterday's close price
 def fetch_d2_close(ticker):
     close_prices = fetch_daily5(ticker)
     if close_prices is None:
@@ -69,17 +67,6 @@ def fetch_d2_close(ticker):
         d2_close = close_prices[-3]  # Use the most recent close
 
     return d2_close
-
-##############
-
-# Function to fetch the previous day's close price
-#def fetch_previous_close(ticker):
- #   stock = yf.Ticker(ticker)
- #   previous_day_data = stock.history(period="5d")  # Fetch last 5 days of data
- #   if len(previous_day_data) >= 2:
- #       return previous_day_data['Close'].iloc[-2]  # Second-to-last close is the previous day's close
- #   else:
-  #      return None  # Handle cases where there isn't enough data
 
 # Function to perform regression analysis
 def perform_regression(data, degree=1):
@@ -112,8 +99,21 @@ def main():
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
-    # Dropdown for interval selection
-    interval = st.selectbox("Select Interval", ["1m", "5m", "30m"], index=1)
+    # Add a button group for interval selection
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("1 Minute"):
+            interval = "1m"
+    with col2:
+        if st.button("5 Minutes", key="5m"):
+            interval = "5m"
+    with col3:
+        if st.button("30 Minutes", key="30m"):
+            interval = "30m"
+
+    # Default interval
+    if 'interval' not in locals():
+        interval = "5m"
 
     # Add a button to refresh data
     if st.button("Refresh Data"):
@@ -128,10 +128,6 @@ def main():
     # Get the current price (last available price in the data)
     current_price = data['Close'].iloc[-1]
 
-    ##### fetch daily5
-    daily5 = fetch_daily5(ticker)
-    print("spy:::::",  daily5)
-    
     # Fetch the previous day's close price
     previous_close = fetch_previous_close(ticker)
     if previous_close is None:
@@ -215,26 +211,24 @@ def main():
     ax.text(x_values[-1], min_price, f'Low: {min_price:.2f}', color='green', verticalalignment='top')
     ax.text(x_values[-1], max_price, f'High: {max_price:.2f}', color='red', verticalalignment='bottom')
 
-    ######## draw gray line for current price
+    # Draw gray line for current price
     ax.axhline(y=current_price, color="gray", linestyle="--", label="")
     
     # Add price label for the current_price
     ax.text(x_values[-1], current_price, f'{current_price:.2f}', color='gray', verticalalignment='top')
     
-    ## prevoius close
+    # Draw gray line for previous close
     ax.axhline(y=previous_close, color="navy", linestyle="--", label="")
     
     # Add price label for the previous_price
     ax.text(0, previous_close, f'{previous_close:.2f}__c1', color='navy', verticalalignment='top')
 
-    ## d2 close
+    # Draw gray line for d2 close
     d2_close = fetch_d2_close(ticker)
     ax.axhline(y=d2_close, color="navy", linestyle="--", label="")
     
     # Add price label for the d2_close
     ax.text(0, d2_close, f'{d2_close:.2f}__c2', color='navy', verticalalignment='top')
-
-    ##########
 
     # Draw exponential moving averages with dashed lines
     ax.plot(x_values, data_recent['EMA_9'], color="blue", linestyle="--", label="EMA 9/20_orange")
@@ -242,7 +236,7 @@ def main():
     ax.axhline(y=data_recent['EMA_9'].iloc[-1], color="blue", linestyle="-", label="")
     ax.axhline(y=data_recent['EMA_20'].iloc[-1], color="orange", linestyle="-", label="")
     
-    # Add price label for emas
+    # Add price label for EMAs
     ax.text(x_values[-1], data_recent['EMA_9'].iloc[-1], f'^^^^^^e9', color='blue', verticalalignment='top')
     ax.text(x_values[-1], data_recent['EMA_20'].iloc[-1], f'^^^^^^^^e20', color='orange', verticalalignment='top')
 
