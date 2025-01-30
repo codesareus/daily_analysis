@@ -15,6 +15,15 @@ def fetch_stock_data(ticker, interval="1m"):
     data = stock.history(period="5d", interval=interval, prepost=True)  # Include premarket data
     return data
 
+# Function to fetch the previous day's close price
+def fetch_previous_close(ticker):
+    stock = yf.Ticker(ticker)
+    previous_day_data = stock.history(period="5d")  # Fetch last 5 days of data
+    if len(previous_day_data) >= 2:
+        return previous_day_data['Close'].iloc[-2]  # Second-to-last close is the previous day's close
+    else:
+        return None  # Handle cases where there isn't enough data
+
 # Function to perform regression analysis
 def perform_regression(data, degree=1):
     # Prepare data (use only the most recent 300 points)
@@ -47,7 +56,7 @@ def main():
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
     # Dropdown for interval selection
-    interval = st.selectbox("Select Interval", ["1m", "5m", "30m"], index=0)
+    interval = st.selectbox("Select Interval", ["1m", "5m", "30m"], index=1)
 
     # Add a button to refresh data
     if st.button("Refresh Data"):
@@ -62,8 +71,11 @@ def main():
     # Get the current price (last available price in the data)
     current_price = data['Close'].iloc[-1]
 
-    # Get the previous day's close price
-    previous_close = data['Close'].iloc[0]  # First price in the dataset (previous day's close)
+    # Fetch the previous day's close price
+    previous_close = fetch_previous_close(ticker)
+    if previous_close is None:
+        st.error("Failed to fetch the previous day's close price. Please try again.")
+        return
 
     change = current_price - previous_close
 
@@ -141,6 +153,14 @@ def main():
     # Add price labels for the highest and lowest prices
     ax.text(x_values[-1], min_price, f'Low: {min_price:.2f}', color='green', verticalalignment='top')
     ax.text(x_values[-1], max_price, f'High: {max_price:.2f}', color='red', verticalalignment='bottom')
+
+    ######## draw gray line for current price
+    ax.axhline(y=current_price, color="gray", linestyle="--", label="")
+    
+    # Add price label for the current_price
+    ax.text(x_values[-1], current_price, f'{current_price:.2f}', color='gray', verticalalignment='top')
+    
+    ##########
 
     # Draw exponential moving averages with dashed lines
     ax.plot(x_values, data_recent['EMA_9'], color="blue", linestyle="-", label="EMA 9/20_orange")
