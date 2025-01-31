@@ -125,8 +125,23 @@ def main():
         st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
         return
 
+    # Add a slider for backtracking
+    backtrack_options = [0, 2, 5, 7, 10, 20, 30, 45, 60, 90, 100, 120]
+    selected_backtrack = st.slider(
+        "Select number of points to backtrack:",
+        min_value=min(backtrack_options),
+        max_value=max(backtrack_options),
+        value=0,  # Default value
+        step=1,  # Step size
+        key="backtrack_slider"
+    )
+
+    # Adjust the data based on the selected backtrack
+    data_recent = data.tail(300 + selected_backtrack)  # Get the most recent 300 + selected_backtrack data points
+    data_recent = data_recent.head(300)  # Use only the first 300 points after backtracking
+
     # Get the current price (last available price in the data)
-    current_price = data['Close'].iloc[-1]
+    current_price = data_recent['Close'].iloc[-1]
 
     # Fetch the previous day's close price
     previous_close = fetch_previous_close(ticker)
@@ -139,20 +154,39 @@ def main():
     # Calculate percentage change
     percentage_change = calculate_percentage_change(current_price, previous_close)
 
-    # Display the percentage change message
+    # Get current local time
+    midwest = pytz.timezone("America/chicago")
+    current_time = datetime.now(midwest).strftime("%H:%M:%S")
+
+    # Display the percentage change message with current local time
     st.write("### Current Price vs Previous Close___" f"{ticker}")
     if percentage_change >= 0:
-        st.success(f"🟢 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, previous_close **{previous_close:.2f}**)")
+        st.success(f"🟢 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, previous_close **{previous_close:.2f}**)  |  **___** {current_time} **___**")
     else:
-        st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)")
+        st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **___** {current_time} **___**")
  
     # Perform linear regression (using only the most recent 300 points)
-    X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data, degree=1)
+    X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
-    # Perform polynomial regression with default degree 3 (using only the most recent 300 points)
+    # Add buttons for polynomial degree selection
     st.write("### Polynomial Regression Analysis")
-    degree = st.slider("Select Polynomial Degree", min_value=2, max_value=3, value=3)  # Default degree set to 3
-    X, y, y_pred_poly, r2_poly, _ = perform_regression(data, degree=degree)
+    col_deg2, col_deg3 = st.columns(2)
+    with col_deg2:
+        if st.button("Degree 2"):
+            degree = 2
+    with col_deg3:
+        if st.button("Degree 3"):
+            degree = 3
+
+    # Default degree
+    if 'degree' not in locals():
+        degree = 3  # Default to degree 3
+
+    # Display the current polynomial degree
+    st.write(f"**Current Polynomial Degree:** {degree}")
+
+    # Perform polynomial regression with the selected degree
+    X, y, y_pred_poly, r2_poly, _ = perform_regression(data_recent, degree=degree)
 
     # Calculate residuals and standard deviation for the polynomial model
     residuals = y - y_pred_poly
@@ -281,7 +315,7 @@ def main():
             ax.plot(x_values[i], data_recent['Close'].iloc[i], 'v', markersize=5, color='red', lw=0)
 
     # Add trend message on top of the plot
-    ax.text(0.5, 0.9, trend_message, transform=ax.transAxes, fontsize=12, color=trend_color, ha='center')
+    #ax.text(0.5, 0.9, trend_message, transform=ax.transAxes, fontsize=12, color=trend_color, ha='center')
 
     # Format x-axis to show only hours (or every 3 hours for 30-minute interval)
     ax.set_xticks(x_values)  # Set ticks for all time points

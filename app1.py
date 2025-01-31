@@ -149,9 +149,9 @@ def main():
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data, degree=1)
 
-    # Perform polynomial regression with default degree 9 (using only the most recent 300 points)
+    # Perform polynomial regression with default degree 3 (using only the most recent 300 points)
     st.write("### Polynomial Regression Analysis")
-    degree = st.slider("Select Polynomial Degree", min_value=2, max_value=10, value=9)  # Default degree set to 9
+    degree = st.slider("Select Polynomial Degree", min_value=2, max_value=3, value=3)  # Default degree set to 3
     X, y, y_pred_poly, r2_poly, _ = perform_regression(data, degree=degree)
 
     # Calculate residuals and standard deviation for the polynomial model
@@ -184,9 +184,34 @@ def main():
         # For 1-minute and 5-minute intervals, show only hours (e.g., 09:00, 10:00)
         simplified_time_labels = [label if label.endswith('00') else '' for label in time_labels]
 
+    # ... (rest of the code remains the same until the plotting section)
+
+    # Calculate the deviation of the current price from the polynomial regression model
+    current_price_deviation = current_price - y_pred_poly[-1]  # Deviation from the polynomial model
+    deviation_in_std = current_price_deviation / std_dev  # Deviation in terms of standard deviations
+
+    # Add a message above the plot showing the price deviation
+    if deviation_in_std >= 2:
+        deviation_message = f"{ticker}_Deviation from PR: +{deviation_in_std:.2f} std_dev"
+        deviation_color = "red"  # Red for >= +2 std_dev
+    elif deviation_in_std <= -2:
+        deviation_message = f"{ticker}_Deviation from PR: {deviation_in_std:.2f} std_dev"
+        deviation_color = "green"  # Green for <= -2 std_dev
+    else:
+        deviation_message = f"{ticker}_Deviation from PR: {deviation_in_std:.2f} std_dev"
+        deviation_color = "gray"  # Default color for other cases
+
+    # Display the deviation message with the appropriate color
+    st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message}</h3>", unsafe_allow_html=True)
+
+    # Add a message above the plot showing the trend
+    st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message}</h3>", unsafe_allow_html=True)
+    
+
     # Plot both linear and polynomial regression results on the same graph
-    st.write("### Combined Regression Plot (Most Recent 300 Points)")
+    st.write(f"### Combined Regression Plot ({interval})")
     fig, ax = plt.subplots()
+    print(interval)
 
     # Use numeric x-axis for plotting to avoid duplicate time issues
     x_values = np.arange(len(data_recent))  # Numeric x-axis
@@ -213,20 +238,28 @@ def main():
 
     # Draw gray line for current price
     ax.axhline(y=current_price, color="gray", linestyle="--", label="")
-    
-    # Add price label for the current_price
-    ax.text(x_values[-1], current_price, f'{current_price:.2f}', color='gray', verticalalignment='top')
-    
+        
+    # Modify the current price label to include the trend message and color
+    current_price_label = f"-----{current_price:.2f} {trend_message.split()[-1]}"
+    if trend_message == "Trend UP":
+        current_price_color = "green"  # Green for UP trend
+    elif trend_message == "Trend DOWN":
+        current_price_color = "red"  # Red for DOWN trend
+    else:
+        current_price_color = "gray"  # Default color for NEUTRAL trend
+
+    ax.text(x_values[-1], current_price, current_price_label, color=current_price_color, verticalalignment='top')
+        
     # Draw gray line for previous close
     ax.axhline(y=previous_close, color="navy", linestyle="--", label="")
-    
+        
     # Add price label for the previous_price
     ax.text(0, previous_close, f'{previous_close:.2f}__c1', color='navy', verticalalignment='top')
 
     # Draw gray line for d2 close
     d2_close = fetch_d2_close(ticker)
     ax.axhline(y=d2_close, color="navy", linestyle="--", label="")
-    
+        
     # Add price label for the d2_close
     ax.text(0, d2_close, f'{d2_close:.2f}__c2', color='navy', verticalalignment='top')
 
@@ -235,7 +268,7 @@ def main():
     ax.plot(x_values, data_recent['EMA_20'], color="orange", linestyle="--", label="")
     ax.axhline(y=data_recent['EMA_9'].iloc[-1], color="blue", linestyle="-", label="")
     ax.axhline(y=data_recent['EMA_20'].iloc[-1], color="orange", linestyle="-", label="")
-    
+        
     # Add price label for EMAs
     ax.text(x_values[-1], data_recent['EMA_9'].iloc[-1], f'^^^^^^e9', color='blue', verticalalignment='top')
     ax.text(x_values[-1], data_recent['EMA_20'].iloc[-1], f'^^^^^^^^e20', color='orange', verticalalignment='top')
@@ -248,7 +281,7 @@ def main():
             ax.plot(x_values[i], data_recent['Close'].iloc[i], 'v', markersize=5, color='red', lw=0)
 
     # Add trend message on top of the plot
-    ax.text(0.5, 0.9, trend_message, transform=ax.transAxes, fontsize=12, color=trend_color, ha='center')
+    #ax.text(0.5, 0.9, trend_message, transform=ax.transAxes, fontsize=12, color=trend_color, ha='center')
 
     # Format x-axis to show only hours (or every 3 hours for 30-minute interval)
     ax.set_xticks(x_values)  # Set ticks for all time points
@@ -259,6 +292,8 @@ def main():
     ax.legend()
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
     st.pyplot(fig)
+
+    # ... (rest of the code remains the same)
 
 if __name__ == "__main__":
     main()
