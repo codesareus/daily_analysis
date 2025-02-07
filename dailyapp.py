@@ -17,6 +17,13 @@ def fetch_stock_data(ticker, interval="1m"):
     data = stock.history(period="5d", interval=interval, prepost=True)  # Include premarket data
     return data
 
+# Function to fetch stock data with a specified 4h interval
+def fetch_stock_data6m(ticker, interval="1h"):
+    # Fetch data for the specified stock with the given interval (including premarket)
+    stock = yf.Ticker(ticker)
+    data = stock.history(period="1mo", interval="1h", prepost=True)  # Include premarket data
+    return data
+
 # Function to fetch the previous 5 day's close price
 def fetch_daily5(ticker):
     stock = yf.Ticker(ticker)
@@ -46,6 +53,7 @@ def fetch_previous_close(ticker):
         previous_close = close_prices[-2]  # Use the most recent close
 
     return previous_close
+
 
 # Function to fetch the day before yesterday's close price
 def fetch_d2_close(ticker):
@@ -100,7 +108,7 @@ def main():
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
     # Add a button group for interval selection
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
         if st.button("1 Minute"):
             interval = "1m"
@@ -111,6 +119,10 @@ def main():
         if st.button("30 Minutes", key="30m"):
             interval = "30m"
 
+    with col4:
+        if st.button("1 hour", key="1h"):
+            interval = "1h"
+
     # Default interval
     if 'interval' not in locals():
         interval = "5m"
@@ -120,13 +132,33 @@ def main():
         st.cache_data.clear()  # Clear cached data to force a fresh fetch
 
     # Fetch data for the user-specified stock and interval
-    data = fetch_stock_data(ticker, interval=interval)
+    if interval == "1h":
+        data = fetch_stock_data6m(ticker, interval = "1h")
+    else:
+        data = fetch_stock_data(ticker, interval=interval)
     if data.empty:
         st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
         return
 
+    # Add a slider for backtracking
+    backtrack_options = [0, 2, 5, 7, 10, 20, 30, 45, 60, 90, 100, 120]
+    selected_backtrack = st.slider(
+        "Select number of points to backtrack:",
+        min_value=min(backtrack_options),
+        max_value=max(backtrack_options),
+        value=0,  # Default value
+        step=1,  # Step size
+        key="backtrack_slider"
+    )
+
+    # Adjust the data based on the selected backtrack
+    if interval == "1h":
+        data_recent = data 
+    else:
+        data_recent = data.tail(300)
+
     # Get the current price (last available price in the data)
-    current_price = data['Close'].iloc[-1]
+    current_price = data_recent['Close'].iloc[-1]
 
     # Fetch the previous day's close price
     previous_close = fetch_previous_close(ticker)
@@ -139,20 +171,39 @@ def main():
     # Calculate percentage change
     percentage_change = calculate_percentage_change(current_price, previous_close)
 
-    # Display the percentage change message
+    # Get current local time
+    midwest = pytz.timezone("America/chicago")
+    current_time = datetime.now(midwest).strftime("%H:%M:%S")
+
+    # Display the percentage change message with current local time
     st.write("### Current Price vs Previous Close___" f"{ticker}")
     if percentage_change >= 0:
-        st.success(f"🟢 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, previous_close **{previous_close:.2f}**)")
+        st.success(f"🟢 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, previous_close **{previous_close:.2f}**)  |  **___** {current_time} **___**")
     else:
-        st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)")
+        st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **___** {current_time} **___**")
  
     # Perform linear regression (using only the most recent 300 points)
-    X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data, degree=1)
+    X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
-    # Perform polynomial regression with default degree 3 (using only the most recent 300 points)
+    # Add buttons for polynomial degree selection
     st.write("### Polynomial Regression Analysis")
-    degree = st.slider("Select Polynomial Degree", min_value=2, max_value=3, value=3)  # Default degree set to 3
-    X, y, y_pred_poly, r2_poly, _ = perform_regression(data, degree=degree)
+    col_deg2, col_deg3 = st.columns(2)
+    with col_deg2:
+        if st.button("Degree 2"):
+            degree = 2
+    with col_deg3:
+        if st.button("Degree 3"):
+            degree = 3
+
+    # Default degree
+    if 'degree' not in locals():
+        degree = 3  # Default to degree 3
+
+    # Display the current polynomial degree
+    st.write(f"**Current Polynomial Degree:** {degree}")
+
+    # Perform polynomial regression with the selected degree
+    X, y, y_pred_poly, r2_poly, _ = perform_regression(data_recent, degree=degree)
 
     # Calculate residuals and standard deviation for the polynomial model
     residuals = y - y_pred_poly
