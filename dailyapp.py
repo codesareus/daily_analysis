@@ -24,18 +24,30 @@ def fetch_stock_data1mo(ticker, interval="1h"):
     data = stock.history(period="1mo", interval="1h", prepost=True)  # no doest not Include premarket data
     return data
 
-# Function to fetch stock data with a specified 1h interval w/o premarket
-def fetch_stock_data3mo(ticker, interval="1h"):
-    stock = yf.Ticker(ticker)
-    data = stock.history(period="3mo", interval="1h")  # NOT Include premarket data
-    return data
-
 # Function to fetch the previous 5 day's close price
 def fetch_daily5(ticker):
     stock = yf.Ticker(ticker)
     daily5 = stock.history(period="5d")  # Fetch last 5 days of data
     if len(daily5) >= 2:
         return daily5['Close'] 
+    else:
+        return None  # Handle cases where there isn't enough data
+
+# Function to fetch 3mo close price
+def fetch_3mo(ticker):
+    stock = yf.Ticker(ticker)
+    daily3mo = stock.history(period="3mo")
+    if len(daily3mo) >= 2:
+        return daily3mo
+    else:
+        return None  # Handle cases where there isn't enough data
+
+# Function to fetch 6mo close price
+def fetch_6mo(ticker):
+    stock = yf.Ticker(ticker)
+    daily6mo = stock.history(period="6mo")
+    if len(daily6mo) >= 2:
+        return daily6mo
     else:
         return None  # Handle cases where there isn't enough data
 
@@ -114,7 +126,7 @@ def main():
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
     # Add a button group for interval selection
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col1, col2, col3, col4, col5, col6 = st.columns(6)
     with col1:
         if st.button("1 Minute"):
             interval = "1m"
@@ -129,8 +141,12 @@ def main():
         if st.button("1 hr_1mo", key="1h"):
             interval = "1h_1mo"        
     with col5:
-        if st.button("1 hr_3mo", key="3mo"):
-            interval = "1h_3mo"
+        if st.button("3mo", key="3mo"):
+            interval = "3mo"
+    with col6:
+        if st.button("6mo", key="6mo"):
+            interval = "6mo"
+   
     
     # Default interval
     if 'interval' not in locals():
@@ -143,8 +159,12 @@ def main():
     # Fetch data for the user-specified stock and interval
     if interval == "1h_1mo":
         data = fetch_stock_data1mo(ticker, interval = "1h")
-    elif interval == "1h_3mo":
-        data = fetch_stock_data3mo(ticker, interval = "1h")
+    elif interval == "3mo":
+        data = fetch_3mo(ticker)
+    elif interval == "6mo":
+        data = fetch_6mo(ticker)
+
+        fetch_3mo
     else:
         data = fetch_stock_data(ticker, interval=interval)
         
@@ -164,12 +184,11 @@ def main():
     )
 
     # Adjust the data based on the selected backtrack
-    if interval == "1h":
-        data_recent = data 
-    else:
-        data_recent = data.tail(300)
+    
+    data_recent = data.tail(300)
 
     # Get the current price (last available price in the data)
+    
     current_price = data_recent['Close'].iloc[-1]
 
     # Fetch the previous day's close price
