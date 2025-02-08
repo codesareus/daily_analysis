@@ -17,17 +17,11 @@ def fetch_stock_data(ticker, interval="1m"):
     data = stock.history(period="5d", interval=interval, prepost=True)  # Include premarket data
     return data
 
-# Function to fetch stock data with a specified 1h interval
-def fetch_stock_data1mo(ticker, interval="1h"):
+# Function to fetch stock data with a specified 4h interval
+def fetch_stock_data6m(ticker, interval="1h"):
     # Fetch data for the specified stock with the given interval (including premarket)
     stock = yf.Ticker(ticker)
-    data = stock.history(period="1mo", interval="1h", prepost=True)  # no doest not Include premarket data
-    return data
-
-# Function to fetch stock data with a specified 1h interval w/o premarket
-def fetch_stock_data3mo(ticker, interval="1h"):
-    stock = yf.Ticker(ticker)
-    data = stock.history(period="3mo", interval="1h")  # NOT Include premarket data
+    data = stock.history(period="1mo", interval="1h", prepost=True)  # Include premarket data
     return data
 
 # Function to fetch the previous 5 day's close price
@@ -114,7 +108,7 @@ def main():
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
     # Add a button group for interval selection
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
         if st.button("1 Minute"):
             interval = "1m"
@@ -126,12 +120,9 @@ def main():
             interval = "30m"
 
     with col4:
-        if st.button("1 hr_1mo", key="1h"):
-            interval = "1h_1mo"        
-    with col5:
-        if st.button("1 hr_3mo", key="3mo"):
-            interval = "1h_3mo"
-    
+        if st.button("1 hour", key="1h"):
+            interval = "1h"
+
     # Default interval
     if 'interval' not in locals():
         interval = "5m"
@@ -141,13 +132,10 @@ def main():
         st.cache_data.clear()  # Clear cached data to force a fresh fetch
 
     # Fetch data for the user-specified stock and interval
-    if interval == "1h_1mo":
-        data = fetch_stock_data1mo(ticker, interval = "1h")
-    elif interval == "1h_3mo":
-        data = fetch_stock_data3mo(ticker, interval = "1h")
+    if interval == "1h":
+        data = fetch_stock_data6m(ticker, interval = "1h")
     else:
         data = fetch_stock_data(ticker, interval=interval)
-        
     if data.empty:
         st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
         return
