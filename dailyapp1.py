@@ -17,11 +17,11 @@ def fetch_stock_data(ticker, interval="1m"):
     data = stock.history(period="5d", interval=interval, prepost=True)  # Include premarket data
     return data
 
-# Function to fetch stock data with a specified 4h interval
-def fetch_stock_data6m(ticker, interval="1h"):
+# Function to fetch stock data with a specified 1h interval
+def fetch_stock_data1mo(ticker, interval="1h"):
     # Fetch data for the specified stock with the given interval (including premarket)
     stock = yf.Ticker(ticker)
-    data = stock.history(period="1mo", interval="1h", prepost=True)  # Include premarket data
+    data = stock.history(period="1mo", interval="1h", prepost=True)  # no doest not Include premarket data
     return data
 
 # Function to fetch the previous 5 day's close price
@@ -30,6 +30,24 @@ def fetch_daily5(ticker):
     daily5 = stock.history(period="5d")  # Fetch last 5 days of data
     if len(daily5) >= 2:
         return daily5['Close'] 
+    else:
+        return None  # Handle cases where there isn't enough data
+
+# Function to fetch 3mo close price
+def fetch_3mo(ticker):
+    stock = yf.Ticker(ticker)
+    daily3mo = stock.history(period="3mo")
+    if len(daily3mo) >= 2:
+        return daily3mo
+    else:
+        return None  # Handle cases where there isn't enough data
+
+# Function to fetch 6mo close price
+def fetch_6mo(ticker):
+    stock = yf.Ticker(ticker)
+    daily6mo = stock.history(period="6mo")
+    if len(daily6mo) >= 2:
+        return daily6mo
     else:
         return None  # Handle cases where there isn't enough data
 
@@ -99,16 +117,25 @@ def perform_regression(data, degree=1):
 def calculate_percentage_change(current_price, previous_close):
     return ((current_price - previous_close) / previous_close) * 100
 
+# Function to calculate exponential moving averages
+def calculate_emas(data):
+    data['EMA_9'] = data['Close'].ewm(span=9, adjust=False).mean()
+    data['EMA_20'] = data['Close'].ewm(span=20, adjust=False).mean()
+    data['EMA_50'] = data['Close'].ewm(span=50, adjust=False).mean()
+    data['EMA_100'] = data['Close'].ewm(span=100, adjust=False).mean()
+    data['EMA_200'] = data['Close'].ewm(span=200, adjust=False).mean()
+    return data
+
+
 # Streamlit app
 def main():
     st.title("Stock Price Regression Analysis")
-    st.write("This app fetches stock prices at different intervals (including premarket data) and performs linear and polynomial regression analysis.")
-
+    
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
     # Add a button group for interval selection
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4, col5, col6 = st.columns(6)
     with col1:
         if st.button("1 Minute"):
             interval = "1m"
@@ -120,9 +147,16 @@ def main():
             interval = "30m"
 
     with col4:
-        if st.button("1 hour", key="1h"):
-            interval = "1h"
-
+        if st.button("1 hr_1mo", key="1h"):
+            interval = "1h_1mo"        
+    with col5:
+        if st.button("3mo", key="3mo"):
+            interval = "3mo"
+    with col6:
+        if st.button("6mo", key="6mo"):
+            interval = "6mo"
+   
+    
     # Default interval
     if 'interval' not in locals():
         interval = "5m"
@@ -132,30 +166,24 @@ def main():
         st.cache_data.clear()  # Clear cached data to force a fresh fetch
 
     # Fetch data for the user-specified stock and interval
-    if interval == "1h":
-        data = fetch_stock_data6m(ticker, interval = "1h")
+    if interval == "1h_1mo":
+        data = fetch_stock_data1mo(ticker, interval="1h")
+    elif interval == "3mo":
+        data = fetch_3mo(ticker)
+    elif interval == "6mo":
+        data = fetch_6mo(ticker)
     else:
         data = fetch_stock_data(ticker, interval=interval)
+
     if data.empty:
         st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
         return
 
-    # Add a slider for backtracking
-    backtrack_options = [0, 2, 5, 7, 10, 20, 30, 45, 60, 90, 100, 120]
-    selected_backtrack = st.slider(
-        "Select number of points to backtrack:",
-        min_value=min(backtrack_options),
-        max_value=max(backtrack_options),
-        value=0,  # Default value
-        step=1,  # Step size
-        key="backtrack_slider"
-    )
-
     # Adjust the data based on the selected backtrack
-    if interval == "1h":
-        data_recent = data 
-    else:
-        data_recent = data.tail(300)
+    data_recent = data.tail(300)
+
+    # Calculate EMAs
+    data_recent = calculate_emas(data_recent)
 
     # Get the current price (last available price in the data)
     current_price = data_recent['Close'].iloc[-1]
@@ -167,7 +195,7 @@ def main():
         return
 
     change = current_price - previous_close
-    
+
     # Calculate percentage change
     percentage_change = calculate_percentage_change(current_price, previous_close)
 
@@ -181,7 +209,7 @@ def main():
         st.success(f"🟢 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, previous_close **{previous_close:.2f}**)  |  **___** {current_time} **___**")
     else:
         st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **___** {current_time} **___**")
- 
+
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
@@ -209,10 +237,6 @@ def main():
     residuals = y - y_pred_poly
     std_dev = np.std(residuals)
 
-    # Calculate exponential moving averages
-    data_recent['EMA_9'] = data_recent['Close'].ewm(span=9, adjust=False).mean()
-    data_recent['EMA_20'] = data_recent['Close'].ewm(span=20, adjust=False).mean()
-
     # Determine the trend message
     if current_price > data_recent['EMA_9'].iloc[-1] and data_recent['EMA_9'].iloc[-1] > data_recent['EMA_20'].iloc[-1]:
         trend_message = f"Trend UP"
@@ -235,8 +259,6 @@ def main():
         # For 1-minute and 5-minute intervals, show only hours (e.g., 09:00, 10:00)
         simplified_time_labels = [label if label.endswith('00') else '' for label in time_labels]
 
-    # ... (rest of the code remains the same until the plotting section)
-
     # Calculate the deviation of the current price from the polynomial regression model
     current_price_deviation = current_price - y_pred_poly[-1]  # Deviation from the polynomial model
     deviation_in_std = current_price_deviation / std_dev  # Deviation in terms of standard deviations
@@ -257,12 +279,10 @@ def main():
 
     # Add a message above the plot showing the trend
     st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message}</h3>", unsafe_allow_html=True)
-    
 
     # Plot both linear and polynomial regression results on the same graph
     st.write(f"### Combined Regression Plot ({interval})")
-    fig, ax = plt.subplots()
-    print(interval)
+    fig, ax = plt.subplots(figsize=(12, 12))
 
     # Use numeric x-axis for plotting to avoid duplicate time issues
     x_values = np.arange(len(data_recent))  # Numeric x-axis
@@ -289,7 +309,7 @@ def main():
 
     # Draw gray line for current price
     ax.axhline(y=current_price, color="gray", linestyle="--", label="")
-        
+
     # Modify the current price label to include the trend message and color
     current_price_label = f"-----{current_price:.2f} {trend_message.split()[-1]}"
     if trend_message == "Trend UP":
@@ -300,29 +320,33 @@ def main():
         current_price_color = "gray"  # Default color for NEUTRAL trend
 
     ax.text(x_values[-1], current_price, current_price_label, color=current_price_color, verticalalignment='top')
-        
+
     # Draw gray line for previous close
     ax.axhline(y=previous_close, color="navy", linestyle="--", label="")
-        
+
     # Add price label for the previous_price
     ax.text(0, previous_close, f'{previous_close:.2f}__c1', color='navy', verticalalignment='top')
 
     # Draw gray line for d2 close
     d2_close = fetch_d2_close(ticker)
     ax.axhline(y=d2_close, color="navy", linestyle="--", label="")
-        
+
     # Add price label for the d2_close
     ax.text(0, d2_close, f'{d2_close:.2f}__c2', color='navy', verticalalignment='top')
 
     # Draw exponential moving averages with dashed lines
     ax.plot(x_values, data_recent['EMA_9'], color="blue", linestyle="--", label="EMA 9/20_orange")
     ax.plot(x_values, data_recent['EMA_20'], color="orange", linestyle="--", label="")
-    ax.axhline(y=data_recent['EMA_9'].iloc[-1], color="blue", linestyle="-", label="")
-    ax.axhline(y=data_recent['EMA_20'].iloc[-1], color="orange", linestyle="-", label="")
-        
-    # Add price label for EMAs
+    ax.plot(x_values, data_recent['EMA_50'], color="gold", linestyle="--", label="EMA 50")
+    ax.plot(x_values, data_recent['EMA_100'], color="gray", linestyle="--", label="EMA 100")
+    ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
+
+    # Add price labels for EMAs
     ax.text(x_values[-1], data_recent['EMA_9'].iloc[-1], f'^^^^^^e9', color='blue', verticalalignment='top')
     ax.text(x_values[-1], data_recent['EMA_20'].iloc[-1], f'^^^^^^^^e20', color='orange', verticalalignment='top')
+    ax.text(x_values[-1], data_recent['EMA_50'].iloc[-1], f'^^^^^^^^e50', color='gold', verticalalignment='top')
+    ax.text(x_values[-1], data_recent['EMA_100'].iloc[-1], f'^^^^^^^^e100', color='gray', verticalalignment='top')
+    ax.text(x_values[-1], data_recent['EMA_200'].iloc[-1], f'^^^^^^^^e200', color='purple', verticalalignment='top')
 
     # Add arrows for EMA crossovers
     for i in range(1, len(data_recent)):
@@ -330,9 +354,6 @@ def main():
             ax.plot(x_values[i], data_recent['Close'].iloc[i], '^', markersize=5, color='blue', lw=0)
         elif data_recent['EMA_9'].iloc[i] < data_recent['EMA_20'].iloc[i] and data_recent['EMA_9'].iloc[i-1] >= data_recent['EMA_20'].iloc[i-1]:
             ax.plot(x_values[i], data_recent['Close'].iloc[i], 'v', markersize=5, color='red', lw=0)
-
-    # Add trend message on top of the plot
-    #ax.text(0.5, 0.9, trend_message, transform=ax.transAxes, fontsize=12, color=trend_color, ha='center')
 
     # Format x-axis to show only hours (or every 3 hours for 30-minute interval)
     ax.set_xticks(x_values)  # Set ticks for all time points
@@ -343,6 +364,53 @@ def main():
     ax.legend()
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
     st.pyplot(fig)
+
+# Calculate EMAs
+    data_recent = calculate_emas(data_recent)
+
+    # Get the latest EMA values
+    ema_9 = data_recent['EMA_9'].iloc[-1]
+    ema_20 = data_recent['EMA_20'].iloc[-1]
+    ema_50 = data_recent['EMA_50'].iloc[-1]
+    ema_100 = data_recent['EMA_100'].iloc[-1]
+    ema_200 = data_recent['EMA_200'].iloc[-1]
+
+    # Get the current price
+    current_price = data_recent['Close'].iloc[-1]
+
+    # Determine which two EMAs sandwich the current price
+    ema_values = [ema_9, ema_20, ema_50, ema_100, ema_200]
+    ema_names = ["EMA 9", "EMA 20", "EMA 50", "EMA 100", "EMA 200"]
+
+    # Sort EMAs and find the sandwiching EMAs
+    sorted_emas = sorted(zip(ema_names, ema_values), key=lambda x: x[1])
+    sandwiching_emas = []
+    for i in range(len(sorted_emas) - 1):
+        if sorted_emas[i][1] <= current_price <= sorted_emas[i + 1][1]:
+            sandwiching_emas = [sorted_emas[i][0], sorted_emas[i + 1][0]]
+            break
+
+    # If current price is below the lowest EMA or above the highest EMA
+    if not sandwiching_emas:
+        if current_price < sorted_emas[0][1]:
+            sandwiching_emas = [f"Below {sorted_emas[0][0]}"]
+        else:
+            sandwiching_emas = [f"Above {sorted_emas[-1][0]}"]
+
+    # Display EMA values and current price in a table
+    st.write("### Exponential Moving Averages (EMAs) and Current Price")
+    ema_data = {
+        "Indicator": ["Current Price", "EMA 9", "EMA 20", "EMA 50", "EMA 100", "EMA 200"],
+        "Value": [current_price, ema_9, ema_20, ema_50, ema_100, ema_200]
+    }
+    ema_df = pd.DataFrame(ema_data)
+
+    # Add a column for the sandwiching EMAs
+    ema_df["Sandwiching EMAs"] = ["N/A"] + [""] * 5  # Initialize with "N/A" for the current price
+    ema_df.at[0, "Sandwiching EMAs"] = f"Between {sandwiching_emas[0]} and {sandwiching_emas[1]}" if len(sandwiching_emas) == 2 else sandwiching_emas[0]
+
+    # Display the table
+    st.table(ema_df)
 
     # ... (rest of the code remains the same)
 
