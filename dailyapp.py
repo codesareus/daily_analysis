@@ -38,10 +38,10 @@ def fetch_3mo(ticker):
     stock = yf.Ticker(ticker)
     daily3mo = stock.history(period="3mo")
     if len(daily3mo) >= 2:
-        return daily3mo
+        return daily3mo    
     else:
         return None  # Handle cases where there isn't enough data
-
+    
 # Function to fetch 6mo close price
 def fetch_6mo(ticker):
     stock = yf.Ticker(ticker)
@@ -129,7 +129,7 @@ def calculate_emas(data):
 
 # Streamlit app
 def main():
-    st.title("Stock Price Regression Analysis")
+    st.title("Ticker Regression Analysis")
     
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
@@ -162,8 +162,8 @@ def main():
         interval = "5m"
 
     # Add a button to refresh data
-    if st.button("Refresh Data"):
-        st.cache_data.clear()  # Clear cached data to force a fresh fetch
+    #if st.button("Refresh Data"):
+     #   st.cache_data.clear()  # Clear cached data to force a fresh fetch
 
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
@@ -201,32 +201,32 @@ def main():
 
     # Get current local time
     midwest = pytz.timezone("America/chicago")
-    current_time = datetime.now(midwest).strftime("%H:%M:%S")
+    #current_time = datetime.now(midwest).strftime("%H:%M:%S")
+    current_time = datetime.now(midwest).strftime("%I:%M:%S %p")
 
     # Display the percentage change message with current local time
-    st.write("### Current Price vs Previous Close___" f"{ticker}")
+    #st.write("### Current Price vs Previous Close___" f"{ticker}")
     if percentage_change >= 0:
         st.success(f"🟢 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, previous_close **{previous_close:.2f}**)  |  **___** {current_time} **___**")
     else:
-        st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **___** {current_time} **___**")
+        st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **......** {current_time}")
 
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
     # Add buttons for polynomial degree selection
-    st.write("### Polynomial Regression Analysis")
+    #st.write("### Polynomial Regression Analysis")
     col_deg2, col_deg3 = st.columns(2)
     with col_deg2:
-        if st.button("Degree 2"):
+        if st.button("PR_deg2"):
             degree = 2
     with col_deg3:
-        if st.button("Degree 3"):
+        if st.button("PR_deg3"):
             degree = 3
 
-    # Default degree
     if 'degree' not in locals():
         degree = 3  # Default to degree 3
-
+            
     # Display the current polynomial degree
     st.write(f"**Current Polynomial Degree:** {degree}")
 
@@ -255,6 +255,20 @@ def main():
     if interval == "30m":
         # For 30-minute interval, show only every 3 hours (e.g., 09:00, 12:00, 15:00)
         simplified_time_labels = [label if label.endswith('00') and int(label.split(':')[0]) % 3 == 0 else '' for label in time_labels]
+    elif interval == "1h":
+        simplified_time_labels = [label if label.endswith('00') and int(label.split(':')[0]) % 8 == 0 else '' for label in time_labels]
+
+    #3mo and 6mo data has only day information not hours and minute
+    elif interval == "3mo":
+        daily3mo = fetch_3mo(ticker)
+        time_labels = daily3mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
+        simplified_time_labels = [label if idx % 3 == 0 else '' for idx, label in enumerate(time_labels)]
+
+    elif interval == "6mo":
+        daily6mo = fetch_6mo(ticker)
+        time_labels = daily6mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
+        simplified_time_labels = [label if idx % 3 == 0 else '' for idx, label in enumerate(time_labels)]    
+
     else:
         # For 1-minute and 5-minute intervals, show only hours (e.g., 09:00, 10:00)
         simplified_time_labels = [label if label.endswith('00') else '' for label in time_labels]
@@ -365,54 +379,29 @@ def main():
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
     st.pyplot(fig)
 
-# Calculate EMAs
+   # Calculate EMAs
     data_recent = calculate_emas(data_recent)
 
-    # Get the latest EMA values
-    ema_9 = data_recent['EMA_9'].iloc[-1]
-    ema_20 = data_recent['EMA_20'].iloc[-1]
-    ema_50 = data_recent['EMA_50'].iloc[-1]
-    ema_100 = data_recent['EMA_100'].iloc[-1]
-    ema_200 = data_recent['EMA_200'].iloc[-1]
-
-    # Get the current price
-    current_price = data_recent['Close'].iloc[-1]
-
-    # Determine which two EMAs sandwich the current price
-    ema_values = [ema_9, ema_20, ema_50, ema_100, ema_200]
-    ema_names = ["EMA 9", "EMA 20", "EMA 50", "EMA 100", "EMA 200"]
-
-    # Sort EMAs and find the sandwiching EMAs
-    sorted_emas = sorted(zip(ema_names, ema_values), key=lambda x: x[1])
-    sandwiching_emas = []
-    for i in range(len(sorted_emas) - 1):
-        if sorted_emas[i][1] <= current_price <= sorted_emas[i + 1][1]:
-            sandwiching_emas = [sorted_emas[i][0], sorted_emas[i + 1][0]]
-            break
-
-    # If current price is below the lowest EMA or above the highest EMA
-    if not sandwiching_emas:
-        if current_price < sorted_emas[0][1]:
-            sandwiching_emas = [f"Below {sorted_emas[0][0]}"]
-        else:
-            sandwiching_emas = [f"Above {sorted_emas[-1][0]}"]
-
-    # Display EMA values and current price in a table
-    st.write("### Exponential Moving Averages (EMAs) and Current Price")
-    ema_data = {
-        "Indicator": ["Current Price", "EMA 9", "EMA 20", "EMA 50", "EMA 100", "EMA 200"],
-        "Value": [current_price, ema_9, ema_20, ema_50, ema_100, ema_200]
+    # Get the latest EMA values and current price
+    ema_values = {
+        "Current Price": data_recent['Close'].iloc[-1],
+        "EMA 9": data_recent['EMA_9'].iloc[-1],
+        "EMA 20": data_recent['EMA_20'].iloc[-1],
+        "EMA 50": data_recent['EMA_50'].iloc[-1],
+        "EMA 100": data_recent['EMA_100'].iloc[-1],
+        "EMA 200": data_recent['EMA_200'].iloc[-1]
     }
-    ema_df = pd.DataFrame(ema_data)
 
-    # Add a column for the sandwiching EMAs
-    ema_df["Sandwiching EMAs"] = ["N/A"] + [""] * 5  # Initialize with "N/A" for the current price
-    ema_df.at[0, "Sandwiching EMAs"] = f"Between {sandwiching_emas[0]} and {sandwiching_emas[1]}" if len(sandwiching_emas) == 2 else sandwiching_emas[0]
+    # Create DataFrame and sort by value in descending order
+    ema_df = pd.DataFrame(list(ema_values.items()), columns=["Indicator", "Value"])
+    ema_df = ema_df.sort_values(by="Value", ascending=False)
+
+    # Reset index and drop the numbers column
+    ema_df = ema_df.reset_index(drop=True)
 
     # Display the table
-    st.table(ema_df)
-
-    # ... (rest of the code remains the same)
+    st.write("### Exponential Moving Averages (EMAs) and Current Price")
+    st.dataframe(ema_df, hide_index=True)
 
 if __name__ == "__main__":
     main()
