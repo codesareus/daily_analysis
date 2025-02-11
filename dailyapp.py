@@ -213,22 +213,20 @@ def main():
 
     ######## Add buttons for polynomial degree selection
     #st.write("### Polynomial Regression Analysis")
-    col_deg2, col_deg3 = st.columns(2)
-    with col_deg2:
-        if st.button("PR_deg2"):
-            degree = 2
+
+    #col_deg2, col_deg3 = st.columns(2)
+    #with col_deg2:
+     #   if st.button("PR_deg2"):
+    #        degree = 2
             
-    with col_deg3:
-        if st.button("PR_deg3"):
-            degree = 3
+    #with col_deg3:
+    #    if st.button("PR_deg3"):
+     #       degree = 3
             
 
-    if 'degree' not in locals():
+    #if 'degree' not in locals():
         
-        degree = 2  # Default to degree 2
-            
-    # Display the current polynomial degree
-    st.write(f"**Current Polynomial Degree:** {degree}")
+    degree = 2  # Default to degree 2
 
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
@@ -297,8 +295,15 @@ def main():
     # Add a message above the plot showing the trend
     st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message}</h3>", unsafe_allow_html=True)
 
+    col_1, col_2 = st.columns(2)
+    with col_1:
+        st.write(f"**Linear_Polynomial Regression Plots ({interval})**")       
+    with col_2:
+        # Display the current polynomial degree
+        st.write(f"**PR_deg:** {degree}")
+
     # Plot both linear and polynomial regression results on the same graph
-    st.write(f"### Combined Regression Plot ({interval})")
+    
     fig, ax = plt.subplots(figsize=(12, 12))
 
     # Use numeric x-axis for plotting to avoid duplicate time issues

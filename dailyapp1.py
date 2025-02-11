@@ -10,6 +10,10 @@ import matplotlib.dates as mdates
 from datetime import datetime
 import pytz
 
+### polynomial degree
+
+degree = 2
+
 # Function to fetch stock data with a specified interval
 def fetch_stock_data(ticker, interval="1m"):
     # Fetch data for the specified stock with the given interval (including premarket)
@@ -41,9 +45,7 @@ def fetch_3mo(ticker):
         return daily3mo    
     else:
         return None  # Handle cases where there isn't enough data
-
     
-
 # Function to fetch 6mo close price
 def fetch_6mo(ticker):
     stock = yf.Ticker(ticker)
@@ -157,7 +159,6 @@ def main():
     with col6:
         if st.button("6mo", key="6mo"):
             interval = "6mo"
-   
     
     # Default interval
     if 'interval' not in locals():
@@ -213,24 +214,28 @@ def main():
     else:
         st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **......** {current_time}")
 
-    # Perform linear regression (using only the most recent 300 points)
-    X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
-    # Add buttons for polynomial degree selection
+    ######## Add buttons for polynomial degree selection
     #st.write("### Polynomial Regression Analysis")
     col_deg2, col_deg3 = st.columns(2)
     with col_deg2:
         if st.button("PR_deg2"):
             degree = 2
+            
     with col_deg3:
         if st.button("PR_deg3"):
             degree = 3
+            
 
     if 'degree' not in locals():
-        degree = 3  # Default to degree 3
+        
+        degree = 2  # Default to degree 2
             
     # Display the current polynomial degree
     st.write(f"**Current Polynomial Degree:** {degree}")
+
+    # Perform linear regression (using only the most recent 300 points)
+    X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
     # Perform polynomial regression with the selected degree
     X, y, y_pred_poly, r2_poly, _ = perform_regression(data_recent, degree=degree)
@@ -261,8 +266,16 @@ def main():
         simplified_time_labels = [label if label.endswith('00') and int(label.split(':')[0]) % 8 == 0 else '' for label in time_labels]
 
     #3mo and 6mo data has only day information not hours and minute
-    elif interval == "3mo" or interval == "6mo":
-        simplified_time_labels = [label if idx % 8 == 0 else '' for idx, label in enumerate(time_labels)]
+    elif interval == "3mo":
+        data3mo = fetch_3mo(ticker)
+        time_labels = data3mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
+        simplified_time_labels = [label if idx % 3 == 0 else '' for idx, label in enumerate(time_labels)]
+
+    elif interval == "6mo":
+        data6mo = fetch_6mo(ticker)
+        time_labels = data6mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
+        simplified_time_labels = [label if idx % 3 == 0 else '' for idx, label in enumerate(time_labels)]    
+
     else:
         # For 1-minute and 5-minute intervals, show only hours (e.g., 09:00, 10:00)
         simplified_time_labels = [label if label.endswith('00') else '' for label in time_labels]
