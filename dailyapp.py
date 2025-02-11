@@ -279,10 +279,10 @@ def main():
     deviation_in_std = current_price_deviation / std_dev  # Deviation in terms of standard deviations
 
     # Add a message above the plot showing the price deviation
-    if deviation_in_std >= 2:
+    if deviation_in_std >= 1:
         deviation_message = f"{ticker}_Deviation from PR: +{deviation_in_std:.2f} std_dev"
         deviation_color = "red"  # Red for >= +2 std_dev
-    elif deviation_in_std <= -2:
+    elif deviation_in_std <= -1:
         deviation_message = f"{ticker}_Deviation from PR: {deviation_in_std:.2f} std_dev"
         deviation_color = "green"  # Green for <= -2 std_dev
     else:
