@@ -10,9 +10,24 @@ import matplotlib.dates as mdates
 from datetime import datetime
 import pytz
 
-### polynomial degree
+# Function to calculate RSI
+def calculate_rsi(data, window=14):
+    delta = data['Close'].diff(1)
+    gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
 
-degree = 2
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
+    
+    data['RSI'] = rsi
+    return data
+
+def calculate_macd(data):
+    data['EMA_12'] = data['Close'].ewm(span=12, adjust=False).mean()
+    data['EMA_26'] = data['Close'].ewm(span=26, adjust=False).mean()
+    data['MACD'] = data['EMA_12'] - data['EMA_26']
+    data['Signal_Line'] = data['MACD'].ewm(span=9, adjust=False).mean()
+    return data
 
 # Function to fetch stock data with a specified interval
 def fetch_stock_data(ticker, interval="1m"):
@@ -217,22 +232,20 @@ def main():
 
     ######## Add buttons for polynomial degree selection
     #st.write("### Polynomial Regression Analysis")
-    col_deg2, col_deg3 = st.columns(2)
-    with col_deg2:
-        if st.button("PR_deg2"):
-            degree = 2
+
+    #col_deg2, col_deg3 = st.columns(2)
+    #with col_deg2:
+     #   if st.button("PR_deg2"):
+    #        degree = 2
             
-    with col_deg3:
-        if st.button("PR_deg3"):
-            degree = 3
+    #with col_deg3:
+    #    if st.button("PR_deg3"):
+     #       degree = 3
             
 
-    if 'degree' not in locals():
+    #if 'degree' not in locals():
         
-        degree = 2  # Default to degree 2
-            
-    # Display the current polynomial degree
-    st.write(f"**Current Polynomial Degree:** {degree}")
+    degree = 2  # Default to degree 2
 
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
@@ -285,10 +298,10 @@ def main():
     deviation_in_std = current_price_deviation / std_dev  # Deviation in terms of standard deviations
 
     # Add a message above the plot showing the price deviation
-    if deviation_in_std >= 2:
+    if deviation_in_std >= 1:
         deviation_message = f"{ticker}_Deviation from PR: +{deviation_in_std:.2f} std_dev"
         deviation_color = "red"  # Red for >= +2 std_dev
-    elif deviation_in_std <= -2:
+    elif deviation_in_std <= -1:
         deviation_message = f"{ticker}_Deviation from PR: {deviation_in_std:.2f} std_dev"
         deviation_color = "green"  # Green for <= -2 std_dev
     else:
@@ -301,9 +314,24 @@ def main():
     # Add a message above the plot showing the trend
     st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message}</h3>", unsafe_allow_html=True)
 
+    col_1, col_2 = st.columns(2)
+    with col_1:
+        st.write(f"**Linear_Polynomial Regression Plots ({interval})**")       
+    with col_2:
+        # Display the current polynomial degree
+        st.write(f"**PR_deg:** {degree}")
+
+    # Calculate RSI before plotting
+    data_recent = calculate_rsi(data_recent)
+    data_recent = calculate_macd(data_recent)
+
     # Plot both linear and polynomial regression results on the same graph
-    st.write(f"### Combined Regression Plot ({interval})")
-    fig, ax = plt.subplots(figsize=(12, 12))
+
+    fig, (ax, ax2, ax3) = plt.subplots(3, 1, figsize=(20, 20), gridspec_kw={'height_ratios': [3, 1, 1]})
+
+    #fig, (ax, ax2) = plt.subplots(2, 1, figsize=(12, 12), gridspec_kw={'height_ratios': [3, 1]})
+
+    #fig, ax = plt.subplots(figsize=(12, 12))
 
     # Use numeric x-axis for plotting to avoid duplicate time issues
     x_values = np.arange(len(data_recent))  # Numeric x-axis
@@ -383,6 +411,22 @@ def main():
     ax.set_ylabel(f"{ticker} Price")
     ax.set_title(f"Combined Linear and Polynomial Regression for {ticker} (Most Recent 300 Points)")
     ax.legend()
+
+    # --- RSI Plot ---
+    ax2.plot(x_values, data_recent['RSI'], color="purple", label="RSI (14)")
+    ax2.axhline(y=70, color="red", linestyle="--", label="Overbought (70)")
+    ax2.axhline(y=30, color="green", linestyle="--", label="Oversold (30)")
+    ax2.set_title("Relative Strength Index (RSI)")
+    ax2.legend()
+
+    # === MACD Plot ===
+    ax3.plot(data_recent.index, data_recent['MACD'], color="blue", label="MACD Line")
+    ax3.plot(data_recent.index, data_recent['Signal_Line'], color="red", linestyle="--", label="Signal Line")
+    ax3.bar(data_recent.index, data_recent['MACD'] - data_recent['Signal_Line'], color=['green' if val > 0 else 'red' for val in (data_recent['MACD'] - data_recent['Signal_Line'])], alpha=0.5)
+    ax3.set_title("MACD (Moving Average Convergence Divergence)")
+    ax3.legend()
+
+
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
     st.pyplot(fig)
 
@@ -409,6 +453,7 @@ def main():
     # Display the table
     st.write("### Exponential Moving Averages (EMAs) and Current Price")
     st.dataframe(ema_df, hide_index=True)
+
 
 if __name__ == "__main__":
     main()

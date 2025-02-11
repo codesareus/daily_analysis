@@ -10,6 +10,25 @@ import matplotlib.dates as mdates
 from datetime import datetime
 import pytz
 
+# Function to calculate RSI
+def calculate_rsi(data, window=14):
+    delta = data['Close'].diff(1)
+    gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
+
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
+    
+    data['RSI'] = rsi
+    return data
+
+def calculate_macd(data):
+    data['EMA_12'] = data['Close'].ewm(span=12, adjust=False).mean()
+    data['EMA_26'] = data['Close'].ewm(span=26, adjust=False).mean()
+    data['MACD'] = data['EMA_12'] - data['EMA_26']
+    data['Signal_Line'] = data['MACD'].ewm(span=9, adjust=False).mean()
+    return data
+
 # Function to fetch stock data with a specified interval
 def fetch_stock_data(ticker, interval="1m"):
     # Fetch data for the specified stock with the given interval (including premarket)
@@ -302,9 +321,25 @@ def main():
         # Display the current polynomial degree
         st.write(f"**PR_deg:** {degree}")
 
+    # Calculate RSI before plotting
+    data_recent = calculate_rsi(data_recent)
+    data_recent = calculate_macd(data_recent)
+
     # Plot both linear and polynomial regression results on the same graph
-    
-    fig, ax = plt.subplots(figsize=(12, 12))
+    # Define a list of timeframes that support MACD
+    valid_macd_timeframes = ["1h", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "max"]
+
+    # Only plot MACD if the selected timeframe is valid
+    if interval in valid_macd_timeframes:
+        fig, (ax, ax2, ax3) = plt.subplots(3, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [3, 1, 1]})
+    else:
+        fig, (ax, ax2) = plt.subplots(2, 1, figsize=(20, 20), gridspec_kw={'height_ratios': [3, 1]})
+
+    #fig, (ax, ax2, ax3) = plt.subplots(3, 1, figsize=(20, 20), gridspec_kw={'height_ratios': [3, 1, 1]})
+
+    #fig, (ax, ax2) = plt.subplots(2, 1, figsize=(12, 12), gridspec_kw={'height_ratios': [3, 1]})
+
+    #fig, ax = plt.subplots(figsize=(12, 12))
 
     # Use numeric x-axis for plotting to avoid duplicate time issues
     x_values = np.arange(len(data_recent))  # Numeric x-axis
@@ -384,6 +419,26 @@ def main():
     ax.set_ylabel(f"{ticker} Price")
     ax.set_title(f"Combined Linear and Polynomial Regression for {ticker} (Most Recent 300 Points)")
     ax.legend()
+
+    # --- RSI Plot ---
+    ax2.plot(x_values, data_recent['RSI'], color="purple", label="RSI (14)")
+    ax2.axhline(y=70, color="red", linestyle="--", label="Overbought (70)")
+    ax2.axhline(y=30, color="green", linestyle="--", label="Oversold (30)")
+    ax2.set_title("Relative Strength Index (RSI)")
+    ax2.legend()
+
+    # === MACD Plot (Only If Timeframe Is Valid) ===
+    if interval in valid_macd_timeframes:
+        ax3.plot(data_recent.index, data_recent['MACD'], color="blue", label="MACD Line")
+        ax3.plot(data_recent.index, data_recent['Signal_Line'], color="red", linestyle="--", label="Signal Line")
+
+        # Histogram Bars (Green for Positive, Red for Negative)
+        histogram_values = data_recent['MACD'] - data_recent['Signal_Line']
+        ax3.bar(data_recent.index, histogram_values, color=['green' if val > 0 else 'red' for val in histogram_values], alpha=0.5)
+
+        ax3.set_title("MACD (Moving Average Convergence Divergence)")
+        ax3.legend()
+
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
     st.pyplot(fig)
 
@@ -410,6 +465,7 @@ def main():
     # Display the table
     st.write("### Exponential Moving Averages (EMAs) and Current Price")
     st.dataframe(ema_df, hide_index=True)
+
 
 if __name__ == "__main__":
     main()
