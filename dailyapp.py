@@ -155,7 +155,6 @@ def main():
     with col6:
         if st.button("6mo", key="6mo"):
             interval = "6mo"
-   
     
     # Default interval
     if 'interval' not in locals():
@@ -211,24 +210,28 @@ def main():
     else:
         st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **......** {current_time}")
 
-    # Perform linear regression (using only the most recent 300 points)
-    X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
-    # Add buttons for polynomial degree selection
+    ######## Add buttons for polynomial degree selection
     #st.write("### Polynomial Regression Analysis")
     col_deg2, col_deg3 = st.columns(2)
     with col_deg2:
         if st.button("PR_deg2"):
             degree = 2
+            
     with col_deg3:
         if st.button("PR_deg3"):
             degree = 3
+            
 
     if 'degree' not in locals():
-        degree = 3  # Default to degree 3
+        
+        degree = 2  # Default to degree 2
             
     # Display the current polynomial degree
     st.write(f"**Current Polynomial Degree:** {degree}")
+
+    # Perform linear regression (using only the most recent 300 points)
+    X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
     # Perform polynomial regression with the selected degree
     X, y, y_pred_poly, r2_poly, _ = perform_regression(data_recent, degree=degree)
@@ -260,13 +263,13 @@ def main():
 
     #3mo and 6mo data has only day information not hours and minute
     elif interval == "3mo":
-        daily3mo = fetch_3mo(ticker)
-        time_labels = daily3mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
+        data3mo = fetch_3mo(ticker)
+        time_labels = data3mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
         simplified_time_labels = [label if idx % 3 == 0 else '' for idx, label in enumerate(time_labels)]
 
     elif interval == "6mo":
-        daily6mo = fetch_6mo(ticker)
-        time_labels = daily6mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
+        data6mo = fetch_6mo(ticker)
+        time_labels = data6mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
         simplified_time_labels = [label if idx % 3 == 0 else '' for idx, label in enumerate(time_labels)]    
 
     else:
