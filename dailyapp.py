@@ -628,6 +628,15 @@ def main():
         st.write(f"### Total Score: {score: .2f} || Interval: {interval} || Time: {datetime.now(midwest).strftime('%H:%M:%S')}")
         st.dataframe(new_data, hide_index=True)
 
+        # Add a download button for the CSV file
+        with open(score_file, "rb") as file:
+            btn = st.download_button(
+                label="Download data",
+                data=file,
+                file_name=score_file,
+                mime="text/csv"
+            )
+
     # Function to perform regression analysis and plot
     def regression_analysis():
         historical_data = pd.read_csv(score_file)
@@ -682,14 +691,7 @@ def main():
     time.sleep(REFRESH_INTERVAL)
     st.rerun()
 
-    # Add a download button for the CSV file
-    with open(score_file, "rb") as file:
-        btn = st.download_button(
-            label="Download data",
-            data=file,
-            file_name=score_file,
-            mime="text/csv"
-        )
+    
 
 
 if __name__ == "__main__":
