@@ -519,20 +519,20 @@ def main():
 
         ## message
         message = " "
-        color = " "
+        color1 = " "
         
         if price > ema9 and ema9 > ema20:
             message = "Up"
-            color = "green"
+            color1 = "green"
         elif price < ema9 and ema9 < ema20:
             message = "Down"
-            color = "red"
+            color1 = "red"
         else:
             message = "Neutral"
-            color = "gray"
+            color1 = "gray"
     
         # Display the table
-        st.markdown(f"### <span style='color:{color};'>EMA: {message}</span>", unsafe_allow_html=True)
+        st.markdown(f"### <span style='color:{color1};'>EMA: {message}</span>", unsafe_allow_html=True)
         st.dataframe(ema_df, hide_index=True)
 
     with col_2:
@@ -546,16 +546,19 @@ def main():
 
         ## message
         message = " "
-        
-        if rsi > rsi2:
+        color2 = " "
+        if rsi > rsi2 and rsi > 50:
             message = "Up "
-        elif rsi == rsi2:
-            message = "Neutral"
+            color2 = "green"
+        elif rsi < rsi2 and rsi < 50:
+            message = "Down"
+            color2 = "red"
         else:
-            message = "Down "
+            message = "Neutral "
+            color2 = "gray"
     
         # Display the table
-        st.markdown(f"### <span style='color:{color};'>RSI: {message}</span>", unsafe_allow_html=True)
+        st.markdown(f"### <span style='color:{color2};'>RSI: {message}</span>", unsafe_allow_html=True)
         st.dataframe(rsi_df, hide_index=True)
     
 
@@ -569,16 +572,19 @@ def main():
 
         ## message
         message = " "
-        
-        if macd > signal:
+        color3 = " "
+        if macd > signal and macd > 0:
             message = "Up "
-        elif macd == signal:
-            message = "Neutral"
+            color3 = "green"
+        elif macd < signal and macd < 0:
+            message = "Down"
+            color3 = "red"
         else:
-            message = "Down "
+            message = "Neutral "
+            color3 = "gray"
             
         # Display the table
-        st.markdown(f"### <span style='color:{color};'>MACD: {message}</span>", unsafe_allow_html=True)
+        st.markdown(f"### <span style='color:{color3};'>MACD: {message}</span>", unsafe_allow_html=True)
         st.dataframe(macd_df, hide_index=True)
 
     #### calculate scores
