@@ -682,6 +682,15 @@ def main():
     time.sleep(REFRESH_INTERVAL)
     st.rerun()
 
+    # Add a download button for the CSV file
+    with open(score_file, "rb") as file:
+        btn = st.download_button(
+            label="Download data",
+            data=file,
+            file_name=score_file,
+            mime="text/csv"
+        )
+
 
 if __name__ == "__main__":
     main()
