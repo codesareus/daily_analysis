@@ -13,7 +13,8 @@ from gtts import gTTS
 import os
 import time
 
-midwest = pytz.timezone("America/Chicago")
+#midwest = pytz.timezone("America/New")
+midwest = pytz.timezone("US/Eastern")
 # Function to calculate RSI
 def calculate_rsi(data, window1=14, window2=25):
     # Calculate RSI with the first window (default 14)
