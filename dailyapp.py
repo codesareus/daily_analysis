@@ -98,7 +98,7 @@ def fetch_previous_close(ticker):
         return None  # Handle cases where there isn't enough data
     
     # Get current time in NY (US Eastern Time)
-    midwest = pytz.timezone("America/chicago")
+    midwest = pytz.timezone("US/Eastern")
     now = datetime.now(midwest)
 
     # Define US market hours
@@ -120,7 +120,7 @@ def fetch_d2_close(ticker):
         return None  # Handle cases where there isn't enough data
     
     # Get current time in NY (US Eastern Time)
-    midwest = pytz.timezone("America/chicago")
+    midwest = pytz.timezone("US/Eastern")
     now = datetime.now(midwest)
 
     # Define US market hours
@@ -243,7 +243,7 @@ def main():
     percentage_change = calculate_percentage_change(current_price, previous_close)
 
     # Get current local time
-    midwest = pytz.timezone("America/chicago")
+    midwest = pytz.timezone("US/Eastern")
     #current_time = datetime.now(midwest).strftime("%H:%M:%S")
     current_time = datetime.now(midwest).strftime("%I:%M:%S %p")
 
