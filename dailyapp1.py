@@ -11,8 +11,13 @@ from datetime import datetime, timedelta
 import pytz
 from gtts import gTTS
 import os
+import time
 
-midwest = pytz.timezone("America/Chicago")
+#midwest = pytz.timezone("America/New")
+midwest = pytz.timezone("US/Eastern")
+
+interval = "1m"
+
 # Function to calculate RSI
 def calculate_rsi(data, window1=14, window2=25):
     # Calculate RSI with the first window (default 14)
@@ -96,7 +101,7 @@ def fetch_previous_close(ticker):
         return None  # Handle cases where there isn't enough data
     
     # Get current time in NY (US Eastern Time)
-    midwest = pytz.timezone("America/chicago")
+    midwest = pytz.timezone("US/Eastern")
     now = datetime.now(midwest)
 
     # Define US market hours
@@ -118,7 +123,7 @@ def fetch_d2_close(ticker):
         return None  # Handle cases where there isn't enough data
     
     # Get current time in NY (US Eastern Time)
-    midwest = pytz.timezone("America/chicago")
+    midwest = pytz.timezone("US/Eastern")
     now = datetime.now(midwest)
 
     # Define US market hours
@@ -202,9 +207,8 @@ def main():
     if 'interval' not in locals():
         interval = "5m"
 
-    # Add a button to refresh data
-    #if st.button("Refresh Data"):
-     #   st.cache_data.clear()  # Clear cached data to force a fresh fetch
+    # Display current selection
+    st.write(f"**Selected Interval:** {interval}")
 
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
@@ -241,7 +245,7 @@ def main():
     percentage_change = calculate_percentage_change(current_price, previous_close)
 
     # Get current local time
-    midwest = pytz.timezone("America/chicago")
+    midwest = pytz.timezone("US/Eastern")
     #current_time = datetime.now(midwest).strftime("%H:%M:%S")
     current_time = datetime.now(midwest).strftime("%I:%M:%S %p")
 
@@ -251,22 +255,6 @@ def main():
         st.success(f"🟢 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, previous_close **{previous_close:.2f}**)  |  **___** {current_time} **___**")
     else:
         st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **......** {current_time}")
-
-
-    ######## Add buttons for polynomial degree selection
-    #st.write("### Polynomial Regression Analysis")
-
-    #col_deg2, col_deg3 = st.columns(2)
-    #with col_deg2:
-     #   if st.button("PR_deg2"):
-    #        degree = 2
-            
-    #with col_deg3:
-    #    if st.button("PR_deg3"):
-     #       degree = 3
-            
-
-    #if 'degree' not in locals():
         
     degree = 2  # Default to degree 2
 
@@ -305,12 +293,12 @@ def main():
     elif interval == "3mo":
         data3mo = fetch_3mo(ticker)
         time_labels = data3mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
-        simplified_time_labels = [label if idx % 3 == 0 else '' for idx, label in enumerate(time_labels)]
+        simplified_time_labels = [label if idx % 9 == 0 else '' for idx, label in enumerate(time_labels)]
 
     elif interval == "6mo":
         data6mo = fetch_6mo(ticker)
         time_labels = data6mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
-        simplified_time_labels = [label if idx % 3 == 0 else '' for idx, label in enumerate(time_labels)]    
+        simplified_time_labels = [label if idx % 9 == 0 else '' for idx, label in enumerate(time_labels)]    
 
     else:
         # For 1-minute and 5-minute intervals, show only hours (e.g., 09:00, 10:00)
@@ -356,7 +344,7 @@ def main():
     if interval in valid_macd_timeframes:
         fig, (ax, ax2, ax3) = plt.subplots(3, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [3, 1, 1]})
     else:
-        fig, (ax, ax2) = plt.subplots(2, 1, figsize=(20, 20), gridspec_kw={'height_ratios': [3, 1]})
+        fig, (ax, ax2) = plt.subplots(2, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [3, 1]})
 
     #fig, (ax, ax2, ax3) = plt.subplots(3, 1, figsize=(20, 20), gridspec_kw={'height_ratios': [3, 1, 1]})
 
@@ -459,12 +447,16 @@ def main():
 
     # === MACD Plot (Only If Timeframe Is Valid) ===
     if interval in valid_macd_timeframes:
-        ax3.plot(data_recent.index, data_recent['MACD'], color="blue", label="MACD Line")
-        ax3.plot(data_recent.index, data_recent['Signal_Line'], color="red", linestyle="--", label="Signal Line")
+        # Create a sequence for the x-axis from 1 to len(data_recent)
+        x_values = range(1, len(data_recent) + 1)
+
+        # Plot the MACD and Signal lines with numeric x-values
+        ax3.plot(x_values, data_recent['MACD'], color="blue", label="MACD Line")
+        ax3.plot(x_values, data_recent['Signal_Line'], color="red", linestyle="--", label="Signal Line")
 
         # Histogram Bars (Green for Positive, Red for Negative)
         histogram_values = data_recent['MACD'] - data_recent['Signal_Line']
-        ax3.bar(data_recent.index, histogram_values, color=['green' if val > 0 else 'red' for val in histogram_values], alpha=0.5)
+        ax3.bar(x_values, histogram_values, color=['green' if val > 0 else 'red' for val in histogram_values], alpha=0.5)
 
         ax3.set_title("MACD (Moving Average Convergence Divergence)")
         ax3.legend()
@@ -583,36 +575,169 @@ def main():
 
     #### calculate scores
     ema_score = (price > ema9)*0.2 + (ema9 > ema20)*0.4 + (ema20 > ema50)*0.6 + (ema50 > ema100)*0.8 +  (ema100 > ema200) - (ema200 > ema100) - (ema100 > ema50)*0.8 - (ema50 > ema20)*0.6 - (ema20 > ema9)*0.4 - (ema9 > price)*0.2
-    rsi_score = (rsi > rsi2)*3 - (rsi < rsi2) * 3
-    macd_score = (macd > signal)*3 - (macd < signal) * 3
 
-    prm_score = (y_pred_poly[-1] > y_pred_poly[-2])*3 - (y_pred_poly[-1] < y_pred_poly[-2])*3
+    rsi_score = 0
+    if (rsi > rsi2) and (rsi > 50):
+        rsi_score = 2
+    elif (rsi < rsi2) and (rsi > 50):
+        rsi_score = 1
+    elif (rsi < rsi2) and (rsi < 50):
+        rsi_score = - 2
+    elif (rsi > rsi2) and (rsi < 50):
+        rsi_score = -1
+    else:
+        rsi_score = 0
+        
+    macd_score = 0
+    if (macd > signal) and (macd > 0):
+        macd_score = 2
+    elif (macd < signal) and (macd > 0):
+        macd_score = 1
+    elif (macd < signal) and (macd < 0):
+        macd_score = - 2
+    elif (macd > signal) and (macd < 0):
+        macd_score = - 1
+    else:
+        macd_score = 0
+
+    prm_score = (y_pred_poly[-1] > y_pred_poly[-2])*1 - (y_pred_poly[-1] < y_pred_poly[-2])*1
     std_score = - deviation_in_std
     
     score = ema_score + rsi_score + macd_score + prm_score + std_score
 
-    # Create DataFrame and sort by value in descending order
-    scores = {
-        "EMAs": round(ema_score, 2),
-        "RSI": round(rsi_score, 2),
-        "MACD": round(macd_score, 2),
-        "PRM": round(prm_score, 2),
-        "std": round(std_score, 2),
-        "total": round(score, 2)
-    }
+    
 
-    timestamp = datetime.now(midwest).strftime("%H:%M:%S")
-    score_df = pd.DataFrame(list(scores.items()), columns=["Indicator", f"{timestamp}"])
+    ############## File to store historical scores
 
-    # Reset index and drop the numbers column
-    score_df = score_df.reset_index(drop=True)
 
- 
-    # Display the table
-    st.write(f"### Total Score: {score: .2f} || Interval: {interval} || time: {timestamp} ")
-    st.dataframe(score_df, hide_index=True)
+    # Define refresh interval (in seconds)
+    REFRESH_INTERVAL = 60  
+
+    # Define file name based on interval
+    score_file = f"score_history_{interval}.csv"
+
+    # Ensure the file exists with proper headers
+    if not os.path.exists(score_file):
+        pd.DataFrame(columns=["Timestamp", "EMAs", "RSI", "MACD", "PRM", "std", "total"]).to_csv(score_file, index=False)
+
+    # Function to update and save data
+    def update_scores():
+        timestamp = datetime.now(midwest).strftime("%Y-%m-%d %H:%M:%S")
+        
+        new_data = pd.DataFrame([{
+            "Timestamp": timestamp,
+            "EMAs": round(ema_score, 2),
+            "RSI": round(rsi_score, 2),
+            "MACD": round(macd_score, 2),
+            "PRM": round(prm_score, 2),
+            "std": round(std_score, 2),
+            "total": round(score, 2)
+        }])
+        
+        # Append to CSV file
+        new_data.to_csv(score_file, mode="a", header=False, index=False)
+        
+        # Display latest score
+        st.write(f"### Total Score: {score: .2f} || Interval: {interval} || Time: {datetime.now(midwest).strftime('%H:%M:%S')}")
+        st.dataframe(new_data, hide_index=True)
+
+        # Add a download button for the CSV file
+        with open(score_file, "rb") as file:
+            btn = st.download_button(
+                label="Download data",
+                data=file,
+                file_name=score_file,
+                mime="text/csv"
+            )
+
+    # Function to perform regression analysis and plot
+    def regression_analysis():
+        historical_data = pd.read_csv(score_file)
+
+        # Convert Timestamp to numerical values for regression
+        historical_data["Timestamp"] = pd.to_datetime(historical_data["Timestamp"]).tail(300)
+        historical_data["TimeIndex"] = (historical_data["Timestamp"] - historical_data["Timestamp"].min()).dt.total_seconds()/600.tail(300)
+        historical_data["Hour"] = historical_data["Timestamp"].dt.strftime("%H:%M").tail(300)  # Format as HH:MM
+
+        # Perform Polynomial Regression (degree=2)
+        X = historical_data[["TimeIndex"]].values
+        y = historical_data["total"].values
+        y_ema = historical_data["EMAs"].values # define Y for ema
+        y_rsi = historical_data["RSI"].values # define Y for std
+
+        poly = PolynomialFeatures(degree=2)
+        X_poly = poly.fit_transform(X)
+
+        # Regression for "total"
+        poly_model = LinearRegression()
+        poly_model.fit(X_poly, y)
+        y_pred_poly = poly_model.predict(X_poly)
+        r2_poly = r2_score(y, y_pred_poly)
+
+        # Regression for "EMA"
+        model_ema = LinearRegression()
+        model_ema.fit(X_poly, y_ema)
+        y_ema_pred = model_ema.predict(X_poly)
+        r2_ema = r2_score(y, y_ema_pred)
+
+        # Regression for "rsi"
+        model_rsi = LinearRegression()
+        model_rsi.fit(X_poly, y_rsi)
+        y_rsi_pred = model_rsi.predict(X_poly)
+        r2_rsi = r2_score(y, y_rsi_pred)
+
+        # Perform Linear Regression
+        lin_model = LinearRegression()
+        lin_model.fit(X, y)
+        y_pred_lin = lin_model.predict(X)
+        r2_lin = r2_score(y, y_pred_lin)
+        
+        # Plot the actual total values
+        plt.figure(figsize=(10, 5))
+        plt.scatter(historical_data["TimeIndex"], historical_data["total"], color="blue", label="Actual total")
+
+        # Plot Linear Regression Line
+        plt.xticks(ticks=historical_data["TimeIndex"], labels=historical_data["Hour"], rotation=45)
+        plt.plot(historical_data["TimeIndex"], y_pred_lin,  color="gray", linestyle="solid", label=f"Linear ( R² = {r2_lin:.2f})")
+
+        # Plot "tota" Polynomial Regression Line
+        plt.xticks(ticks=historical_data["TimeIndex"], labels=historical_data["Hour"], rotation=45)
+        plt.plot(historical_data["TimeIndex"], y_pred_poly,  color="blue", linestyle="dashed", label=f"total ( R² = {r2_poly:.2f})")
+
+        #plot ema polynomial
+        plt.scatter(X, y_ema, label="EMA (Actual)", marker="x", color="red")
+        plt.plot(X, y_ema_pred, linestyle="--", color="red", label=f"EMA ( R² = {r2_ema:.2f})")
+
+        #plot rsi polynomial
+        plt.scatter(X, y_rsi, label="RSI (Actual)", marker="^", color="orange")
+        plt.plot(X, y_rsi_pred, linestyle="--", color="orange", label=f"RSI ( R² = {r2_rsi:.2f})")
+
+        
+        # Labels and legend
+        plt.xlabel("Time")
+        plt.ylabel("Total Score")
+        plt.legend()
+        plt.title("Total vs. Time with Polynomial & Linear Regression")
+
+        # Show plot in Streamlit
+        st.pyplot(plt)
+
+    ###### Call functions to update data and plot
+
+    update_scores()
+    regression_analysis()
+
+    # Display latest score
+    #st.write(f"### Total Score: {score: .2f} || Interval: {interval} || Time: {datetime.now(midwest).strftime('%H:%M:%S')}")
+
+    # Refresh app every minute
+    time.sleep(REFRESH_INTERVAL)
+    st.rerun()
 
     
 
+
 if __name__ == "__main__":
     main()
+
+
