@@ -654,21 +654,23 @@ def main():
         poly_model = LinearRegression()
         poly_model.fit(X_poly, y)
         y_pred_poly = poly_model.predict(X_poly)
+        r2_poly = r2_score(y, y_pred_poly)
 
         # Perform Linear Regression
         lin_model = LinearRegression()
         lin_model.fit(X, y)
         y_pred_lin = lin_model.predict(X)
+        r2_lin = r2_score(y, y_pred_lin)
         
         # Plot the actual EMA values
         plt.figure(figsize=(10, 5))
         plt.scatter(historical_data["TimeIndex"], historical_data["total"], color="blue", label="Actual total")
 
         # Plot Polynomial Regression Line
-        plt.plot(historical_data["TimeIndex"], y_pred_poly, color="red", linestyle="dashed", label="Polynomial Fit (deg=2)")
+        plt.plot(historical_data["TimeIndex"], y_pred_poly,  color="red", linestyle="dashed", label=f"P.R. ( R² = {r2_poly:.2f})")
 
         # Plot Linear Regression Line
-        plt.plot(historical_data["TimeIndex"], y_pred_lin, color="green", linestyle="solid", label="Linear Fit")
+        plt.plot(historical_data["TimeIndex"], y_pred_lin,  color="green", linestyle="solid", label=f"Linear ( R² = {r2_lin:.2f})")
 
         # Labels and legend
         plt.xlabel("Time (seconds)")
