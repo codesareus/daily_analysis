@@ -397,11 +397,6 @@ def main():
     ax.text(0, previous_close, f'{previous_close:.2f}__c1', color='navy', verticalalignment='top')
 
     # add time intervals on bottom of chart
-    if interval in ["1m", "5m", "30m", "1h"]:
-        interval = interval
-    else:
-        interval = "day_" + f"{interval}"
-        
     ax.text(0.3, 0.05, f"Time Frame: {interval}", 
         horizontalalignment='left', verticalalignment='center', 
         transform=ax.transAxes, fontsize=12, color="blue")
