@@ -283,7 +283,11 @@ def main():
     time_labels = data_recent.index.strftime('%H:%M')  # Format time as HH:MM
 
     # Simplify x-axis labels based on the interval
-    if interval == "30m":
+
+    if interval == "15m":
+        # For 15-minute interval, show only every 3 hours (e.g., 09:00, 12:00, 15:00)
+        simplified_time_labels = [label if label.endswith('00') and int(label.split(':')[0]) % 3 == 0 else '' for label in time_labels]
+    elif interval == "30m":
         # For 30-minute interval, show only every 3 hours (e.g., 09:00, 12:00, 15:00)
         simplified_time_labels = [label if label.endswith('00') and int(label.split(':')[0]) % 3 == 0 else '' for label in time_labels]
     elif interval == "1h":
@@ -515,16 +519,20 @@ def main():
 
         ## message
         message = " "
+        color = " "
         
         if price > ema9 and ema9 > ema20:
-            message = "Up "
+            message = "Up"
+            color = "green"
         elif price < ema9 and ema9 < ema20:
-            message = "Down "
+            message = "Down"
+            color = "red"
         else:
             message = "Neutral"
-            
+            color = "gray"
+    
         # Display the table
-        st.write(f"### EMA: {message}")
+        st.markdown(f"### <span style='color:{color};'>EMA: {message}</span>", unsafe_allow_html=True)
         st.dataframe(ema_df, hide_index=True)
 
     with col_2:
@@ -547,7 +555,7 @@ def main():
             message = "Down "
     
         # Display the table
-        st.write(f"### RSI: {message}")
+        st.markdown(f"### <span style='color:{color};'>RSI: {message}</span>", unsafe_allow_html=True)
         st.dataframe(rsi_df, hide_index=True)
     
 
@@ -570,7 +578,7 @@ def main():
             message = "Down "
             
         # Display the table
-        st.write(f"### MACD: {message}")
+        st.markdown(f"### <span style='color:{color};'>MACD: {message}</span>", unsafe_allow_html=True)
         st.dataframe(macd_df, hide_index=True)
 
     #### calculate scores
