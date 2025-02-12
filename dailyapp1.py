@@ -7,30 +7,37 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
+from gtts import gTTS
+import os
 
+midwest = pytz.timezone("America/Chicago")
 # Function to calculate RSI
-def calculate_rsi(data, window=14):
+def calculate_rsi(data, window1=14, window2=25):
+    # Calculate RSI with the first window (default 14)
     delta = data['Close'].diff(1)
-    gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
-
-    rs = gain / loss
-    rsi = 100 - (100 / (1 + rs))
+    gain = (delta.where(delta > 0, 0)).rolling(window=window1).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=window1).mean()
     
-    data['RSI'] = rsi
-
-    #####
-    window = 25
-    delta = data['Close'].diff(1)
-    gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
-
-    rs = gain / loss
-    rsi = 100 - (100 / (1 + rs))
+    # Avoid division by zero by adding a small epsilon to loss
+    rs1 = gain / (loss + 1e-10)
+    rsi1 = 100 - (100 / (1 + rs1))
     
-    data['RSI2'] = rsi
+    # Add RSI1 to the DataFrame
+    data['RSI'] = rsi1
+    
+    # Calculate RSI with the second window (default 25)
+    delta2 = data['Close'].diff(1)
+    gain2 = (delta2.where(delta2 > 0, 0)).rolling(window=window2).mean()
+    loss2 = (-delta2.where(delta2 < 0, 0)).rolling(window=window2).mean()
+    
+    # Avoid division by zero by adding a small epsilon to loss
+    rs2 = gain2 / (loss2 + 1e-10)
+    rsi2 = 100 - (100 / (1 + rs2))
+    
+    # Add RSI2 to the DataFrame
+    data['RSI2'] = rsi2
     
     return data
 
@@ -465,8 +472,10 @@ def main():
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
     st.pyplot(fig)
 
-   # Calculate EMAs
+   # Calculate EMAs, RSI, MACD
     data_recent = calculate_emas(data_recent)
+    data_recent = calculate_rsi(data_recent)
+    data_recent = calculate_macd(data_recent)
 
     # Get the latest EMA values and current price
     ema_values = {
@@ -478,17 +487,132 @@ def main():
         "EMA 200": data_recent['EMA_200'].iloc[-1]
     }
 
+    #Get the latest RSI values 
+    RSI_values = {
+        "RSI": data_recent['RSI'].iloc[-1],
+        "RSI2": data_recent['RSI2'].iloc[-1],
+    }
+
+    #Get the latest MACD values 
+    MACD_values = {
+        "MACD": data_recent['MACD'].iloc[-1],
+        "Signal_Line": data_recent['Signal_Line'].iloc[-1],
+    }
+
+    ########## values used
+    price = data_recent['Close'].iloc[-1]
+    ema9= data_recent['EMA_9'].iloc[-1]
+    ema20= data_recent['EMA_20'].iloc[-1]
+    ema50= data_recent['EMA_50'].iloc[-1]
+    ema100= data_recent['EMA_100'].iloc[-1]
+    ema200= data_recent['EMA_200'].iloc[-1]
+    rsi = data_recent['RSI'].iloc[-1]
+    rsi2 = data_recent['RSI2'].iloc[-1]
+    macd = data_recent['MACD'].iloc[-1]
+    signal = data_recent['Signal_Line'].iloc[-1]
+
+    col_1, col_2, col_3= st.columns(3)
+    with col_1:
+
+        # Create DataFrame and sort by value in descending order
+        ema_df = pd.DataFrame(list(ema_values.items()), columns=["Indicator", "Value"])
+        ema_df = ema_df.sort_values(by="Value", ascending=False)
+
+        # Reset index and drop the numbers column
+        ema_df = ema_df.reset_index(drop=True)
+
+        ## message
+        message = " "
+        
+        if price > ema9 and ema9 > ema20:
+            message = "Up "
+        elif price < ema9 and ema9 < ema20:
+            message = "Down "
+        else:
+            message = "Neutral"
+            
+        # Display the table
+        st.write(f"### EMA: {message}")
+        st.dataframe(ema_df, hide_index=True)
+
+    with col_2:
+
+        # Create DataFrame and sort by value in descending order
+        rsi_df = pd.DataFrame(list(RSI_values.items()), columns=["Indicator", "Value"])
+        rsi_df = rsi_df.sort_values(by="Value", ascending=False)
+
+        # Reset index and drop the numbers column
+        rsi_df = rsi_df.reset_index(drop=True)
+
+        ## message
+        message = " "
+        
+        if rsi > rsi2:
+            message = "Up "
+        elif rsi == rsi2:
+            message = "Neutral"
+        else:
+            message = "Down "
+    
+        # Display the table
+        st.write(f"### RSI: {message}")
+        st.dataframe(rsi_df, hide_index=True)
+    
+
+    with col_3:
+        # Create DataFrame and sort by value in descending order
+        macd_df = pd.DataFrame(list(MACD_values.items()), columns=["Indicator", "Value"])
+        macd_df = macd_df.sort_values(by="Value", ascending=False)
+
+        # Reset index and drop the numbers column
+        macd_df = macd_df.reset_index(drop=True)
+
+        ## message
+        message = " "
+        
+        if macd > signal:
+            message = "Up "
+        elif macd == signal:
+            message = "Neutral"
+        else:
+            message = "Down "
+            
+        # Display the table
+        st.write(f"### MACD: {message}")
+        st.dataframe(macd_df, hide_index=True)
+
+    #### calculate scores
+    ema_score = (price > ema9)*0.2 + (ema9 > ema20)*0.4 + (ema20 > ema50)*0.6 + (ema50 > ema100)*0.8 +  (ema100 > ema200) - (ema200 > ema100) - (ema100 > ema50)*0.8 - (ema50 > ema20)*0.6 - (ema20 > ema9)*0.4 - (ema9 > price)*0.2
+    rsi_score = (rsi > rsi2)*3 - (rsi < rsi2) * 3
+    macd_score = (macd > signal)*3 - (macd < signal) * 3
+
+    prm_score = (y_pred_poly[-1] > y_pred_poly[-2])*3 - (y_pred_poly[-1] < y_pred_poly[-2])*3
+    std_score = - deviation_in_std
+    
+    score = ema_score + rsi_score + macd_score + prm_score + std_score
+
     # Create DataFrame and sort by value in descending order
-    ema_df = pd.DataFrame(list(ema_values.items()), columns=["Indicator", "Value"])
-    ema_df = ema_df.sort_values(by="Value", ascending=False)
+    scores = {
+        "EMAs": round(ema_score, 2),
+        "RSI": round(rsi_score, 2),
+        "MACD": round(macd_score, 2),
+        "PRM": round(prm_score, 2),
+        "std": round(std_score, 2),
+        "total": round(score, 2)
+    }
+
+    timestamp = datetime.now(midwest).strftime("%H:%M:%S")
+    score_df = pd.DataFrame(list(scores.items()), columns=["Indicator", f"{timestamp}"])
 
     # Reset index and drop the numbers column
-    ema_df = ema_df.reset_index(drop=True)
+    score_df = score_df.reset_index(drop=True)
 
+ 
     # Display the table
-    st.write("### Exponential Moving Averages (EMAs) and Current Price")
-    st.dataframe(ema_df, hide_index=True)
+    st.write(f"### Total Score: {score: .2f} || Interval: {interval} || time: {timestamp} ")
+    st.dataframe(score_df, hide_index=True)
 
+    
 
 if __name__ == "__main__":
     main()

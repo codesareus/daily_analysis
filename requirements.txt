@@ -7,3 +7,5 @@ streamlit
 pandas
 yfinance
 pytz
+gtts
+time

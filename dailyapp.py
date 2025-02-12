@@ -7,9 +7,13 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
+from gtts import gTTS
+import os
+import time
 
+midwest = pytz.timezone("America/Chicago")
 # Function to calculate RSI
 def calculate_rsi(data, window1=14, window2=25):
     # Calculate RSI with the first window (default 14)
@@ -496,6 +500,18 @@ def main():
         "Signal_Line": data_recent['Signal_Line'].iloc[-1],
     }
 
+    ########## values used
+    price = data_recent['Close'].iloc[-1]
+    ema9= data_recent['EMA_9'].iloc[-1]
+    ema20= data_recent['EMA_20'].iloc[-1]
+    ema50= data_recent['EMA_50'].iloc[-1]
+    ema100= data_recent['EMA_100'].iloc[-1]
+    ema200= data_recent['EMA_200'].iloc[-1]
+    rsi = data_recent['RSI'].iloc[-1]
+    rsi2 = data_recent['RSI2'].iloc[-1]
+    macd = data_recent['MACD'].iloc[-1]
+    signal = data_recent['Signal_Line'].iloc[-1]
+
     col_1, col_2, col_3= st.columns(3)
     with col_1:
 
@@ -508,9 +524,6 @@ def main():
 
         ## message
         message = " "
-        price = data_recent['Close'].iloc[-1]
-        ema9= data_recent['EMA_9'].iloc[-1]
-        ema20= data_recent['EMA_20'].iloc[-1]
         
         if price > ema9 and ema9 > ema20:
             message = "Up "
@@ -534,8 +547,7 @@ def main():
 
         ## message
         message = " "
-        rsi = data_recent['RSI'].iloc[-1]
-        rsi2 = data_recent['RSI2'].iloc[-1]
+        
         if rsi > rsi2:
             message = "Up "
         elif rsi == rsi2:
@@ -558,8 +570,7 @@ def main():
 
         ## message
         message = " "
-        macd = data_recent['MACD'].iloc[-1]
-        signal = data_recent['Signal_Line'].iloc[-1]
+        
         if macd > signal:
             message = "Up "
         elif macd == signal:
@@ -571,6 +582,108 @@ def main():
         st.write(f"### MACD: {message}")
         st.dataframe(macd_df, hide_index=True)
 
+    #### calculate scores
+    ema_score = (price > ema9)*0.2 + (ema9 > ema20)*0.4 + (ema20 > ema50)*0.6 + (ema50 > ema100)*0.8 +  (ema100 > ema200) - (ema200 > ema100) - (ema100 > ema50)*0.8 - (ema50 > ema20)*0.6 - (ema20 > ema9)*0.4 - (ema9 > price)*0.2
+    rsi_score = (rsi > rsi2)*3 - (rsi < rsi2) * 3
+    macd_score = (macd > signal)*3 - (macd < signal) * 3
+
+    prm_score = (y_pred_poly[-1] > y_pred_poly[-2])*3 - (y_pred_poly[-1] < y_pred_poly[-2])*3
+    std_score = - deviation_in_std
+    
+    score = ema_score + rsi_score + macd_score + prm_score + std_score
+
+    
+
+    ############## File to store historical scores
+
+
+    # Define refresh interval (in seconds)
+    REFRESH_INTERVAL = 60  
+
+    # Define file name based on interval
+    score_file = f"score_history_{interval}.csv"
+
+    # Ensure the file exists with proper headers
+    if not os.path.exists(score_file):
+        pd.DataFrame(columns=["Timestamp", "EMAs", "RSI", "MACD", "PRM", "std", "total"]).to_csv(score_file, index=False)
+
+    # Function to update and save data
+    def update_scores():
+        timestamp = datetime.now(midwest).strftime("%Y-%m-%d %H:%M:%S")
+        
+        new_data = pd.DataFrame([{
+            "Timestamp": timestamp,
+            "EMAs": round(ema_score, 2),
+            "RSI": round(rsi_score, 2),
+            "MACD": round(macd_score, 2),
+            "PRM": round(prm_score, 2),
+            "std": round(std_score, 2),
+            "total": round(score, 2)
+        }])
+        
+        # Append to CSV file
+        new_data.to_csv(score_file, mode="a", header=False, index=False)
+        
+        # Display latest score
+        st.write(f"### Total Score: {score: .2f} || Interval: {interval} || Time: {datetime.now(midwest).strftime('%H:%M:%S')}")
+        st.dataframe(new_data, hide_index=True)
+
+    # Function to perform regression analysis and plot
+    def regression_analysis():
+        historical_data = pd.read_csv(score_file)
+
+        # Convert Timestamp to numerical values for regression
+        historical_data["Timestamp"] = pd.to_datetime(historical_data["Timestamp"])
+        historical_data["TimeIndex"] = (historical_data["Timestamp"] - historical_data["Timestamp"].min()).dt.total_seconds()
+
+        # Perform Polynomial Regression (degree=2)
+        X = historical_data[["TimeIndex"]].values
+        y = historical_data["EMAs"].values
+
+        poly = PolynomialFeatures(degree=2)
+        X_poly = poly.fit_transform(X)
+        poly_model = LinearRegression()
+        poly_model.fit(X_poly, y)
+        y_pred_poly = poly_model.predict(X_poly)
+
+        # Perform Linear Regression
+        lin_model = LinearRegression()
+        lin_model.fit(X, y)
+        y_pred_lin = lin_model.predict(X)
+        
+        # Plot the actual EMA values
+        plt.figure(figsize=(10, 5))
+        plt.scatter(historical_data["TimeIndex"], historical_data["total"], color="blue", label="Actual total")
+
+        # Plot Polynomial Regression Line
+        plt.plot(historical_data["TimeIndex"], y_pred_poly, color="red", linestyle="dashed", label="Polynomial Fit (deg=2)")
+
+        # Plot Linear Regression Line
+        plt.plot(historical_data["TimeIndex"], y_pred_lin, color="green", linestyle="solid", label="Linear Fit")
+
+        # Labels and legend
+        plt.xlabel("Time (seconds)")
+        plt.ylabel("Total Score")
+        plt.legend()
+        plt.title("Total vs. Time with Polynomial & Linear Regression")
+
+        # Show plot in Streamlit
+        st.pyplot(plt)
+
+    ###### Call functions to update data and plot
+
+    update_scores()
+    regression_analysis()
+
+    # Display latest score
+    st.write(f"### Total Score: {score: .2f} || Interval: {interval} || Time: {datetime.now().strftime('%H:%M:%S')}")
+
+    # Refresh app every minute
+    time.sleep(REFRESH_INTERVAL)
+    st.rerun()
+
 
 if __name__ == "__main__":
     main()
+
+
