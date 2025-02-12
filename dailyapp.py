@@ -676,7 +676,7 @@ def main():
     regression_analysis()
 
     # Display latest score
-    st.write(f"### Total Score: {score: .2f} || Interval: {interval} || Time: {datetime.now().strftime('%H:%M:%S')}")
+    #st.write(f"### Total Score: {score: .2f} || Interval: {interval} || Time: {datetime.now(midwest).strftime('%H:%M:%S')}")
 
     # Refresh app every minute
     time.sleep(REFRESH_INTERVAL)
