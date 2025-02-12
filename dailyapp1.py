@@ -20,6 +20,18 @@ def calculate_rsi(data, window=14):
     rsi = 100 - (100 / (1 + rs))
     
     data['RSI'] = rsi
+
+    #####
+    window = 25
+    delta = data['Close'].diff(1)
+    gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
+
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
+    
+    data['RSI2'] = rsi
+    
     return data
 
 def calculate_macd(data):
@@ -154,24 +166,28 @@ def main():
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
     # Add a button group for interval selection
-    col1, col2, col3, col4, col5, col6 = st.columns(6)
+    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
     with col1:
-        if st.button("1 Minute"):
+        if st.button("1min"):
             interval = "1m"
     with col2:
-        if st.button("5 Minutes", key="5m"):
+        if st.button("5min", key="5m"):
             interval = "5m"
     with col3:
-        if st.button("30 Minutes", key="30m"):
-            interval = "30m"
+        if st.button("15min", key="15m"):
+            interval = "15m"
 
     with col4:
-        if st.button("1 hr_1mo", key="1h"):
-            interval = "1h"        
+        if st.button("30min", key="30m"):
+            interval = "30m"
+
     with col5:
+        if st.button("1hr", key="1h"):
+            interval = "1h"        
+    with col6:
         if st.button("3mo", key="3mo"):
             interval = "3mo"
-    with col6:
+    with col7:
         if st.button("6mo", key="6mo"):
             interval = "6mo"
     
@@ -327,7 +343,7 @@ def main():
 
     # Plot both linear and polynomial regression results on the same graph
     # Define a list of timeframes that support MACD
-    valid_macd_timeframes = ["1h", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "max"]
+    valid_macd_timeframes = ["1m","5m","15m","30m","1h", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "max"]
 
     # Only plot MACD if the selected timeframe is valid
     if interval in valid_macd_timeframes:
@@ -384,6 +400,11 @@ def main():
     # Add price label for the previous_price
     ax.text(0, previous_close, f'{previous_close:.2f}__c1', color='navy', verticalalignment='top')
 
+    # add time intervals on bottom of chart
+    ax.text(0.3, 0.05, f"Time Frame: {interval}", 
+        horizontalalignment='left', verticalalignment='center', 
+        transform=ax.transAxes, fontsize=12, color="blue")
+    
     # Draw gray line for d2 close
     d2_close = fetch_d2_close(ticker)
     ax.axhline(y=d2_close, color="navy", linestyle="--", label="")
@@ -421,9 +442,11 @@ def main():
     ax.legend()
 
     # --- RSI Plot ---
-    ax2.plot(x_values, data_recent['RSI'], color="purple", label="RSI (14)")
-    ax2.axhline(y=70, color="red", linestyle="--", label="Overbought (70)")
-    ax2.axhline(y=30, color="green", linestyle="--", label="Oversold (30)")
+    ax2.plot(x_values, data_recent['RSI'], color="gray", label="RSI (14)")
+    ax2.plot(x_values, data_recent['RSI2'], color="red", linestyle="--", label="RSI (25)")
+    ax2.axhline(y=70, color="red", linestyle="--")
+    ax2.axhline(y=30, color="green", linestyle="--")
+    ax2.axhline(y=50, color="gray", linestyle="--")
     ax2.set_title("Relative Strength Index (RSI)")
     ax2.legend()
 

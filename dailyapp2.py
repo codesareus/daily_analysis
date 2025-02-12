@@ -496,80 +496,35 @@ def main():
         "Signal_Line": data_recent['Signal_Line'].iloc[-1],
     }
 
-    col_1, col_2, col_3= st.columns(3)
-    with col_1:
 
-        # Create DataFrame and sort by value in descending order
-        ema_df = pd.DataFrame(list(ema_values.items()), columns=["Indicator", "Value"])
-        ema_df = ema_df.sort_values(by="Value", ascending=False)
+    # Create DataFrame and sort by value in descending order
+    ema_df = pd.DataFrame(list(ema_values.items()), columns=["Indicator", "Value"])
+    ema_df = ema_df.sort_values(by="Value", ascending=False)
 
-        # Reset index and drop the numbers column
-        ema_df = ema_df.reset_index(drop=True)
+    # Reset index and drop the numbers column
+    ema_df = ema_df.reset_index(drop=True)
 
-        ## message
-        message = " "
-        price = data_recent['Close'].iloc[-1]
-        ema9= data_recent['EMA_9'].iloc[-1]
-        ema20= data_recent['EMA_20'].iloc[-1]
-        
-        if price > ema9 and ema9 > ema20:
-            message = "Up "
-        elif price < ema9 and ema9 < ema20:
-            message = "Down "
-        else:
-            message = "Neutral"
-            
-        # Display the table
-        st.write(f"### EMA: {message}")
-        st.dataframe(ema_df, hide_index=True)
+    # Display the table
+    st.write("### Exponential Moving Averages (EMAs) and Current Price")
+    st.dataframe(ema_df, hide_index=True)
 
-    with col_2:
-
-        # Create DataFrame and sort by value in descending order
-        rsi_df = pd.DataFrame(list(RSI_values.items()), columns=["Indicator", "Value"])
-        rsi_df = rsi_df.sort_values(by="Value", ascending=False)
-
-        # Reset index and drop the numbers column
-        rsi_df = rsi_df.reset_index(drop=True)
-
-        ## message
-        message = " "
-        rsi = data_recent['RSI'].iloc[-1]
-        rsi2 = data_recent['RSI2'].iloc[-1]
-        if rsi > rsi2:
-            message = "Up "
-        elif rsi == rsi2:
-            message = "Neutral"
-        else:
-            message = "Down "
     
-        # Display the table
-        st.write(f"### RSI: {message}")
-        st.dataframe(rsi_df, hide_index=True)
-    
+    # Combine all indicator values into one dictionary
+    all_indicators = {**RSI_values, **MACD_values}
 
-    with col_3:
-        # Create DataFrame and sort by value in descending order
-        macd_df = pd.DataFrame(list(MACD_values.items()), columns=["Indicator", "Value"])
-        macd_df = macd_df.sort_values(by="Value", ascending=False)
+    # Create DataFrame and sort EMAs by value in descending order (but keep RSI and MACD unsorted)
+    indicator_df = pd.DataFrame(list(all_indicators.items()), columns=["Indicator", "Value"])
 
-        # Reset index and drop the numbers column
-        macd_df = macd_df.reset_index(drop=True)
+    # Sort only the EMAs by value in descending order, keeping RSI and MACD at the bottom
+    ema_sorted = indicator_df[indicator_df['Indicator'].str.contains('EMA|Current Price')].sort_values(by="Value", ascending=False)
+    other_indicators = indicator_df[~indicator_df['Indicator'].str.contains('EMA|Current Price')]
 
-        ## message
-        message = " "
-        macd = data_recent['MACD'].iloc[-1]
-        signal = data_recent['Signal_Line'].iloc[-1]
-        if macd > signal:
-            message = "Up "
-        elif macd == signal:
-            message = "Neutral"
-        else:
-            message = "Down "
-            
-        # Display the table
-        st.write(f"### MACD: {message}")
-        st.dataframe(macd_df, hide_index=True)
+    # Concatenate the sorted EMAs with the other indicators
+    final_df = pd.concat([ema_sorted, other_indicators]).reset_index(drop=True)
+
+    # Display the table
+    st.write("### Technical Indicators")
+    st.dataframe(final_df, hide_index=True)
 
 
 if __name__ == "__main__":
