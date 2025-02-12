@@ -326,8 +326,16 @@ def main():
     data_recent = calculate_macd(data_recent)
 
     # Plot both linear and polynomial regression results on the same graph
+    # Define a list of timeframes that support MACD
+    valid_macd_timeframes = ["1h", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "max"]
 
-    fig, (ax, ax2, ax3) = plt.subplots(3, 1, figsize=(20, 20), gridspec_kw={'height_ratios': [3, 1, 1]})
+    # Only plot MACD if the selected timeframe is valid
+    if interval in valid_macd_timeframes:
+        fig, (ax, ax2, ax3) = plt.subplots(3, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [3, 1, 1]})
+    else:
+        fig, (ax, ax2) = plt.subplots(2, 1, figsize=(20, 20), gridspec_kw={'height_ratios': [3, 1]})
+
+    #fig, (ax, ax2, ax3) = plt.subplots(3, 1, figsize=(20, 20), gridspec_kw={'height_ratios': [3, 1, 1]})
 
     #fig, (ax, ax2) = plt.subplots(2, 1, figsize=(12, 12), gridspec_kw={'height_ratios': [3, 1]})
 
@@ -419,13 +427,17 @@ def main():
     ax2.set_title("Relative Strength Index (RSI)")
     ax2.legend()
 
-    # === MACD Plot ===
-    ax3.plot(data_recent.index, data_recent['MACD'], color="blue", label="MACD Line")
-    ax3.plot(data_recent.index, data_recent['Signal_Line'], color="red", linestyle="--", label="Signal Line")
-    ax3.bar(data_recent.index, data_recent['MACD'] - data_recent['Signal_Line'], color=['green' if val > 0 else 'red' for val in (data_recent['MACD'] - data_recent['Signal_Line'])], alpha=0.5)
-    ax3.set_title("MACD (Moving Average Convergence Divergence)")
-    ax3.legend()
+    # === MACD Plot (Only If Timeframe Is Valid) ===
+    if interval in valid_macd_timeframes:
+        ax3.plot(data_recent.index, data_recent['MACD'], color="blue", label="MACD Line")
+        ax3.plot(data_recent.index, data_recent['Signal_Line'], color="red", linestyle="--", label="Signal Line")
 
+        # Histogram Bars (Green for Positive, Red for Negative)
+        histogram_values = data_recent['MACD'] - data_recent['Signal_Line']
+        ax3.bar(data_recent.index, histogram_values, color=['green' if val > 0 else 'red' for val in histogram_values], alpha=0.5)
+
+        ax3.set_title("MACD (Moving Average Convergence Divergence)")
+        ax3.legend()
 
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
     st.pyplot(fig)

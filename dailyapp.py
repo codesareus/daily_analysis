@@ -20,6 +20,18 @@ def calculate_rsi(data, window=14):
     rsi = 100 - (100 / (1 + rs))
     
     data['RSI'] = rsi
+
+    #####
+    window = 25
+    delta = data['Close'].diff(1)
+    gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
+
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
+    
+    data['RSI2'] = rsi
+    
     return data
 
 def calculate_macd(data):
@@ -421,9 +433,11 @@ def main():
     ax.legend()
 
     # --- RSI Plot ---
-    ax2.plot(x_values, data_recent['RSI'], color="purple", label="RSI (14)")
-    ax2.axhline(y=70, color="red", linestyle="--", label="Overbought (70)")
-    ax2.axhline(y=30, color="green", linestyle="--", label="Oversold (30)")
+    ax2.plot(x_values, data_recent['RSI'], color="gray", label="RSI (14)")
+    ax2.plot(x_values, data_recent['RSI2'], color="red", linestyle="--", label="RSI (25)")
+    ax2.axhline(y=70, color="red", linestyle="--")
+    ax2.axhline(y=30, color="green", linestyle="--")
+    ax2.axhline(y=50, color="gray", linestyle="--")
     ax2.set_title("Relative Strength Index (RSI)")
     ax2.legend()
 
