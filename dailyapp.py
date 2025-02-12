@@ -643,11 +643,12 @@ def main():
 
         # Convert Timestamp to numerical values for regression
         historical_data["Timestamp"] = pd.to_datetime(historical_data["Timestamp"])
-        historical_data["TimeIndex"] = (historical_data["Timestamp"] - historical_data["Timestamp"].min()).dt.total_seconds()
+        historical_data["TimeIndex"] = (historical_data["Timestamp"] - historical_data["Timestamp"].min()).dt.total_seconds()/600
+        historical_data["Hour"] = historical_data["Timestamp"].dt.strftime("%H:%M")  # Format as HH:MM
 
         # Perform Polynomial Regression (degree=2)
         X = historical_data[["TimeIndex"]].values
-        y = historical_data["EMAs"].values
+        y = historical_data["total"].values
 
         poly = PolynomialFeatures(degree=2)
         X_poly = poly.fit_transform(X)
@@ -667,9 +668,11 @@ def main():
         plt.scatter(historical_data["TimeIndex"], historical_data["total"], color="blue", label="Actual total")
 
         # Plot Polynomial Regression Line
+        plt.xticks(ticks=historical_data["TimeIndex"], labels=historical_data["Hour"], rotation=45)
         plt.plot(historical_data["TimeIndex"], y_pred_poly,  color="red", linestyle="dashed", label=f"P.R. ( R² = {r2_poly:.2f})")
 
         # Plot Linear Regression Line
+        plt.xticks(ticks=historical_data["TimeIndex"], labels=historical_data["Hour"], rotation=45)
         plt.plot(historical_data["TimeIndex"], y_pred_lin,  color="green", linestyle="solid", label=f"Linear ( R² = {r2_lin:.2f})")
 
         # Labels and legend
