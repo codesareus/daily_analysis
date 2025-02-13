@@ -688,9 +688,9 @@ def main():
         ### interval is from ["1m","5m","15m","30m","1h", "1mo", "3mo", "6mo"]
         e_trend = 0
         if price > ema9 and ema9 > ema20:
-            e_trend = 2
+            e_trend = 3
         elif price < ema9 and ema9 < ema20:
-            e_trend = -2
+            e_trend = -3
         elif price > ema9:
             e_trend = 1
         elif price < ema9:
