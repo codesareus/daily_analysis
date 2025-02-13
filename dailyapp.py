@@ -1,3 +1,4 @@
+
 import streamlit as st
 import yfinance as yf
 import pandas as pd
@@ -600,7 +601,8 @@ def main():
 
     #### calculate scores
     ema_score = (price > ema9)*0.2 + (ema9 > ema20)*0.4 + (ema20 > ema50)*0.6 + (ema50 > ema100)*0.8 +  (ema100 > ema200) - (ema200 > ema100) - (ema100 > ema50)*0.8 - (ema50 > ema20)*0.6 - (ema20 > ema9)*0.4 - (ema9 > price)*0.2
-
+    ema_score = ema_score * 2/3
+    
     rsi_score = 0
     if (rsi > rsi2) and (rsi > 50):
         rsi_score = 2
@@ -629,8 +631,6 @@ def main():
     std_score = - deviation_in_std
     
     score = ema_score + rsi_score + macd_score + prm_score + std_score
-
-    
 
     ############## File to store historical scores
 
@@ -683,9 +683,9 @@ def main():
         
         new_data = pd.DataFrame([{
             "tFrame": f"{interval}",
-            "ema": round(emaT_score, 2),
-            "rsi": round(rsiT_score, 2),
-            "macd": round(macdT_score, 2),
+            "ema": round(ema_score, 2),
+            "rsi": round(rsi_score, 2),
+            "macd": round(macd_score, 2),
         }])
         
         # Append to CSV file
@@ -695,8 +695,14 @@ def main():
         st.write(f"### emaT: {emaT_score: .2f} tFrame: {interval}")
         st.dataframe(new_data, hide_index=True)
 
+        # delete data button
+        if st.button("Delete Data"):
+            new_data = pd.DataFrame([{}])
+            # Append to CSV file
+            new_data.to_csv(scoreT_file, mode="w", header=False, index=False)
+
+
         ### do bar graph using scoreT_file
-        # Load data from the CSV file
         # Load data from the CSV file
         try:
             df = pd.read_csv(scoreT_file, names=["tFrame", "ema", "rsi", "macd"])
@@ -717,20 +723,20 @@ def main():
         fig, ax = plt.subplots(figsize=(10, 5))
 
         # Function to determine color based on value (green for positive, red for negative)
-        def get_color(value):
-            return "green" if value >= 0 else "red"
+        #def get_color(value):
+            #return "gray" if value >= 0 else "gray"
 
         # Plot EMA bars
         for i, value in enumerate(ema_values):
-            ax.bar(x[i] - width, value, width, color=get_color(value), hatch="//", edgecolor="black")
+            ax.bar(x[i] - width, value, width, color="purple",  edgecolor="black")
 
         # Plot RSI bars
         for i, value in enumerate(rsi_values):
-            ax.bar(x[i], value, width, color=get_color(value), hatch="xx", edgecolor="black")
+            ax.bar(x[i], value, width, color="gold",  edgecolor="black")
 
         # Plot MACD bars
         for i, value in enumerate(macd_values):
-            ax.bar(x[i] + width, value, width, color=get_color(value), hatch="..", edgecolor="black")
+            ax.bar(x[i] + width, value, width, color="orange",  edgecolor="black")
 
         # Add labels and title
         ax.set_xlabel("Time Frame")
@@ -836,5 +842,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

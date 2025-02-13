@@ -16,8 +16,6 @@ import time
 #midwest = pytz.timezone("America/New")
 midwest = pytz.timezone("US/Eastern")
 
-interval = "1m"
-
 # Function to calculate RSI
 def calculate_rsi(data, window1=14, window2=25):
     # Calculate RSI with the first window (default 14)
@@ -600,7 +598,7 @@ def main():
 
     #### calculate scores
     ema_score = (price > ema9)*0.2 + (ema9 > ema20)*0.4 + (ema20 > ema50)*0.6 + (ema50 > ema100)*0.8 +  (ema100 > ema200) - (ema200 > ema100) - (ema100 > ema50)*0.8 - (ema50 > ema20)*0.6 - (ema20 > ema9)*0.4 - (ema9 > price)*0.2
-
+    ema_score = ema_score * 2/3
     rsi_score = 0
     if (rsi > rsi2) and (rsi > 50):
         rsi_score = 2
@@ -630,8 +628,6 @@ def main():
     
     score = ema_score + rsi_score + macd_score + prm_score + std_score
 
-    
-
     ############## File to store historical scores
 
 
@@ -640,6 +636,7 @@ def main():
 
     # Define file name based on interval
     score_file = f"score_history_{interval}.csv"
+    scoreT_file = f"scoreT.csv"
 
     # Ensure the file exists with proper headers
     if not os.path.exists(score_file):
@@ -674,6 +671,80 @@ def main():
                 file_name=score_file,
                 mime="text/csv"
             )
+            
+    # Function to update and save scoreT(trend based on 3 color)
+    def update_scoreT():
+
+        ### interval is from ["1m","5m","15m","30m","1h", "1mo", "3mo", "6mo"]
+        
+        new_data = pd.DataFrame([{
+            "tFrame": f"{interval}",
+            "ema": round(ema_score, 2),
+            "rsi": round(rsi_score, 2),
+            "macd": round(macd_score, 2),
+        }])
+        
+        # Append to CSV file
+        new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
+
+        # delete data button
+        if st.button("Delete Data"):
+            new_data = pd.DataFrame([{}])
+            # Append to CSV file
+            new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
+
+        # Display latest score
+        st.write(f"### emaT: {emaT_score: .2f} tFrame: {interval}")
+        st.dataframe(new_data, hide_index=True)
+
+        ### do bar graph using scoreT_file
+        
+        # Load data from the CSV file
+        try:
+            df = pd.read_csv(scoreT_file, names=["tFrame", "ema", "rsi", "macd"])
+        except Exception as e:
+            st.error(f"Error loading file: {e}")
+            return
+
+        # Get unique intervals and prepare x-axis locations
+        unique_intervals = df["tFrame"].unique()
+        x = np.arange(len(unique_intervals))  # X locations for groups
+        width = 0.25  # Width of each bar
+
+        # Prepare values for each metric
+        ema_values = [df[df["tFrame"] == interval]["ema"].mean() for interval in unique_intervals]
+        rsi_values = [df[df["tFrame"] == interval]["rsi"].mean() for interval in unique_intervals]
+        macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
+
+        fig, ax = plt.subplots(figsize=(10, 5))
+
+        # Function to determine color based on value (green for positive, red for negative)
+        def get_color(value):
+            return "green" if value >= 0 else "red"
+
+        # Plot EMA bars
+        for i, value in enumerate(ema_values):
+            ax.bar(x[i] - width, value, width, color=get_color(value), hatch="//", edgecolor="black")
+
+        # Plot RSI bars
+        for i, value in enumerate(rsi_values):
+            ax.bar(x[i], value, width, color=get_color(value), hatch="xx", edgecolor="black")
+
+        # Plot MACD bars
+        for i, value in enumerate(macd_values):
+            ax.bar(x[i] + width, value, width, color=get_color(value), hatch="..", edgecolor="black")
+
+        # Add labels and title
+        ax.set_xlabel("Time Frame")
+        ax.set_ylabel("Score")
+        ax.set_title("Trend Scores by Interval")
+        ax.set_xticks(x)
+        ax.set_xticklabels(unique_intervals, rotation=45)
+        ax.legend(["EMA (//)", "RSI (xx)", "MACD (..)"], loc="upper left")
+
+        # Display the chart
+        st.pyplot(fig)
+
 
     # Function to perform regression analysis and plot
     def regression_analysis():
@@ -751,6 +822,7 @@ def main():
 
     update_scores()
     regression_analysis()
+    update_scoreT()
 
     # Display latest score
     #st.write(f"### Total Score: {score: .2f} || Interval: {interval} || Time: {datetime.now(midwest).strftime('%H:%M:%S')}")
@@ -759,6 +831,7 @@ def main():
     time.sleep(REFRESH_INTERVAL)
     st.rerun()
 
+      
     
     
 
