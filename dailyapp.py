@@ -738,11 +738,16 @@ def main():
 
         # Sort DataFrame based on the categorical order
         df = df.sort_values("tFrame")
-        
+
+        ## plotting
+        fig, ax = plt.subplots(figsize=(10, 5))
+
+        ax.set_ylim(-8, 8)  # Adjust Y-axis limits if needed
+
         # Get unique intervals and prepare x-axis locations
         unique_intervals = df["tFrame"].unique()
         x = np.arange(len(unique_intervals))  # X locations for groups
-        width = 0.25  # Width of each bar
+        width = 0.15  # Width of each bar
 
         # Prepare values for each metric
         e_trend = [df[df["tFrame"] == interval]["e_trend"].mean() for interval in unique_intervals]
@@ -751,34 +756,22 @@ def main():
         macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
         total_values = [df[df["tFrame"] == interval]["total"].mean() for interval in unique_intervals]
 
-        fig, ax = plt.subplots(figsize=(10, 5))
+        ##########
+        # Define offsets for each bar group
+        offsets = [-2 * width, -width, 0, width, 2 * width]
 
-        ax.set_ylim(-8, 8)  # Adjust Y-axis limits if needed
+        # Plot bars with proper spacing
+        ax.bar(x + offsets[0], e_trend, width, color="cyan", edgecolor="black", label="e_trend")
+        ax.bar(x + offsets[1], ema_values, width, color="purple", edgecolor="black", label="EMA")
+        ax.bar(x + offsets[2], rsi_values, width, color="navy", edgecolor="black", label="RSI")
+        ax.bar(x + offsets[3], macd_values, width, color="orange", edgecolor="black", label="MACD")
+        ax.bar(x + offsets[4], total_values, width, color="gray", edgecolor="black", label="total")
 
-        # Adjust width so bars are spaced correctly
-        width = 0.2  
-        x = range(len(unique_intervals))
-
-        # Plot e_trend bars with more space
-        for i, value in enumerate(e_trend):
-            ax.bar(x[i] - 1.5 * width, value, width, color="cyan" , edgecolor="black", label="e_trend")  
-
-        # Plot other bars with spacing
-        for i, value in enumerate(ema_values):
-            ax.bar(x[i] - 0.5 * width, value, width, color="purple", edgecolor="black", label="EMA")
-
-        for i, value in enumerate(rsi_values):
-            ax.bar(x[i] + 0.5 * width, value, width, color="navy", edgecolor="black", label="RSI")
-
-        for i, value in enumerate(macd_values):
-            ax.bar(x[i] + 1.5 * width, value, width, color="orange", edgecolor="black", label="MACD")
-
-        for i, value in enumerate(total_values):
-            ax.bar(x[i] + 1.5 * width, value, width, color="gray", edgecolor="black", label="MACD")
-
+        
         # Add horizontal lines at y = 4 and y = -4
         ax.axhline(y=3, color="red", linestyle="--", linewidth=1, label="Threshold (4)")
         ax.axhline(y=-3, color="green", linestyle="--", linewidth=1, label="Threshold (-4)")
+        ax.axhline(y=0, color="gray", linestyle="-", linewidth=3, label="Threshold (-4)")
 
         # Add labels and title
 
@@ -830,7 +823,10 @@ def main():
 
         # Plot the actual total values
         plt.figure(figsize=(10, 5))
-        plt.scatter(historical_data["TimeIndex"], historical_data["total"], color="blue", label="Actual total")
+        ##assign color 
+        color = "blue"
+    
+        plt.scatter(historical_data["TimeIndex"], historical_data["total"], color=color, label="Actual total")
 
         # Select every 10th label
         xticks = historical_data["TimeIndex"][::10]
@@ -845,16 +841,13 @@ def main():
         # Plot Polynomial Regression Line
         plt.plot(historical_data["TimeIndex"], y_pred_poly, color="blue", linestyle="dashed", label=f"Polynomial ( R² = {r2_poly:.2f})")
 
-        ## add max and min
-        # Get the maximum y-value
-        max_y = np.max(y)
-        min_y = np.min(y)
-        current_y = y[-1]
-
-        # Add a horizontal line at max/min y-value
-        plt.axhline(y=max_y, color="red", linestyle="--", label=f"Max Y: {max_y:.2f}")
-        plt.axhline(y=min_y, color="green", linestyle="--", label=f"Min Y: {min_y:.2f}")
-        plt.axhline(y=current_y, color="gray", linestyle="--", label=f"Current Y: {current_y:.2f}")
+        # Add a horizontal line at set y_value
+        current = y[-1]
+        
+        plt.axhline(y=current, color="gray", linestyle="--", label=f"current: {current}")
+        plt.axhline(y=4, color="red", linestyle="--")
+        plt.axhline(y=-4, color="green", linestyle="--")
+        plt.axhline(y=0, color="gray", linestyle="-", linewidth = 3)
         
         
         # Labels and legend
@@ -873,7 +866,7 @@ def main():
     update_scoreT()
 
     # Display latest score
-    #st.write(f"### Total Score: {score: .2f} || Interval: {interval} || Time: {datetime.now(midwest).strftime('%H:%M:%S')}")
+    st.write(f"### Total Score: {score: .2f} || Interval: {interval} || Time: {datetime.now(midwest).strftime('%H:%M:%S')}")
 
     # Refresh app every minute
     time.sleep(REFRESH_INTERVAL)
