@@ -507,6 +507,11 @@ def main():
     macd = data_recent['MACD'].iloc[-1]
     signal = data_recent['Signal_Line'].iloc[-1]
 
+    # trend scores
+    emaT_score = 0
+    rsiT_score = 0
+    macdT_score = 0
+    
     col_1, col_2, col_3= st.columns(3)
     with col_1:
 
@@ -524,9 +529,11 @@ def main():
         if price > ema9 and ema9 > ema20:
             message = "Up"
             color1 = "green"
+            emaT_score = emaT_score + 1
         elif price < ema9 and ema9 < ema20:
             message = "Down"
             color1 = "red"
+            emaT_score = emaT_score - 1
         else:
             message = "Neutral"
             color1 = "gray"
@@ -550,9 +557,11 @@ def main():
         if rsi > rsi2 and rsi > 50:
             message = "Up "
             color2 = "green"
+            rsiT_score = rsiT_score + 1
         elif rsi < rsi2 and rsi < 50:
             message = "Down"
             color2 = "red"
+            rsiT_score = rsiT_score - 1
         else:
             message = "Neutral "
             color2 = "gray"
@@ -576,9 +585,11 @@ def main():
         if macd > signal and macd > 0:
             message = "Up "
             color3 = "green"
+            macdT_score = macdT_score + 1
         elif macd < signal and macd < 0:
             message = "Down"
             color3 = "red"
+            macdT_score = macdT_score - 1
         else:
             message = "Neutral "
             color3 = "gray"
@@ -629,6 +640,7 @@ def main():
 
     # Define file name based on interval
     score_file = f"score_history_{interval}.csv"
+    scoreT_file = f"scoreT.csv"
 
     # Ensure the file exists with proper headers
     if not os.path.exists(score_file):
@@ -663,6 +675,74 @@ def main():
                 file_name=score_file,
                 mime="text/csv"
             )
+            
+    # Function to update and save scoreT(trend based on 3 color)
+    def update_scoreT():
+
+        ### interval is from ["1m","5m","15m","30m","1h", "1mo", "3mo", "6mo"]
+        
+        new_data = pd.DataFrame([{
+            "tFrame": f"{interval}",
+            "ema": round(emaT_score, 2),
+            "rsi": round(rsiT_score, 2),
+            "macd": round(macdT_score, 2),
+        }])
+        
+        # Append to CSV file
+        new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
+        
+        # Display latest score
+        st.write(f"### emaT: {emaT_score: .2f} tFrame: {interval}")
+        st.dataframe(new_data, hide_index=True)
+
+        ### do bar graph using scoreT_file
+        # Load data from the CSV file
+        # Load data from the CSV file
+        try:
+            df = pd.read_csv(scoreT_file, names=["tFrame", "ema", "rsi", "macd"])
+        except Exception as e:
+            st.error(f"Error loading file: {e}")
+            return
+
+        # Get unique intervals and prepare x-axis locations
+        unique_intervals = df["tFrame"].unique()
+        x = np.arange(len(unique_intervals))  # X locations for groups
+        width = 0.25  # Width of each bar
+
+        # Prepare values for each metric
+        ema_values = [df[df["tFrame"] == interval]["ema"].mean() for interval in unique_intervals]
+        rsi_values = [df[df["tFrame"] == interval]["rsi"].mean() for interval in unique_intervals]
+        macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
+
+        fig, ax = plt.subplots(figsize=(10, 5))
+
+        # Function to determine color based on value (green for positive, red for negative)
+        def get_color(value):
+            return "green" if value >= 0 else "red"
+
+        # Plot EMA bars
+        for i, value in enumerate(ema_values):
+            ax.bar(x[i] - width, value, width, color=get_color(value), hatch="//", edgecolor="black")
+
+        # Plot RSI bars
+        for i, value in enumerate(rsi_values):
+            ax.bar(x[i], value, width, color=get_color(value), hatch="xx", edgecolor="black")
+
+        # Plot MACD bars
+        for i, value in enumerate(macd_values):
+            ax.bar(x[i] + width, value, width, color=get_color(value), hatch="..", edgecolor="black")
+
+        # Add labels and title
+        ax.set_xlabel("Time Frame")
+        ax.set_ylabel("Score")
+        ax.set_title("Trend Scores by Interval")
+        ax.set_xticks(x)
+        ax.set_xticklabels(unique_intervals, rotation=45)
+        ax.legend(["EMA (//)", "RSI (xx)", "MACD (..)"], loc="upper left")
+
+        # Display the chart
+        st.pyplot(fig)
+
 
     # Function to perform regression analysis and plot
     def regression_analysis():
@@ -740,6 +820,7 @@ def main():
 
     update_scores()
     regression_analysis()
+    update_scoreT()
 
     # Display latest score
     #st.write(f"### Total Score: {score: .2f} || Interval: {interval} || Time: {datetime.now(midwest).strftime('%H:%M:%S')}")
@@ -748,6 +829,8 @@ def main():
     time.sleep(REFRESH_INTERVAL)
     st.rerun()
 
+      
+    
     
 
 

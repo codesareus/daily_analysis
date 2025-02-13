@@ -283,7 +283,11 @@ def main():
     time_labels = data_recent.index.strftime('%H:%M')  # Format time as HH:MM
 
     # Simplify x-axis labels based on the interval
-    if interval == "30m":
+
+    if interval == "15m":
+        # For 15-minute interval, show only every 3 hours (e.g., 09:00, 12:00, 15:00)
+        simplified_time_labels = [label if label.endswith('00') and int(label.split(':')[0]) % 3 == 0 else '' for label in time_labels]
+    elif interval == "30m":
         # For 30-minute interval, show only every 3 hours (e.g., 09:00, 12:00, 15:00)
         simplified_time_labels = [label if label.endswith('00') and int(label.split(':')[0]) % 3 == 0 else '' for label in time_labels]
     elif interval == "1h":
@@ -503,6 +507,11 @@ def main():
     macd = data_recent['MACD'].iloc[-1]
     signal = data_recent['Signal_Line'].iloc[-1]
 
+    # trend scores
+    emaT_score = 0
+    rsiT_score = 0
+    macdT_score = 0
+    
     col_1, col_2, col_3= st.columns(3)
     with col_1:
 
@@ -515,16 +524,22 @@ def main():
 
         ## message
         message = " "
+        color1 = " "
         
         if price > ema9 and ema9 > ema20:
-            message = "Up "
+            message = "Up"
+            color1 = "green"
+            emaT_score = emaT_score + 1
         elif price < ema9 and ema9 < ema20:
-            message = "Down "
+            message = "Down"
+            color1 = "red"
+            emaT_score = emaT_score - 1
         else:
             message = "Neutral"
-            
+            color1 = "gray"
+    
         # Display the table
-        st.write(f"### EMA: {message}")
+        st.markdown(f"### <span style='color:{color1};'>EMA: {message}</span>", unsafe_allow_html=True)
         st.dataframe(ema_df, hide_index=True)
 
     with col_2:
@@ -538,16 +553,21 @@ def main():
 
         ## message
         message = " "
-        
-        if rsi > rsi2:
+        color2 = " "
+        if rsi > rsi2 and rsi > 50:
             message = "Up "
-        elif rsi == rsi2:
-            message = "Neutral"
+            color2 = "green"
+            rsiT_score = rsiT_score + 1
+        elif rsi < rsi2 and rsi < 50:
+            message = "Down"
+            color2 = "red"
+            rsiT_score = rsiT_score - 1
         else:
-            message = "Down "
+            message = "Neutral "
+            color2 = "gray"
     
         # Display the table
-        st.write(f"### RSI: {message}")
+        st.markdown(f"### <span style='color:{color2};'>RSI: {message}</span>", unsafe_allow_html=True)
         st.dataframe(rsi_df, hide_index=True)
     
 
@@ -561,16 +581,21 @@ def main():
 
         ## message
         message = " "
-        
-        if macd > signal:
+        color3 = " "
+        if macd > signal and macd > 0:
             message = "Up "
-        elif macd == signal:
-            message = "Neutral"
+            color3 = "green"
+            macdT_score = macdT_score + 1
+        elif macd < signal and macd < 0:
+            message = "Down"
+            color3 = "red"
+            macdT_score = macdT_score - 1
         else:
-            message = "Down "
+            message = "Neutral "
+            color3 = "gray"
             
         # Display the table
-        st.write(f"### MACD: {message}")
+        st.markdown(f"### <span style='color:{color3};'>MACD: {message}</span>", unsafe_allow_html=True)
         st.dataframe(macd_df, hide_index=True)
 
     #### calculate scores
@@ -655,9 +680,9 @@ def main():
         historical_data = pd.read_csv(score_file)
 
         # Convert Timestamp to numerical values for regression
-        historical_data["Timestamp"] = pd.to_datetime(historical_data["Timestamp"]).tail(300)
-        historical_data["TimeIndex"] = (historical_data["Timestamp"] - historical_data["Timestamp"].min()).dt.total_seconds()/600.tail(300)
-        historical_data["Hour"] = historical_data["Timestamp"].dt.strftime("%H:%M").tail(300)  # Format as HH:MM
+        historical_data["Timestamp"] = pd.to_datetime(historical_data["Timestamp"])
+        historical_data["TimeIndex"] = (historical_data["Timestamp"] - historical_data["Timestamp"].min()).dt.total_seconds()/600
+        historical_data["Hour"] = historical_data["Timestamp"].dt.strftime("%H:%M")  # Format as HH:MM
 
         # Perform Polynomial Regression (degree=2)
         X = historical_data[["TimeIndex"]].values
@@ -734,6 +759,7 @@ def main():
     time.sleep(REFRESH_INTERVAL)
     st.rerun()
 
+    
     
 
 
