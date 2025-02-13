@@ -1,3 +1,4 @@
+
 import streamlit as st
 import yfinance as yf
 import pandas as pd
@@ -12,6 +13,7 @@ import pytz
 from gtts import gTTS
 import os
 import time
+from matplotlib.lines import Line2D
 
 #midwest = pytz.timezone("America/New")
 midwest = pytz.timezone("US/Eastern")
@@ -597,17 +599,25 @@ def main():
         st.dataframe(macd_df, hide_index=True)
 
     #### calculate scores
-    ema_score = (price > ema9)*0.2 + (ema9 > ema20)*0.4 + (ema20 > ema50)*0.6 + (ema50 > ema100)*0.8 +  (ema100 > ema200) - (ema200 > ema100) - (ema100 > ema50)*0.8 - (ema50 > ema20)*0.6 - (ema20 > ema9)*0.4 - (ema9 > price)*0.2
-    ema_score = ema_score * 2/3
+    e_score = ((price > ema9)*0.2 + (ema9 > ema20)*0.4 + (ema20 > ema50)*0.6 + (ema50 > ema100)*0.8 +  (ema100 > ema200) - (ema200 > ema100) - (ema100 > ema50)*0.8 - (ema50 > ema20)*0.6 - (ema20 > ema9)*0.4 - (ema9 > price)*0.2) * 2/3
+    ema_score = 0
+    
+    if price > ema9 and ema9 > ema20:
+        ema_score = e_score + 1
+    elif price < ema9 and ema9 < ema20:
+        ema_score = e_score - 1
+    else:
+        ema_score = e_score
+        
     rsi_score = 0
     if (rsi > rsi2) and (rsi > 50):
-        rsi_score = 2
+        rsi_score = ((rsi - 50)/50) * 2
     elif (rsi < rsi2) and (rsi > 50):
-        rsi_score = 1
+        rsi_score = (rsi - 50)/50
     elif (rsi < rsi2) and (rsi < 50):
-        rsi_score = - 2
+        rsi_score = ((rsi - 50)/50) * 2
     elif (rsi > rsi2) and (rsi < 50):
-        rsi_score = -1
+        rsi_score = ((rsi - 50)/50) 
     else:
         rsi_score = 0
         
@@ -676,71 +686,112 @@ def main():
     def update_scoreT():
 
         ### interval is from ["1m","5m","15m","30m","1h", "1mo", "3mo", "6mo"]
+        e_trend = 0
+        if price > ema9 and ema9 > ema20:
+            e_trend = 2
+        elif price < ema9 and ema9 < ema20:
+            e_trend = -2
+        elif price > ema9:
+            e_trend = 1
+        elif price < ema9:
+            e_trend = -1
+        else:
+            e_trend = 0
         
         new_data = pd.DataFrame([{
             "tFrame": f"{interval}",
+            "e_trend": round(e_trend, 2),
             "ema": round(ema_score, 2),
             "rsi": round(rsi_score, 2),
             "macd": round(macd_score, 2),
+            "total": round(score, 2),
         }])
         
         # Append to CSV file
         new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
+        
+        # Display latest score
+        st.write(f"### e_trend: {e_trend}  || tFrame: {interval}")
+        st.dataframe(new_data, hide_index=True)
 
         # delete data button
         if st.button("Delete Data"):
             new_data = pd.DataFrame([{}])
             # Append to CSV file
-            new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
+            new_data.to_csv(scoreT_file, mode="w", header=False, index=False)
 
-        # Display latest score
-        st.write(f"### emaT: {emaT_score: .2f} tFrame: {interval}")
-        st.dataframe(new_data, hide_index=True)
 
         ### do bar graph using scoreT_file
-        
         # Load data from the CSV file
         try:
-            df = pd.read_csv(scoreT_file, names=["tFrame", "ema", "rsi", "macd"])
+            df = pd.read_csv(scoreT_file, names=["tFrame", "e_trend", "ema", "rsi", "macd", "total"])
         except Exception as e:
             st.error(f"Error loading file: {e}")
             return
+        
+        ## sort df
+        # Define custom order
+        timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
 
+        # Convert 'tFrame' column to categorical with defined order
+        df["tFrame"] = pd.Categorical(df["tFrame"], categories=timeframe_order, ordered=True)
+
+        # Sort DataFrame based on the categorical order
+        df = df.sort_values("tFrame")
+        
         # Get unique intervals and prepare x-axis locations
         unique_intervals = df["tFrame"].unique()
         x = np.arange(len(unique_intervals))  # X locations for groups
         width = 0.25  # Width of each bar
 
         # Prepare values for each metric
+        e_trend = [df[df["tFrame"] == interval]["e_trend"].mean() for interval in unique_intervals]
         ema_values = [df[df["tFrame"] == interval]["ema"].mean() for interval in unique_intervals]
         rsi_values = [df[df["tFrame"] == interval]["rsi"].mean() for interval in unique_intervals]
         macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
+        total_values = [df[df["tFrame"] == interval]["total"].mean() for interval in unique_intervals]
 
         fig, ax = plt.subplots(figsize=(10, 5))
 
-        # Function to determine color based on value (green for positive, red for negative)
-        def get_color(value):
-            return "green" if value >= 0 else "red"
+        ax.set_ylim(-8, 8)  # Adjust Y-axis limits if needed
 
-        # Plot EMA bars
+        # Adjust width so bars are spaced correctly
+        width = 0.2  
+        x = range(len(unique_intervals))
+
+        # Plot e_trend bars with more space
+        for i, value in enumerate(e_trend):
+            ax.bar(x[i] - 1.5 * width, value, width, color="cyan" , edgecolor="black", label="e_trend")  
+
+        # Plot other bars with spacing
         for i, value in enumerate(ema_values):
-            ax.bar(x[i] - width, value, width, color=get_color(value), hatch="//", edgecolor="black")
+            ax.bar(x[i] - 0.5 * width, value, width, color="purple", edgecolor="black", label="EMA")
 
-        # Plot RSI bars
         for i, value in enumerate(rsi_values):
-            ax.bar(x[i], value, width, color=get_color(value), hatch="xx", edgecolor="black")
+            ax.bar(x[i] + 0.5 * width, value, width, color="navy", edgecolor="black", label="RSI")
 
-        # Plot MACD bars
         for i, value in enumerate(macd_values):
-            ax.bar(x[i] + width, value, width, color=get_color(value), hatch="..", edgecolor="black")
+            ax.bar(x[i] + 1.5 * width, value, width, color="orange", edgecolor="black", label="MACD")
+
+        for i, value in enumerate(total_values):
+            ax.bar(x[i] + 1.5 * width, value, width, color="gray", edgecolor="black", label="MACD")
 
         # Add labels and title
+
+        legend_handles = [
+            Line2D([0], [0], color='cyan', lw=2, label="e_trend"),
+            Line2D([0], [0], color='purple', lw=2, label="EMA"),
+            Line2D([0], [0], color='navy', lw=2, label="RSI"),
+            Line2D([0], [0], color='orange', lw=2, label="MACD"),
+            Line2D([0], [0], color='gray', lw=2, label="total"),
+        ]
+        time = datetime.now(midwest).strftime('%D:%H:%M')
         ax.set_xlabel("Time Frame")
         ax.set_ylabel("Score")
-        ax.set_title("Trend Scores by Interval")
+        ax.set_title(f"Trend Scores by Interval({time})")
         ax.set_xticks(x)
         ax.set_xticklabels(unique_intervals, rotation=45)
-        ax.legend(["EMA (//)", "RSI (xx)", "MACD (..)"], loc="upper left")
+        ax.legend(handles=legend_handles, loc="lower right")
 
         # Display the chart
         st.pyplot(fig)
@@ -752,68 +803,49 @@ def main():
 
         # Convert Timestamp to numerical values for regression
         historical_data["Timestamp"] = pd.to_datetime(historical_data["Timestamp"])
-        historical_data["TimeIndex"] = (historical_data["Timestamp"] - historical_data["Timestamp"].min()).dt.total_seconds()/600
+        historical_data["TimeIndex"] = (historical_data["Timestamp"] - historical_data["Timestamp"].min()).dt.total_seconds()
         historical_data["Hour"] = historical_data["Timestamp"].dt.strftime("%H:%M")  # Format as HH:MM
 
         # Perform Polynomial Regression (degree=2)
         X = historical_data[["TimeIndex"]].values
         y = historical_data["total"].values
-        y_ema = historical_data["EMAs"].values # define Y for ema
-        y_rsi = historical_data["RSI"].values # define Y for std
 
+        # Polynomial Regression
         poly = PolynomialFeatures(degree=2)
         X_poly = poly.fit_transform(X)
-
-        # Regression for "total"
         poly_model = LinearRegression()
         poly_model.fit(X_poly, y)
         y_pred_poly = poly_model.predict(X_poly)
         r2_poly = r2_score(y, y_pred_poly)
 
-        # Regression for "EMA"
-        model_ema = LinearRegression()
-        model_ema.fit(X_poly, y_ema)
-        y_ema_pred = model_ema.predict(X_poly)
-        r2_ema = r2_score(y, y_ema_pred)
-
-        # Regression for "rsi"
-        model_rsi = LinearRegression()
-        model_rsi.fit(X_poly, y_rsi)
-        y_rsi_pred = model_rsi.predict(X_poly)
-        r2_rsi = r2_score(y, y_rsi_pred)
-
-        # Perform Linear Regression
+        # Linear Regression
         lin_model = LinearRegression()
         lin_model.fit(X, y)
-        y_pred_lin = lin_model.predict(X)
+        y_pred_lin = lin_model.predict(X)  # Ensure this line is present
         r2_lin = r2_score(y, y_pred_lin)
-        
+
         # Plot the actual total values
         plt.figure(figsize=(10, 5))
         plt.scatter(historical_data["TimeIndex"], historical_data["total"], color="blue", label="Actual total")
 
+        # Select every 10th label
+        xticks = historical_data["TimeIndex"][::10]
+        xlabels = historical_data["Hour"][::10]
+
+        # Set x-ticks and labels
+        plt.xticks(ticks=xticks, labels=xlabels, rotation=45)
+
         # Plot Linear Regression Line
-        plt.xticks(ticks=historical_data["TimeIndex"], labels=historical_data["Hour"], rotation=45)
-        plt.plot(historical_data["TimeIndex"], y_pred_lin,  color="gray", linestyle="solid", label=f"Linear ( R² = {r2_lin:.2f})")
+        plt.plot(historical_data["TimeIndex"], y_pred_lin, color="gray", linestyle="solid", label=f"Linear ( R² = {r2_lin:.2f})")
 
-        # Plot "tota" Polynomial Regression Line
-        plt.xticks(ticks=historical_data["TimeIndex"], labels=historical_data["Hour"], rotation=45)
-        plt.plot(historical_data["TimeIndex"], y_pred_poly,  color="blue", linestyle="dashed", label=f"total ( R² = {r2_poly:.2f})")
+        # Plot Polynomial Regression Line
+        plt.plot(historical_data["TimeIndex"], y_pred_poly, color="blue", linestyle="dashed", label=f"Polynomial ( R² = {r2_poly:.2f})")
 
-        #plot ema polynomial
-        plt.scatter(X, y_ema, label="EMA (Actual)", marker="x", color="red")
-        plt.plot(X, y_ema_pred, linestyle="--", color="red", label=f"EMA ( R² = {r2_ema:.2f})")
-
-        #plot rsi polynomial
-        plt.scatter(X, y_rsi, label="RSI (Actual)", marker="^", color="orange")
-        plt.plot(X, y_rsi_pred, linestyle="--", color="orange", label=f"RSI ( R² = {r2_rsi:.2f})")
-
-        
         # Labels and legend
         plt.xlabel("Time")
         plt.ylabel("Total Score")
         plt.legend()
-        plt.title("Total vs. Time with Polynomial & Linear Regression")
+        plt.title(f"T_score Regression ({interval})  || {datetime.now().strftime('%D:%H:%M')})")
 
         # Show plot in Streamlit
         st.pyplot(plt)
@@ -838,5 +870,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

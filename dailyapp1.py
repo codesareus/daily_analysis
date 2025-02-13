@@ -704,7 +704,6 @@ def main():
             "ema": round(ema_score, 2),
             "rsi": round(rsi_score, 2),
             "macd": round(macd_score, 2),
-            "total": round(score, 2),
         }])
         
         # Append to CSV file
@@ -724,7 +723,7 @@ def main():
         ### do bar graph using scoreT_file
         # Load data from the CSV file
         try:
-            df = pd.read_csv(scoreT_file, names=["tFrame", "e_trend", "ema", "rsi", "macd", "total"])
+            df = pd.read_csv(scoreT_file, names=["tFrame", "e_trend", "ema", "rsi", "macd"])
         except Exception as e:
             st.error(f"Error loading file: {e}")
             return
@@ -749,11 +748,10 @@ def main():
         ema_values = [df[df["tFrame"] == interval]["ema"].mean() for interval in unique_intervals]
         rsi_values = [df[df["tFrame"] == interval]["rsi"].mean() for interval in unique_intervals]
         macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
-        total_values = [df[df["tFrame"] == interval]["total"].mean() for interval in unique_intervals]
 
         fig, ax = plt.subplots(figsize=(10, 5))
 
-        ax.set_ylim(-8, 8)  # Adjust Y-axis limits if needed
+        ax.set_ylim(-2, 2)  # Adjust Y-axis limits if needed
 
         # Adjust width so bars are spaced correctly
         width = 0.2  
@@ -773,13 +771,6 @@ def main():
         for i, value in enumerate(macd_values):
             ax.bar(x[i] + 1.5 * width, value, width, color="orange", edgecolor="black", label="MACD")
 
-        for i, value in enumerate(total_values):
-            ax.bar(x[i] + 1.5 * width, value, width, color="gray", edgecolor="black", label="MACD")
-
-        # Add horizontal lines at y = 4 and y = -4
-        ax.axhline(y=3, color="red", linestyle="--", linewidth=1, label="Threshold (4)")
-        ax.axhline(y=-3, color="green", linestyle="--", linewidth=1, label="Threshold (-4)")
-
         # Add labels and title
 
         legend_handles = [
@@ -787,7 +778,6 @@ def main():
             Line2D([0], [0], color='purple', lw=2, label="EMA"),
             Line2D([0], [0], color='navy', lw=2, label="RSI"),
             Line2D([0], [0], color='orange', lw=2, label="MACD"),
-            Line2D([0], [0], color='gray', lw=2, label="total"),
         ]
         time = datetime.now(midwest).strftime('%D:%H:%M')
         ax.set_xlabel("Time Frame")
@@ -795,7 +785,9 @@ def main():
         ax.set_title(f"Trend Scores by Interval({time})")
         ax.set_xticks(x)
         ax.set_xticklabels(unique_intervals, rotation=45)
-        ax.legend(handles=legend_handles, loc="lower right")
+        ax.legend(handles=legend_handles, loc="upper left")
+
+        print("Plotting e_trend bars:", e_trend)
 
         # Display the chart
         st.pyplot(fig)
@@ -807,61 +799,68 @@ def main():
 
         # Convert Timestamp to numerical values for regression
         historical_data["Timestamp"] = pd.to_datetime(historical_data["Timestamp"])
-        historical_data["TimeIndex"] = (historical_data["Timestamp"] - historical_data["Timestamp"].min()).dt.total_seconds()
+        historical_data["TimeIndex"] = (historical_data["Timestamp"] - historical_data["Timestamp"].min()).dt.total_seconds()/600
         historical_data["Hour"] = historical_data["Timestamp"].dt.strftime("%H:%M")  # Format as HH:MM
 
         # Perform Polynomial Regression (degree=2)
         X = historical_data[["TimeIndex"]].values
         y = historical_data["total"].values
+        #y_ema = historical_data["EMAs"].values # define Y for ema
+        #y_rsi = historical_data["RSI"].values # define Y for std
 
-        # Polynomial Regression
         poly = PolynomialFeatures(degree=2)
         X_poly = poly.fit_transform(X)
+
+        # Regression for "total"
         poly_model = LinearRegression()
         poly_model.fit(X_poly, y)
         y_pred_poly = poly_model.predict(X_poly)
         r2_poly = r2_score(y, y_pred_poly)
 
-        # Linear Regression
+        # Regression for "EMA"
+        #model_ema = LinearRegression()
+        #model_ema.fit(X_poly, y_ema)
+        #y_ema_pred = model_ema.predict(X_poly)
+        #r2_ema = r2_score(y, y_ema_pred)
+
+        # Regression for "rsi"
+        #model_rsi = LinearRegression()
+        #model_rsi.fit(X_poly, y_rsi)
+        #y_rsi_pred = model_rsi.predict(X_poly)
+        #r2_rsi = r2_score(y, y_rsi_pred)
+
+        # Perform Linear Regression
         lin_model = LinearRegression()
         lin_model.fit(X, y)
-        y_pred_lin = lin_model.predict(X)  # Ensure this line is present
+        y_pred_lin = lin_model.predict(X)
         r2_lin = r2_score(y, y_pred_lin)
-
+        
         # Plot the actual total values
         plt.figure(figsize=(10, 5))
         plt.scatter(historical_data["TimeIndex"], historical_data["total"], color="blue", label="Actual total")
 
-        # Select every 10th label
-        xticks = historical_data["TimeIndex"][::10]
-        xlabels = historical_data["Hour"][::10]
-
-        # Set x-ticks and labels
-        plt.xticks(ticks=xticks, labels=xlabels, rotation=45)
-
         # Plot Linear Regression Line
-        plt.plot(historical_data["TimeIndex"], y_pred_lin, color="gray", linestyle="solid", label=f"Linear ( R² = {r2_lin:.2f})")
+        plt.xticks(ticks=historical_data["TimeIndex"], labels=historical_data["Hour"], rotation=45)
+        plt.plot(historical_data["TimeIndex"], y_pred_lin,  color="gray", linestyle="solid", label=f"Linear ( R² = {r2_lin:.2f})")
 
-        # Plot Polynomial Regression Line
-        plt.plot(historical_data["TimeIndex"], y_pred_poly, color="blue", linestyle="dashed", label=f"Polynomial ( R² = {r2_poly:.2f})")
+        # Plot "tota" Polynomial Regression Line
+        plt.xticks(ticks=historical_data["TimeIndex"], labels=historical_data["Hour"], rotation=45)
+        plt.plot(historical_data["TimeIndex"], y_pred_poly,  color="blue", linestyle="dashed", label=f"total ( R² = {r2_poly:.2f})")
 
-        ## add max and min
-        # Get the maximum y-value
-        max_y = np.max(y)
-        min_y = np.min(y)
-        current_y = y[-1]
+        #plot ema polynomial
+        #plt.scatter(X, y_ema, label="EMA (Actual)", marker="x", color="red")
+        #plt.plot(X, y_ema_pred, linestyle="--", color="red", label=f"EMA ( R² = {r2_ema:.2f})")
 
-        # Add a horizontal line at max/min y-value
-        plt.axhline(y=max_y, color="red", linestyle="--", label=f"Max Y: {max_y:.2f}")
-        plt.axhline(y=min_y, color="green", linestyle="--", label=f"Min Y: {min_y:.2f}")
-        plt.axhline(y=current_y, color="gray", linestyle="--", label=f"Current Y: {current_y:.2f}")
-        
+        #plot rsi polynomial
+        #plt.scatter(X, y_rsi, label="RSI (Actual)", marker="^", color="orange")
+        #plt.plot(X, y_rsi_pred, linestyle="--", color="orange", label=f"RSI ( R² = {r2_rsi:.2f})")
+
         
         # Labels and legend
         plt.xlabel("Time")
         plt.ylabel("Total Score")
         plt.legend()
-        plt.title(f"T_score Regression ({interval})  || {datetime.now().strftime('%D:%H:%M')})")
+        plt.title(f"T_score Regression ({datetime.now(midwest).strftime('%D:%H:%M')})")
 
         # Show plot in Streamlit
         st.pyplot(plt)
