@@ -54,7 +54,7 @@ def calculate_macd(data):
     return data
 
 # Function to fetch stock data with a specified interval
-def fetch_stock_data(ticker, interval="1m"):
+def fetch_stock_data(ticker, interval="5m"):
     # Fetch data for the specified stock with the given interval (including premarket)
     stock = yf.Ticker(ticker)
     data = stock.history(period="5d", interval=interval, prepost=True)  # Include premarket data
@@ -173,10 +173,27 @@ def calculate_emas(data):
 # Streamlit app
 def main():
     st.title("Ticker Regression Analysis")
-    
+
+    #######################
+        
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
+    # Initialize session state
+    if "turn" not in st.session_state:
+        st.session_state.turn = 0
+
+    intervals = ["1m", "5m", "15m", "30m", "1h"]
+    interval = intervals[st.session_state.turn]
+
+    time.sleep(15)  # Wait for 15 seconds before fetching
+
+    # Get the current turn and update it
+    st.session_state.turn = (st.session_state.turn + 1) % len(intervals)
+
+    # Fetch data
+    data = fetch_stock_data(ticker, interval=intervals[st.session_state.turn])
+    
     # Add a button group for interval selection
     col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
     with col1:
@@ -202,13 +219,6 @@ def main():
     with col7:
         if st.button("6mo", key="6mo"):
             interval = "6mo"
-    
-    # Default interval
-    if 'interval' not in locals():
-        interval = "5m"
-
-    # Display current selection
-    st.write(f"**Selected Interval:** {interval}")
 
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
@@ -220,6 +230,16 @@ def main():
     else:
         data = fetch_stock_data(ticker, interval=interval)
 
+    if data.empty:
+        st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
+        return
+
+    print(data.head(5))
+    print(f"Turn: {st.session_state.turn}")
+    print(f"**Selected Interval:** {interval}")
+
+    #############
+    
     if data.empty:
         st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
         return
@@ -688,9 +708,9 @@ def main():
         ### interval is from ["1m","5m","15m","30m","1h", "1mo", "3mo", "6mo"]
         e_trend = 0
         if price > ema9 and ema9 > ema20:
-            e_trend = 2
+            e_trend = 3
         elif price < ema9 and ema9 < ema20:
-            e_trend = -2
+            e_trend = -3
         elif price > ema9:
             e_trend = 1
         elif price < ema9:
@@ -704,6 +724,7 @@ def main():
             "ema": round(ema_score, 2),
             "rsi": round(rsi_score, 2),
             "macd": round(macd_score, 2),
+            "total": round(score, 2),
         }])
         
         # Append to CSV file
@@ -723,7 +744,7 @@ def main():
         ### do bar graph using scoreT_file
         # Load data from the CSV file
         try:
-            df = pd.read_csv(scoreT_file, names=["tFrame", "e_trend", "ema", "rsi", "macd"])
+            df = pd.read_csv(scoreT_file, names=["tFrame", "e_trend", "ema", "rsi", "macd", "total"])
         except Exception as e:
             st.error(f"Error loading file: {e}")
             return
@@ -737,39 +758,40 @@ def main():
 
         # Sort DataFrame based on the categorical order
         df = df.sort_values("tFrame")
-        
+
+        ## plotting
+        fig, ax = plt.subplots(figsize=(10, 5))
+
+        ax.set_ylim(-8, 8)  # Adjust Y-axis limits if needed
+
         # Get unique intervals and prepare x-axis locations
         unique_intervals = df["tFrame"].unique()
         x = np.arange(len(unique_intervals))  # X locations for groups
-        width = 0.25  # Width of each bar
+        width = 0.15  # Width of each bar
 
         # Prepare values for each metric
         e_trend = [df[df["tFrame"] == interval]["e_trend"].mean() for interval in unique_intervals]
         ema_values = [df[df["tFrame"] == interval]["ema"].mean() for interval in unique_intervals]
         rsi_values = [df[df["tFrame"] == interval]["rsi"].mean() for interval in unique_intervals]
         macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
+        total_values = [df[df["tFrame"] == interval]["total"].mean() for interval in unique_intervals]
 
-        fig, ax = plt.subplots(figsize=(10, 5))
+        ##########
+        # Define offsets for each bar group
+        offsets = [-2 * width, -width, 0, width, 2 * width]
 
-        ax.set_ylim(-2, 2)  # Adjust Y-axis limits if needed
+        # Plot bars with proper spacing
+        ax.bar(x + offsets[0], e_trend, width, color="cyan", edgecolor="black", label="e_trend")
+        ax.bar(x + offsets[1], ema_values, width, color="purple", edgecolor="black", label="EMA")
+        ax.bar(x + offsets[2], rsi_values, width, color="navy", edgecolor="black", label="RSI")
+        ax.bar(x + offsets[3], macd_values, width, color="orange", edgecolor="black", label="MACD")
+        ax.bar(x + offsets[4], total_values, width, color="gray", edgecolor="black", label="total")
 
-        # Adjust width so bars are spaced correctly
-        width = 0.2  
-        x = range(len(unique_intervals))
-
-        # Plot e_trend bars with more space
-        for i, value in enumerate(e_trend):
-            ax.bar(x[i] - 1.5 * width, value, width, color="cyan" , edgecolor="black", label="e_trend")  
-
-        # Plot other bars with spacing
-        for i, value in enumerate(ema_values):
-            ax.bar(x[i] - 0.5 * width, value, width, color="purple", edgecolor="black", label="EMA")
-
-        for i, value in enumerate(rsi_values):
-            ax.bar(x[i] + 0.5 * width, value, width, color="navy", edgecolor="black", label="RSI")
-
-        for i, value in enumerate(macd_values):
-            ax.bar(x[i] + 1.5 * width, value, width, color="orange", edgecolor="black", label="MACD")
+        
+        # Add horizontal lines at y = 4 and y = -4
+        ax.axhline(y=3, color="red", linestyle="--", linewidth=1, label="Threshold (4)")
+        ax.axhline(y=-3, color="green", linestyle="--", linewidth=1, label="Threshold (-4)")
+        ax.axhline(y=0, color="gray", linestyle="-", linewidth=3, label="Threshold (-4)")
 
         # Add labels and title
 
@@ -778,6 +800,7 @@ def main():
             Line2D([0], [0], color='purple', lw=2, label="EMA"),
             Line2D([0], [0], color='navy', lw=2, label="RSI"),
             Line2D([0], [0], color='orange', lw=2, label="MACD"),
+            Line2D([0], [0], color='gray', lw=2, label="total"),
         ]
         time = datetime.now(midwest).strftime('%D:%H:%M')
         ax.set_xlabel("Time Frame")
@@ -785,9 +808,7 @@ def main():
         ax.set_title(f"Trend Scores by Interval({time})")
         ax.set_xticks(x)
         ax.set_xticklabels(unique_intervals, rotation=45)
-        ax.legend(handles=legend_handles, loc="upper left")
-
-        print("Plotting e_trend bars:", e_trend)
+        ax.legend(handles=legend_handles, loc="lower right")
 
         # Display the chart
         st.pyplot(fig)
@@ -799,68 +820,61 @@ def main():
 
         # Convert Timestamp to numerical values for regression
         historical_data["Timestamp"] = pd.to_datetime(historical_data["Timestamp"])
-        historical_data["TimeIndex"] = (historical_data["Timestamp"] - historical_data["Timestamp"].min()).dt.total_seconds()/600
+        historical_data["TimeIndex"] = (historical_data["Timestamp"] - historical_data["Timestamp"].min()).dt.total_seconds()
         historical_data["Hour"] = historical_data["Timestamp"].dt.strftime("%H:%M")  # Format as HH:MM
 
         # Perform Polynomial Regression (degree=2)
         X = historical_data[["TimeIndex"]].values
         y = historical_data["total"].values
-        #y_ema = historical_data["EMAs"].values # define Y for ema
-        #y_rsi = historical_data["RSI"].values # define Y for std
 
+        # Polynomial Regression
         poly = PolynomialFeatures(degree=2)
         X_poly = poly.fit_transform(X)
-
-        # Regression for "total"
         poly_model = LinearRegression()
         poly_model.fit(X_poly, y)
         y_pred_poly = poly_model.predict(X_poly)
         r2_poly = r2_score(y, y_pred_poly)
 
-        # Regression for "EMA"
-        #model_ema = LinearRegression()
-        #model_ema.fit(X_poly, y_ema)
-        #y_ema_pred = model_ema.predict(X_poly)
-        #r2_ema = r2_score(y, y_ema_pred)
-
-        # Regression for "rsi"
-        #model_rsi = LinearRegression()
-        #model_rsi.fit(X_poly, y_rsi)
-        #y_rsi_pred = model_rsi.predict(X_poly)
-        #r2_rsi = r2_score(y, y_rsi_pred)
-
-        # Perform Linear Regression
+        # Linear Regression
         lin_model = LinearRegression()
         lin_model.fit(X, y)
-        y_pred_lin = lin_model.predict(X)
+        y_pred_lin = lin_model.predict(X)  # Ensure this line is present
         r2_lin = r2_score(y, y_pred_lin)
-        
+
         # Plot the actual total values
         plt.figure(figsize=(10, 5))
-        plt.scatter(historical_data["TimeIndex"], historical_data["total"], color="blue", label="Actual total")
+        ##assign color 
+        color = "blue"
+    
+        plt.scatter(historical_data["TimeIndex"], historical_data["total"], color=color, label="Actual total")
+
+        # Select every 10th label
+        xticks = historical_data["TimeIndex"][::10]
+        xlabels = historical_data["Hour"][::10]
+
+        # Set x-ticks and labels
+        plt.xticks(ticks=xticks, labels=xlabels, rotation=45)
 
         # Plot Linear Regression Line
-        plt.xticks(ticks=historical_data["TimeIndex"], labels=historical_data["Hour"], rotation=45)
-        plt.plot(historical_data["TimeIndex"], y_pred_lin,  color="gray", linestyle="solid", label=f"Linear ( R² = {r2_lin:.2f})")
+        plt.plot(historical_data["TimeIndex"], y_pred_lin, color="gray", linestyle="solid", label=f"Linear ( R² = {r2_lin:.2f})")
 
-        # Plot "tota" Polynomial Regression Line
-        plt.xticks(ticks=historical_data["TimeIndex"], labels=historical_data["Hour"], rotation=45)
-        plt.plot(historical_data["TimeIndex"], y_pred_poly,  color="blue", linestyle="dashed", label=f"total ( R² = {r2_poly:.2f})")
+        # Plot Polynomial Regression Line
+        plt.plot(historical_data["TimeIndex"], y_pred_poly, color="blue", linestyle="dashed", label=f"Polynomial ( R² = {r2_poly:.2f})")
 
-        #plot ema polynomial
-        #plt.scatter(X, y_ema, label="EMA (Actual)", marker="x", color="red")
-        #plt.plot(X, y_ema_pred, linestyle="--", color="red", label=f"EMA ( R² = {r2_ema:.2f})")
-
-        #plot rsi polynomial
-        #plt.scatter(X, y_rsi, label="RSI (Actual)", marker="^", color="orange")
-        #plt.plot(X, y_rsi_pred, linestyle="--", color="orange", label=f"RSI ( R² = {r2_rsi:.2f})")
-
+        # Add a horizontal line at set y_value
+        current = y[-1]
+        
+        plt.axhline(y=current, color="gray", linestyle="--", label=f"current: {current}")
+        plt.axhline(y=4, color="red", linestyle="--")
+        plt.axhline(y=-4, color="green", linestyle="--")
+        plt.axhline(y=0, color="gray", linestyle="-", linewidth = 3)
+        
         
         # Labels and legend
         plt.xlabel("Time")
         plt.ylabel("Total Score")
         plt.legend()
-        plt.title(f"T_score Regression ({datetime.now(midwest).strftime('%D:%H:%M')})")
+        plt.title(f"T_score Regression ({interval})  || {datetime.now().strftime('%D:%H:%M')})")
 
         # Show plot in Streamlit
         st.pyplot(plt)
@@ -872,15 +886,9 @@ def main():
     update_scoreT()
 
     # Display latest score
-    #st.write(f"### Total Score: {score: .2f} || Interval: {interval} || Time: {datetime.now(midwest).strftime('%H:%M:%S')}")
+    st.write(f"### Total Score: {score: .2f} || Interval: {interval} || Time: {datetime.now(midwest).strftime('%H:%M:%S')}")
 
-    # Refresh app every minute
-    time.sleep(REFRESH_INTERVAL)
-    st.rerun()
-
-      
-    
-    
+    st.rerun()  # Refresh Streamlit app
 
 
 if __name__ == "__main__":
