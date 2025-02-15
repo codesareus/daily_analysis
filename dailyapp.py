@@ -258,32 +258,7 @@ def main():
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
-    # Add a button group for interval selection
-    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
-    with col1:
-        if st.button("1min"):
-            interval = "1m"
-    with col2:
-        if st.button("5min", key="5m"):
-            interval = "5m"
-    with col3:
-        if st.button("15min", key="15m"):
-            interval = "15m"
-
-    with col4:
-        if st.button("30min", key="30m"):
-            interval = "30m"
-
-    with col5:
-        if st.button("1hr", key="1h"):
-            interval = "1h"        
-    with col6:
-        if st.button("3mo", key="3mo"):
-            interval = "3mo"
-    with col7:
-        if st.button("6mo", key="6mo"):
-            interval = "6mo"
-
+    
     # Default interval
     #if 'interval' not in locals():
     #    interval = "5m"
@@ -293,6 +268,10 @@ def main():
         st.session_state.index = 0
     if 'rerun_count' not in st.session_state:
         st.session_state.rerun_count = 0
+        
+    # Initialize rerun state
+    if "stop_sleep" not in st.session_state:
+        st.session_state.stop_sleep = 0
 
     # List of intervals
     intervals = ['1m', '5m', '15m', '30m', '1h', '3mo', '6mo']
@@ -300,8 +279,39 @@ def main():
     # Get the current interval
     interval = intervals[st.session_state.index]
 
-    # Display the current interval
-    st.write(f"Current Interval: {interval} || rerun_count: {st.session_state.rerun_count}")
+    # Add a button group for interval selection
+    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
+    with col1:
+        if st.button("1min"):
+            interval = "1m"
+            st.session_state.stop_sleep == 1
+    with col2:
+        if st.button("5min", key="5m"):
+            interval = "5m"
+            st.session_state.stop_sleep == 1
+    with col3:
+        if st.button("15min", key="15m"):
+            interval = "15m"
+            st.session_state.stop_sleep == 1
+
+    with col4:
+        if st.button("30min", key="30m"):
+            interval = "30m"
+            st.session_state.stop_sleep == 1
+
+    with col5:
+        if st.button("1hr", key="1h"):
+            interval = "1h"
+            st.session_state.stop_sleep == 1
+    with col6:
+        if st.button("3mo", key="3mo"):
+            interval = "3mo"
+            st.session_state.stop_sleep == 1
+    with col7:
+        if st.button("6mo", key="6mo"):
+            interval = "6mo"
+            st.session_state.stop_sleep == 1
+    
 ############################
 
     # Fetch data for the user-specified stock and interval
@@ -766,12 +776,43 @@ def main():
     st.write(f"### e_trend: {e_trend}  || tFrame: {interval}")
     st.dataframe(new_data, hide_index=True)
 
-    # delete data button
-    if st.button("Delete Bar"):
-        new_data = pd.DataFrame([{}])
-        # Append to CSV file
-        new_data.to_csv(scoreT_file, mode="w", header=False, index=False)
 
+################### all buttons ###########################################################
+        
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        # delete data button
+        if st.button("Delete Bars_Refresh"):
+            new_data = pd.DataFrame([{}])
+            # Append to CSV file
+            new_data.to_csv(scoreT_file, mode="w", header=False, index=False)
+            st.session_state.rerun_count = 0
+            st.session_state.index = 0
+            st.session_state.stop_sleep = 0
+            st. rerun()
+            
+    with col2:   
+        # Display the current interval
+        st.write(f"Interval: {interval} || rerun_count: {st.session_state.rerun_count}")
+
+    with col3:
+        # toggle button for rerun
+        # Function to toggle state
+        if st.button("Stop Sleep"):
+            st.session_state.stop_sleep = 1
+            st.rerun()
+                     
+    with col4:
+        st.write("Sleep ON" if st.session_state.stop_sleep == 0 else "Sleep OFF")
+        # Display the current state
+       # state_text = "Rerun ON" if rerun_state else "Rerun OFF"
+       # color = "green" if rerun_state else "red"
+       # st.markdown(f"<p style='color:{color}; font-weight:bold;'>Current State: {state_text}</p>", unsafe_allow_html=True)
+
+    #show which timeframes are in bar chart:
+    timeframes = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
+    message_here = timeframes[:st.session_state.rerun_count]
+    st.write(f"Bars now: {message_here}")
 
     ### do bar graph using scoreT_file
     # Load data from the CSV file
@@ -983,7 +1024,7 @@ def main():
 
     # Sleep for 8 seconds (simulating some processing)
     # Check if the rerun count is less than 7
-    if st.session_state.rerun_count < 7:
+    if st.session_state.stop_sleep == 0: 
         # Sleep for 8 seconds (simulating some processing)
         sleep(8)
         
@@ -994,17 +1035,21 @@ def main():
             st.session_state.index = 0
         
         # Increment the rerun count
-        st.session_state.rerun_count += 1
-        
+        if st.session_state.rerun_count < 7:
+            st.session_state.rerun_count += 1
+        else:
+            st.session_state.rerun_count = 0
+            st.session_state.index = 0
+            # delete bar chart data 
+            new_data = pd.DataFrame([{}])
+            # Append to CSV file
+            new_data.to_csv(scoreT_file, mode="w", header=False, index=False)
+            
+        st.write("barChart data deleted" if st.session_state.index == 7 else " ")   
         # Rerun the app to update the interval
         st.rerun()
-    else:
-        # delete bar chart data 
-        new_data = pd.DataFrame([{}])
-        # Append to CSV file
-        new_data.to_csv(scoreT_file, mode="w", header=False, index=False)
-        st.write("barChart data deleted")
-        st.write("Process stopped after 7 reruns.")
+    elif st.session_state.stop_sleep == 1: 
+        st.write("Sleep stopped.")
 
 
 if __name__ == "__main__":
