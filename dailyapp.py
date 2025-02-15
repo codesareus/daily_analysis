@@ -13,6 +13,7 @@ import pytz
 from gtts import gTTS
 import os
 import time
+from time import sleep
 from matplotlib.lines import Line2D
 
 #midwest = pytz.timezone("America/New")
@@ -284,8 +285,24 @@ def main():
             interval = "6mo"
 
     # Default interval
-    if 'interval' not in locals():
-        interval = "5m" 
+    #if 'interval' not in locals():
+    #    interval = "5m"
+
+    # Initialize session state for index
+    if 'index' not in st.session_state:
+        st.session_state.index = 0
+    if 'rerun_count' not in st.session_state:
+        st.session_state.rerun_count = 0
+
+    # List of intervals
+    intervals = ['1m', '5m', '15m', '30m', '1h', '3mo', '6mo']
+
+    # Get the current interval
+    interval = intervals[st.session_state.index]
+
+    # Display the current interval
+    st.write(f"Current Interval: {interval} || rerun_count: {st.session_state.rerun_count}")
+############################
 
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
@@ -963,6 +980,31 @@ def main():
     st.pyplot(fig)  ## finally plot all 5 figures
 
 ########################################
+
+    # Sleep for 8 seconds (simulating some processing)
+    # Check if the rerun count is less than 7
+    if st.session_state.rerun_count < 7:
+        # Sleep for 8 seconds (simulating some processing)
+        sleep(8)
+        
+        # Update the index for the next interval
+        if st.session_state.index < len(intervals) - 1:
+            st.session_state.index += 1
+        else:
+            st.session_state.index = 0
+        
+        # Increment the rerun count
+        st.session_state.rerun_count += 1
+        
+        # Rerun the app to update the interval
+        st.rerun()
+    else:
+        # delete bar chart data 
+        new_data = pd.DataFrame([{}])
+        # Append to CSV file
+        new_data.to_csv(scoreT_file, mode="w", header=False, index=False)
+        st.write("barChart data deleted")
+        st.write("Process stopped after 7 reruns.")
 
 
 if __name__ == "__main__":
