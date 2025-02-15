@@ -285,32 +285,39 @@ def main():
         if st.button("1min"):
             interval = "1m"
             st.session_state.stop_sleep == 1
+            st.rerun()
     with col2:
         if st.button("5min", key="5m"):
             interval = "5m"
             st.session_state.stop_sleep == 1
+            st.rerun()
     with col3:
         if st.button("15min", key="15m"):
             interval = "15m"
             st.session_state.stop_sleep == 1
+            st.rerun()
 
     with col4:
         if st.button("30min", key="30m"):
             interval = "30m"
             st.session_state.stop_sleep == 1
+            st.rerun()
 
     with col5:
         if st.button("1hr", key="1h"):
             interval = "1h"
             st.session_state.stop_sleep == 1
+            st.rerun()
     with col6:
         if st.button("3mo", key="3mo"):
             interval = "3mo"
             st.session_state.stop_sleep == 1
+            st.rerun()
     with col7:
         if st.button("6mo", key="6mo"):
             interval = "6mo"
             st.session_state.stop_sleep == 1
+            st.rerun()
     
 ############################
 
