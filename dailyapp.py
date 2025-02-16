@@ -13,6 +13,7 @@ import pytz
 from gtts import gTTS
 import os
 import time
+from datetime import datetime, time
 from time import sleep
 from matplotlib.lines import Line2D
 
@@ -861,11 +862,26 @@ def main():
     ################### all control buttons ###########################################################
     ## tempory use
     current_price = round(data_recent['Close'].iloc[-1], 2)
-    now = datetime.now(midwest).strftime('%m-%d %H:%M:%S')  # Correct format
-
-    #get the time   
     
-    st.write(f"time now: {now}")
+    now = datetime.now(midwest).strftime('%I:%M:%S %p')  # Correct format
+
+    #get the time
+    
+    # U.S. stock market open and close times in Eastern Time
+    market_open_et = datetime.now(pytz.timezone('America/New_York')).replace(hour=9, minute=30, second=0, microsecond=0)
+    market_close_et = datetime.now(pytz.timezone('America/New_York')).replace(hour=16, minute=0, second=0, microsecond=0)
+
+    # convert and format with AM/PM
+    market_open = market_open_et.astimezone(midwest).strftime('%I:%M:%S %p')
+    market_close = market_close_et.astimezone(midwest).strftime('%I:%M:%S %p')
+
+    # Check if the current time is within market hours
+    if market_open <= now <= market_close:
+        message = " open (9:30am)."
+    else:
+        message = " closed (4:00pm)."
+    st.write(f"...time now:  {now}.....  {message}")
+    
     ############ investigate score_trends
     
     
@@ -898,7 +914,11 @@ def main():
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
     st.write(f"sb_status: {st.session_state.sb_status}...sleep: {sleep_status}..||...temp_pr: {st.session_state.temp_price}...current_pr = {current_price:.2f}")
 
+
+###########################
     updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total", "prior_status"])
+    b_condition = st.session_state.sb_status == 0 and ema_trend_1m == 3 and (sum_score_trend_rest >= 5) and (market_open <= now) and (market_open <= now and now < market_close)
+    s_condition = st.session_state.sb_status ==  1 and ((((current_price - st.session_state.temp_price) >= 0.5) and ema_trend_1m < 3) or (((current_price - st.session_state.temp_price) <= -0.25) and ema_trend_1m <= 0) or now >= market_close)
     
     ########## B and S actions
     def save_pe(SB= "", price=None):      
@@ -939,14 +959,13 @@ def main():
         
     def execute_sb(price = None):
         priceHere = price
-        
-        if st.session_state.sb_status == 0 and ema_trend_1m == 3 and sum_score_trend_rest >= 5:
+        if b_condition:
             save_pe("B", priceHere)
             
-        elif st.session_state.sb_status ==  1 and ((((current_price - st.session_state.temp_price) >= 0.5) and ema_trend_1m < 3) or (((current_price - st.session_state.temp_price) <= -0.25) and ema_trend_1m <= 0)):
+        elif s_condition:
             #st.session_state.sb_status ==  1 and score_trend_1m == - 1 and sum_score_trend_rest <= - 5:
             save_pe("S", priceHere)
-    
+    st.write(f"yesno: {now< market_close}")
             
     #####################################
     #st.write(f"### Controls:  ||______ current_price = {current_price:.2f}______")
@@ -967,7 +986,7 @@ def main():
 
     with col3:
         if st.button("B"):
-            if st.session_state.sb_status == 0:
+            if st.session_state.sb_status == 0 and b_condition:
                 save_pe("B", current_price)
                 st.session_state.temp_price = current_price 
                 st.session_state.sb_status = 1
@@ -979,7 +998,7 @@ def main():
 
     with col4:
         if st.button("S"):
-            if st.session_state.sb_status == 1:
+            if st.session_state.sb_status == 1 and s_condition:
                 save_pe("S", current_price)
                 st.session_state.temp_price = 0
                 st.session_state.sb_status = 0
