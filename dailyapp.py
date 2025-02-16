@@ -973,7 +973,27 @@ def main():
     #display pe_table
     # Read the updated CSV file ---- example
     updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total","prior_status"])
-    st.write("pe_table:")
+
+    col1, col2 = st.columns(2)
+    with col1: 
+        st.write("pe_table:")
+    with col2:
+        if st.button("Clear data"):
+            st.session_state.sb_status = 0
+            new_data = pd.DataFrame([{
+                        "TimeStamp": f"{now}",
+                        "B_pr": 0,
+                        "S_pr": 0,
+                        "pl": 0,
+                        "total_pl": 0, 
+                        "prior_status": 0
+                    }])
+            # clear CSV file
+            new_data.to_csv(pe_file, mode="w", header=False, index=False)
+            st.write("pl_data")
+            st.rerun()
+            
+        
     st.dataframe(updated_data.tail(5), hide_index=False) 
     
     st.write("---------------------")
@@ -1200,18 +1220,6 @@ def main():
             st.session_state.index = 0
             st.rerun()
             
-            # no need to delete bar chart data, it is replacing now
-            #new_data = pd.DataFrame([{}])
-            # Append to CSV file
-            #new_data.to_csv(scoreT_file, mode="w", header=False, index=False)
-            
-    
-    st.write(f"barChart data deleted {st.session_state.sb_status}||{interval}" )   
-    
-    st.write(f"barChart data deleted {st.session_state.sb_status}{interval}" )   
-    #elif st.session_state.stop_sleep == 1: 
-        #st.write("Sleep stopped.")
-
 
 if __name__ == "__main__":
     main()
