@@ -925,21 +925,17 @@ def main():
             save_pe("S", priceHere)
             st.session_state.temp_price = 0
             st.session_state.sb_status = 0
-                    
-    if interval == "1m":
-        execute_sb(current_price)
-    
-    st.write(f"sb_status: {st.session_state.sb_status} || tFrame: {interval} || total_pl: { updated_data['total'].iloc[-1] } ||current_price = {current_price:.2f}")
             
     #####################################
     #st.write(f"### Controls:  ||______ current_price = {current_price:.2f}______")
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         # delete data button
-        if st.button("Refresh_1min"):
+        if st.button("Refresh_Reset"):
             st.session_state.rerun_count = 0
             st.session_state.index = 0
             st.session_state.stop_sleep = 0
+            st.session_state.sb_status = 0
             st. rerun()
             
     with col2:
@@ -949,20 +945,30 @@ def main():
 
     with col3:
         if st.button("B"):
-            st.session_state.temp_price = current_price - 1## hold current price for comparison with S
-            save_pe("B", interval, current_price)
-            st.session_state.sb_status = 1
-            st.write(f"temp_price: {st.session_state.temp_price: .2f} || profit: ||sb_status: {st.session_state.sb_status}")
-            st.rerun()
+            if st.session_state.sb_status == 0:
+                save_pe("B", current_price)
+                st.session_state.temp_price = current_price 
+                st.session_state.sb_status = 1
+                st.write(f"sb_B: Yes ||sb_status: {st.session_state.sb_status}")
+                st.rerun()
+            else:
+                st.write(f"sb_B: NO, Can not ||sb_status: {st.session_state.sb_status}")
+                st.rerun()
 
     with col4:
         if st.button("S"):
-            save_pe("S", interval, current_price)
-            st.session_state.temp_price = 0
-            st.session_state.sb_status = 1
-            st.write(f"temp_price: {st.session_state.temp_price: .2f} || profit: || sb_status: {st.session_state.sb_status}")
-            st.rerun()
-            
+            if st.session_state.sb_status == 1:
+                save_pe("S", current_price)
+                st.session_state.temp_price = 0
+                st.session_state.sb_status = 0
+                st.write(f"sb_S: Yes ||sb_status: {st.session_state.sb_status}")
+                st.session_state.stop_sleep = 1
+                st.rerun()
+            else:
+                st.write(f"sb_S: NO, Can not ||sb_status: {st.session_state.sb_status}")
+                st.session_state.stop_sleep = 1
+                st.rerun()
+
     #show which timeframes are in bar chart:
     timeframes = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
     message_here = timeframes[:st.session_state.rerun_count]
@@ -979,6 +985,7 @@ def main():
         st.write("pe_table:")
     with col2:
         if st.button("Clear data"):
+            st.session_state.stop_sleep = 1
             st.session_state.sb_status = 0
             new_data = pd.DataFrame([{
                         "TimeStamp": f"{now}",
@@ -991,6 +998,7 @@ def main():
             # clear CSV file
             new_data.to_csv(pe_file, mode="w", header=False, index=False)
             st.write("pl_data")
+            
             st.rerun()
             
         
@@ -1128,9 +1136,6 @@ def main():
     
    ## read bar data scoreT_file
     df = pd.read_csv(scoreT_file, names=["tFrame", "ema_trend", "ema", "rsi", "macd", "total", "score_trend_1", "score_trend"])
-
-    print("original")
-    print(df)
     
     # Define custom order
     timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
@@ -1140,9 +1145,6 @@ def main():
 
     # Sort DataFrame based on the categorical order
     df = df.sort_values("tFrame")
-
-    print("after")
-    print(df)
     
     ## plotting barchart
     ax0.set_ylim(-8, 8)  # Adjust Y-axis limits if needed
@@ -1201,6 +1203,12 @@ def main():
 
     # Sleep for 8 seconds (simulating some processing)
     # Check if the rerun count is less than 7
+
+    ### run automatic SB
+    if interval == "1m":
+        execute_sb(current_price)
+    st.write(f"sb_status: {st.session_state.sb_status} || tFrame: {interval} || total_pl: { updated_data['total'].iloc[-1] } ||current_price = {current_price:.2f}")
+
     if st.session_state.stop_sleep == 0: 
     # Sleep for 8 seconds (simulating some processing)
         sleep(8)
