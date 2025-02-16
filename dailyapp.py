@@ -279,7 +279,7 @@ def main():
 
     # Initialize sb_status state
     if "sb_status" not in st.session_state:
-        st.session_state.sb_status = 10
+        st.session_state.sb_status = 0
 
     # Define file names
     
@@ -839,10 +839,6 @@ def main():
     # Append to CSV file
     
     new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
-    
-    # Display latest score
-    trend_message = 'Up' if ema_trend > 0 else 'Down'
-    st.write(f"### ema_trend: {trend_message} ({interval})")
 
     # Read the updated CSV file
     df = pd.read_csv(file_path, header=None)
@@ -872,12 +868,35 @@ def main():
     st.write(f"time now: {now}")
     ############ investigate score_trends
     
-    # Extract "score_trend" for "1m"
+    
+    # Extract "score_trend" for "1m"  ## messages
     ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
-    st.write(f"ema_trend_1min: || {ema_trend_1m}")
+    
+    if ema_trend_1m ==3:
+        message = "OK"
+    else:
+        message = "Hold it"
+    st.write(f"ema_trend_1min: ||... {ema_trend_1m} ___ {message}")
 
     # Sum "score_trend_1" for all the rest
     sum_score_trend_rest = df[df["tFrame"] != "1m"]["score_trend"].sum()
+    
+    if sum_score_trend_rest >= 5:
+        message = "OK"
+    else:
+        message = "Hold it"
+    st.write(f"score_trend_others: ||... {sum_score_trend_rest} ___ {message}")
+
+    # Display latest score
+
+    if ema_trend > 0:
+        trend_message = 'Up' 
+    else:
+        trend_message = 'Down'
+    st.write(f"ema_trend___{trend_message} ({interval})")
+     #display message about app status
+    sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
+    st.write(f"sb_status: {st.session_state.sb_status}...sleep: {sleep_status}..||...temp_pr: {st.session_state.temp_price}...current_pr = {current_price:.2f}")
 
     updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total", "prior_status"])
     
@@ -886,45 +905,48 @@ def main():
         total_pl = updated_data["total"].iloc[-1]
         
         if SB == "B":
-            B_pr = price - 1
+            B_pr = price
+            t_pl = total_pl
             new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
                     "B_pr": round(B_pr, 2),
                     "S_pr": 0,
                     "pl": 0,
-                    "total_pl": total_pl,
+                    "total_pl": t_pl,
                     "prior_status": st.session_state.sb_status
                 }])
+            st.session_state.temp_price = B_pr
+            st.session_state.sb_status = 1
 
         else:
             S_pr = price
             pl = S_pr - st.session_state.temp_price
-            total_pl = total_pl + pl
+            t_pl = total_pl + pl
             new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
                     "B_pr": 0,
                     "S_pr": round(S_pr, 2),
                     "pl": round(pl, 2),
-                    "total_pl": total_pl, ## for now
+                    "total_pl": t_pl, ## for now
                     "prior_status": st.session_state.sb_status
                 }])
+            st.session_state.temp_price = 0
+            st.session_state.sb_status = 0
             
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
+        st.rerun()
         
     def execute_sb(price = None):
         priceHere = price
         
         if st.session_state.sb_status == 0 and ema_trend_1m == 3 and sum_score_trend_rest >= 5:
-            save_pe("B", priceHere)  
-            st.session_state.temp_price = priceHere - 1
-            st.session_state.sb_status = 1
+            save_pe("B", priceHere)
             
         elif st.session_state.sb_status ==  1 and ((((current_price - st.session_state.temp_price) >= 0.5) and ema_trend_1m < 3) or (((current_price - st.session_state.temp_price) <= -0.25) and ema_trend_1m <= 0)):
             #st.session_state.sb_status ==  1 and score_trend_1m == - 1 and sum_score_trend_rest <= - 5:
             save_pe("S", priceHere)
-            st.session_state.temp_price = 0
-            st.session_state.sb_status = 0
+    
             
     #####################################
     #st.write(f"### Controls:  ||______ current_price = {current_price:.2f}______")
@@ -973,9 +995,6 @@ def main():
     timeframes = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
     message_here = timeframes[:st.session_state.rerun_count]
 
-    #display message about app status
-    sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
-    st.write(f"Bars now: {message_here} ______ Sleep_count: {st.session_state.rerun_count} ______ sleep_status: {sleep_status} ")
     #display pe_table
     # Read the updated CSV file ---- example
     updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total","prior_status"])
@@ -997,7 +1016,7 @@ def main():
                     }])
             # clear CSV file
             new_data.to_csv(pe_file, mode="w", header=False, index=False)
-            st.write("pl_data")
+            st.write("pl_data cleared")
             
             st.rerun()
             
@@ -1205,10 +1224,9 @@ def main():
     # Check if the rerun count is less than 7
 
     ### run automatic SB
-    if interval == "1m":
+    if interval == "1m" :
         execute_sb(current_price)
-    st.write(f"sb_status: {st.session_state.sb_status} || tFrame: {interval} || total_pl: { updated_data['total'].iloc[-1] } ||current_price = {current_price:.2f}")
-
+   
     if st.session_state.stop_sleep == 0: 
     # Sleep for 8 seconds (simulating some processing)
         sleep(8)
