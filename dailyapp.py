@@ -273,6 +273,19 @@ def main():
     if "stop_sleep" not in st.session_state:
         st.session_state.stop_sleep = 0
 
+    # Initialize temp_price state
+    if "temp_price" not in st.session_state:
+        st.session_state.temp_price = 0
+
+    # Initialize sb_status state
+    if "sb_status" not in st.session_state:
+        st.session_state.sb_status = 0
+
+    # Define file names
+    
+    scoreT_file = f"scoreT.csv"
+    pe_file = f"pe.csv"
+
     # List of intervals
     intervals = ['1m', '5m', '15m', '30m', '1h', '3mo', '6mo']
 
@@ -450,10 +463,10 @@ def main():
         deviation_color = "gray"  # Default color for other cases
 
     # Display the deviation message with the appropriate color
-    st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message}</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message} ({interval})</h3>", unsafe_allow_html=True)
 
     # Add a message above the plot showing the trend
-    st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message}</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})</h3>", unsafe_allow_html=True)
         
     # Calculate RSI before plotting
     data_recent = calculate_rsi(data_recent)
@@ -555,7 +568,7 @@ def main():
 
     # Only plot MACD if the selected timeframe is valid
     if interval in valid_macd_timeframes:
-        fig, (ax, ax2, ax3, ax4, ax5) = plt.subplots(5, 1, figsize=(20, 40), gridspec_kw={'height_ratios': [4, 1, 1, 1.5, 1.5]})
+        fig, (ax0, ax, ax2, ax3, ax4) = plt.subplots(5, 1, figsize=(20, 40), gridspec_kw={'height_ratios': [1.5, 4, 1, 1, 1.5]})
     else:
         fig, (ax, ax2) = plt.subplots(2, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [3, 1]})
 
@@ -731,92 +744,247 @@ def main():
     ax4.set_title(f"Combined Linear and Polynomial Regression for score ({interval})")
     ax4.legend()
 
-###################################### bar chart
-############## get score function
-
     st.write("---------------------")
+
+    ### get scores functions
     def get_scores():
         ema_score = data_recent["ema_score"].iloc[-1]
-        e_trend = data_recent["ema_trend"].iloc[-1]
+        ema_trend = data_recent["ema_trend"].iloc[-1]
         rsi_score = data_recent["rsi_score"].iloc[-1]
         macd_score = data_recent["macd_score"].iloc[-1]
         score = data_recent["score"].iloc[-1]
         
-        return ema_score, e_trend, rsi_score, macd_score, score, 
+        return ema_score, ema_trend, rsi_score, macd_score, score
 
-    ############################## display ema, rsi, macd trends columns
+    def get_scores_more():
+        price = data_recent['Close'].iloc[-1]
+        
+        ema9= data_recent['EMA_9'].iloc[-1]
+        ema20= data_recent['EMA_20'].iloc[-1]
+        ema50= data_recent['EMA_50'].iloc[-1]
+        ema100= data_recent['EMA_100'].iloc[-1]
+        ema200= data_recent['EMA_200'].iloc[-1]
+        rsi = data_recent['RSI'].iloc[-1]
+        rsi2 = data_recent['RSI2'].iloc[-1]
+        macd = data_recent['MACD'].iloc[-1]
+        signal = data_recent['Signal_Line'].iloc[-1]
+
+        return price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal
+
+    #get all scores:
+    ema_score, ema_trend, rsi_score, macd_score, score = get_scores()
+    price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal = get_scores_more()
+
+    ##################### e_trend scoreT.csv for bar charts
+
+    # Load existing data if there is, examine if {interval} is already there.
+    #if it is, then remove it and replace with new data
     
-    ema_score, e_trend, rsi_score, macd_score, score = get_scores()
+    # File path
+    file_path = 'scoreT.csv'
 
-    # Define file name based on interval
+    # Check if the file exists and is not empty
+    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+        # Load the CSV file into a DataFrame
+        df = pd.read_csv(file_path, header=None)
+
+        # Check if any row contains {interval} in the first column
+        if interval in df[0].values:
+            # Remove the row where the first column is {interval}
+            df = df[df[0] != interval]
+
+            # Save the updated DataFrame back to the CSV file
+            df.to_csv(file_path, index=False, header=False)
+        else:
+            print("No row with '{interval' found. File remains unchanged.")
+    else:
+        # If the file doesn't exist or is empty, create a new DataFrame
+        print("File does not exist or is empty. Creating a new file.")
+
+        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'total', 'score_trend'])
+
+        # Save the empty DataFrame to the CSV file
+        df.to_csv(file_path, index=False, header=False)
+
+    ################### evaluate score trend and save it to scoreT.csv
+    score_prior = data_recent['score'].iloc[-2]
+    score_prior2 = data_recent['score'].iloc[-3]
+
+    if (score_prior > score_prior2) and score_prior >= 1 and data_recent['ema_trend'].iloc[-2] >= 1:
+        score_trend_1 = 1
+    elif (score_prior < score_prior2) and score_prior <= -1 and data_recent['ema_trend'].iloc[-2] <= -1:
+        score_trend_1 = -1
+    else:
+        score_trend_1 = 0
     
-    scoreT_file = f"scoreT.csv"
-       
- ###############################   
-
-
-    ### interval is from ["1m","5m","15m","30m","1h", "1mo", "3mo", "6mo"]
-
-    ema_score, e_trend, rsi_score, macd_score, score = get_scores()
-    
+    if (score > score_prior) and score >= 1 and data_recent['ema_trend'].iloc[-1] >= 1:
+        score_trend = 1
+    elif (score < score_prior) and score <= -1 and data_recent['ema_trend'].iloc[-1] <= -1:
+        score_trend = -1
+    else:
+        score_trend = 0
+        
     new_data = pd.DataFrame([{
         "tFrame": f"{interval}",
-        "e_trend": round(e_trend, 2),
+        "ema_trend": round(ema_trend, 2),
         "ema": round(ema_score, 2),
         "rsi": round(rsi_score, 2),
         "macd": round(macd_score, 2),
         "total": round(score, 2),
+        "score_trend_1": score_trend,
+        "score_trend": score_trend,
     }])
-    
+
+    print(data_recent.columns)
     # Append to CSV file
+    
     new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
     
     # Display latest score
-    st.write(f"### e_trend: {e_trend}  || tFrame: {interval}")
-    st.dataframe(new_data, hide_index=True)
+    trend_message = 'Up' if ema_trend > 0 else 'Down'
+    st.write(f"### ema_trend: {trend_message} ({interval})")
 
+    # Read the updated CSV file
+    df = pd.read_csv(file_path, header=None)
 
-################### all buttons ###########################################################
+    # Define the custom order for the first column
+    custom_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
+
+    # Convert the first column to a categorical type with the custom order
+    df[0] = pd.Categorical(df[0], categories=custom_order, ordered=True)
+
+    # Sort the DataFrame by the first column using the custom order
+    df = df.sort_values(by=0)
+
+    #add column names
+    df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'score_trend_1', 'score_trend']
+
+    #display table
+    st.dataframe(df, hide_index=True)
+
+    ################### all control buttons ###########################################################
+    ## tempory use
+    current_price = round(data_recent['Close'].iloc[-1], 2)
+    now = datetime.now(midwest).strftime('%m-%d %H:%M:%S')  # Correct format
+
+    #get the time   
+    
+    st.write(f"time now: {now}")
+    ############ investigate score_trends
+    
+    # Extract "score_trend" for "1m"
+    ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
+    st.write(f"ema_trend_1min: || {ema_trend_1m}")
+
+    # Sum "score_trend_1" for all the rest
+    sum_score_trend_rest = df[df["tFrame"] != "1m"]["score_trend"].sum()
+
+    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total", "prior_status"])
+    
+    ########## B and S actions
+    def save_pe(SB= "", price=None):      
+        total_pl = updated_data["total"].iloc[-1]
         
+        if SB == "B":
+            B_pr = price - 1
+            new_data = pd.DataFrame([{
+                    "TimeStamp": f"{now}",
+                    "B_pr": round(B_pr, 2),
+                    "S_pr": 0,
+                    "pl": 0,
+                    "total_pl": total_pl,
+                    "prior_status": st.session_state.sb_status
+                }])
+
+        else:
+            S_pr = price
+            pl = S_pr - st.session_state.temp_price
+            total_pl = total_pl + pl
+            new_data = pd.DataFrame([{
+                    "TimeStamp": f"{now}",
+                    "B_pr": 0,
+                    "S_pr": round(S_pr, 2),
+                    "pl": round(pl, 2),
+                    "total_pl": total_pl, ## for now
+                    "prior_status": st.session_state.sb_status
+                }])
+            
+        # Append to CSV file
+        new_data.to_csv(pe_file, mode="a", header=False, index=False)
+        
+    def execute_sb(price = None):
+        priceHere = price
+        
+        if st.session_state.sb_status == 0 and ema_trend_1m == 3 and sum_score_trend_rest >= 5:
+            save_pe("B", priceHere)  
+            st.session_state.temp_price = priceHere - 1
+            st.session_state.sb_status = 1
+            
+        elif st.session_state.sb_status ==  1 and ((((current_price - st.session_state.temp_price) >= 0.5) and ema_trend_1m < 3) or (((current_price - st.session_state.temp_price) <= -0.25) and ema_trend_1m <= 0)):
+            #st.session_state.sb_status ==  1 and score_trend_1m == - 1 and sum_score_trend_rest <= - 5:
+            save_pe("S", priceHere)
+            st.session_state.temp_price = 0
+            st.session_state.sb_status = 0
+                    
+    if interval == "1m":
+        execute_sb(current_price)
+    
+    st.write(f"sb_status: {st.session_state.sb_status} || tFrame: {interval} || total_pl: { updated_data['total'].iloc[-1] } ||current_price = {current_price:.2f}")
+            
+    #####################################
+    #st.write(f"### Controls:  ||______ current_price = {current_price:.2f}______")
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         # delete data button
-        if st.button("Delete Bars_Refresh"):
-            new_data = pd.DataFrame([{}])
-            # Append to CSV file
-            new_data.to_csv(scoreT_file, mode="w", header=False, index=False)
+        if st.button("Refresh_1min"):
             st.session_state.rerun_count = 0
             st.session_state.index = 0
             st.session_state.stop_sleep = 0
             st. rerun()
             
-    with col2:   
-        # Display the current interval
-        st.write(f"Interval: {interval} || rerun_count: {st.session_state.rerun_count}")
-
-    with col3:
-        # toggle button for rerun
-        # Function to toggle state
+    with col2:
         if st.button("Stop Sleep"):
             st.session_state.stop_sleep = 1
             st.rerun()
-                     
-    with col4:
-        st.write("Sleep ON" if st.session_state.stop_sleep == 0 else "Sleep OFF")
-        # Display the current state
-       # state_text = "Rerun ON" if rerun_state else "Rerun OFF"
-       # color = "green" if rerun_state else "red"
-       # st.markdown(f"<p style='color:{color}; font-weight:bold;'>Current State: {state_text}</p>", unsafe_allow_html=True)
 
+    with col3:
+        if st.button("B"):
+            st.session_state.temp_price = current_price - 1## hold current price for comparison with S
+            save_pe("B", interval, current_price)
+            st.session_state.sb_status = 1
+            st.write(f"temp_price: {st.session_state.temp_price: .2f} || profit: ||sb_status: {st.session_state.sb_status}")
+            st.rerun()
+
+    with col4:
+        if st.button("S"):
+            save_pe("S", interval, current_price)
+            st.session_state.temp_price = 0
+            st.session_state.sb_status = 1
+            st.write(f"temp_price: {st.session_state.temp_price: .2f} || profit: || sb_status: {st.session_state.sb_status}")
+            st.rerun()
+            
     #show which timeframes are in bar chart:
     timeframes = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
     message_here = timeframes[:st.session_state.rerun_count]
-    st.write(f"Bars now: {message_here}")
 
-    ### do bar graph using scoreT_file
+    #display message about app status
+    sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
+    st.write(f"Bars now: {message_here} ______ Sleep_count: {st.session_state.rerun_count} ______ sleep_status: {sleep_status} ")
+    #display pe_table
+    # Read the updated CSV file ---- example
+    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total","prior_status"])
+    st.write("pe_table:")
+    st.dataframe(updated_data.tail(5), hide_index=False) 
+    
+    st.write("---------------------")
+
+    
+
+################### do bar graph using scoreT_file
+    
     # Load data from the CSV file
     try:
-        df = pd.read_csv(scoreT_file, names=["tFrame", "e_trend", "ema", "rsi", "macd", "total"])
+        df = pd.read_csv(scoreT_file, names=["tFrame", "ema_trend", "ema", "rsi", "macd", "total", "score_trend"])
     except Exception as e:
         st.error(f"Error loading file: {e}")
         return
@@ -845,27 +1013,9 @@ def main():
         "Signal_Line": data_recent['Signal_Line'].iloc[-1],
     }
 
-############## get score function
-    def get_scores_more():
-        price = data_recent['Close'].iloc[-1]
-        
-        ema9= data_recent['EMA_9'].iloc[-1]
-        ema20= data_recent['EMA_20'].iloc[-1]
-        ema50= data_recent['EMA_50'].iloc[-1]
-        ema100= data_recent['EMA_100'].iloc[-1]
-        ema200= data_recent['EMA_200'].iloc[-1]
-        rsi = data_recent['RSI'].iloc[-1]
-        rsi2 = data_recent['RSI2'].iloc[-1]
-        macd = data_recent['MACD'].iloc[-1]
-        signal = data_recent['Signal_Line'].iloc[-1]
-
-        return price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal
-
 ############################## display ema, rsi, macd trends columns
-    st.write("---------------------")
-    st.write(f"### Trend_3:  || tFrame: {interval}")
-    price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal = get_scores_more()
-    ema_score, e_trend, rsi_score, macd_score, score = get_scores()
+
+    st.write(f"### Indicator trend ({interval})")
     
     col_1, col_2, col_3= st.columns(3)
     with col_1:
@@ -954,9 +1104,14 @@ def main():
         st.dataframe(macd_df, hide_index=True)
 
 
-######################
+###################### bar chart?
     
-    ## sort df
+   ## read bar data scoreT_file
+    df = pd.read_csv(scoreT_file, names=["tFrame", "ema_trend", "ema", "rsi", "macd", "total", "score_trend_1", "score_trend"])
+
+    print("original")
+    print(df)
+    
     # Define custom order
     timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
 
@@ -966,8 +1121,11 @@ def main():
     # Sort DataFrame based on the categorical order
     df = df.sort_values("tFrame")
 
-    ## plotting
-    ax5.set_ylim(-8, 8)  # Adjust Y-axis limits if needed
+    print("after")
+    print(df)
+    
+    ## plotting barchart
+    ax0.set_ylim(-8, 8)  # Adjust Y-axis limits if needed
 
     # Get unique intervals and prepare x-axis locations
     unique_intervals = df["tFrame"].unique()
@@ -975,7 +1133,7 @@ def main():
     width = 0.15  # Width of each bar
 
     # Prepare values for each metric
-    e_trend = [df[df["tFrame"] == interval]["e_trend"].mean() for interval in unique_intervals]
+    ema_trend = [df[df["tFrame"] == interval]["ema_trend"].mean() for interval in unique_intervals]
     ema_values = [df[df["tFrame"] == interval]["ema"].mean() for interval in unique_intervals]
     rsi_values = [df[df["tFrame"] == interval]["rsi"].mean() for interval in unique_intervals]
     macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
@@ -986,33 +1144,33 @@ def main():
     offsets = [-2 * width, -width, 0, width, 2 * width]
 
     # Plot bars with proper spacing
-    ax5.bar(x + offsets[0], e_trend, width, color="cyan", edgecolor="black", label="e_trend")
-    ax5.bar(x + offsets[1], ema_values, width, color="purple", edgecolor="black", label="EMA")
-    ax5.bar(x + offsets[2], rsi_values, width, color="navy", edgecolor="black", label="RSI")
-    ax5.bar(x + offsets[3], macd_values, width, color="orange", edgecolor="black", label="MACD")
-    ax5.bar(x + offsets[4], total_values, width, color="gray", edgecolor="black", label="total")
+    ax0.bar(x + offsets[0], ema_trend, width, color="cyan", edgecolor="black", label="ema_trend")
+    ax0.bar(x + offsets[1], ema_values, width, color="purple", edgecolor="black", label="EMA")
+    ax0.bar(x + offsets[2], rsi_values, width, color="navy", edgecolor="black", label="RSI")
+    ax0.bar(x + offsets[3], macd_values, width, color="orange", edgecolor="black", label="MACD")
+    ax0.bar(x + offsets[4], total_values, width, color="gray", edgecolor="black", label="total")
 
     # Add horizontal lines at y = 4 and y = -4
-    ax5.axhline(y=3, color="red", linestyle="--", linewidth=1, label="Threshold (4)")
-    ax5.axhline(y=-3, color="green", linestyle="--", linewidth=1, label="Threshold (-4)")
-    ax5.axhline(y=0, color="gray", linestyle="-", linewidth=3, label="Threshold (-4)")
+    ax0.axhline(y=3, color="red", linestyle="--", linewidth=1, label="Threshold (4)")
+    ax0.axhline(y=-3, color="green", linestyle="--", linewidth=1, label="Threshold (-4)")
+    ax0.axhline(y=0, color="gray", linestyle="-", linewidth=3, label="Threshold (-4)")
 
     # Add labels and title
 
     legend_handles = [
-        Line2D([0], [0], color='cyan', lw=2, label="e_trend"),
+        Line2D([0], [0], color='cyan', lw=2, label="ema_trend"),
         Line2D([0], [0], color='purple', lw=2, label="EMA"),
         Line2D([0], [0], color='navy', lw=2, label="RSI"),
         Line2D([0], [0], color='orange', lw=2, label="MACD"),
         Line2D([0], [0], color='gray', lw=2, label="total"),
     ]
     time = datetime.now(midwest).strftime('%D:%H:%M')
-    ax5.set_xlabel("Time Frame")
-    ax5.set_ylabel("Score")
-    ax5.set_title(f"Trend Scores by Interval({time})")
-    ax5.set_xticks(x)
-    ax5.set_xticklabels(unique_intervals, rotation=45)
-    ax5.legend(handles=legend_handles, loc="lower right")
+    ax0.set_xlabel("Time Frame")
+    ax0.set_ylabel("Score")
+    ax0.set_title(f"Trend Scores by Interval({time})")
+    ax0.set_xticks(x)
+    ax0.set_xticklabels(unique_intervals, rotation=45)
+    ax0.legend(handles=legend_handles, loc="lower right")
 
     #########################################
 
@@ -1024,7 +1182,7 @@ def main():
     # Sleep for 8 seconds (simulating some processing)
     # Check if the rerun count is less than 7
     if st.session_state.stop_sleep == 0: 
-        # Sleep for 8 seconds (simulating some processing)
+    # Sleep for 8 seconds (simulating some processing)
         sleep(8)
         
         # Update the index for the next interval
@@ -1036,19 +1194,23 @@ def main():
         # Increment the rerun count
         if st.session_state.rerun_count < 7:
             st.session_state.rerun_count += 1
+            st.rerun()
         else:
             st.session_state.rerun_count = 0
             st.session_state.index = 0
-            # delete bar chart data 
-            new_data = pd.DataFrame([{}])
-            # Append to CSV file
-            new_data.to_csv(scoreT_file, mode="w", header=False, index=False)
+            st.rerun()
             
-        st.write("barChart data deleted" if st.session_state.index == 7 else " ")   
-        # Rerun the app to update the interval
-        st.rerun()
-    elif st.session_state.stop_sleep == 1: 
-        st.write("Sleep stopped.")
+            # no need to delete bar chart data, it is replacing now
+            #new_data = pd.DataFrame([{}])
+            # Append to CSV file
+            #new_data.to_csv(scoreT_file, mode="w", header=False, index=False)
+            
+    
+    st.write(f"barChart data deleted {st.session_state.sb_status}||{interval}" )   
+    
+    st.write(f"barChart data deleted {st.session_state.sb_status}{interval}" )   
+    #elif st.session_state.stop_sleep == 1: 
+        #st.write("Sleep stopped.")
 
 
 if __name__ == "__main__":
