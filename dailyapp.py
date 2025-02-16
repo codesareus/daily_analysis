@@ -279,7 +279,7 @@ def main():
 
     # Initialize sb_status state
     if "sb_status" not in st.session_state:
-        st.session_state.sb_status = 0
+        st.session_state.sb_status = 10
 
     # Define file names
     
