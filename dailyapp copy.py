@@ -806,7 +806,6 @@ def main():
 
         # Save the empty DataFrame to the CSV file
         df.to_csv(file_path, index=False, header=False)
-        st.success(f"✅ File created successfully as `{file_path}`")
 
     ################### evaluate score trend and save it to scoreT.csv
     score_prior = data_recent['score'].iloc[-2]
@@ -917,7 +916,7 @@ def main():
 
 
 ###########################
-    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
+    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total", "prior_status"])
     b_condition = st.session_state.sb_status == 0 and ema_trend_1m == 3 and (sum_score_trend_rest >= 5) and (market_open <= now) and (market_open <= now and now < market_close)
     s_condition = st.session_state.sb_status ==  1 and ((((current_price - st.session_state.temp_price) >= 0.5) and ema_trend_1m < 3) or (((current_price - st.session_state.temp_price) <= -0.25) and ema_trend_1m <= 0) or now >= market_close)
     
@@ -934,6 +933,7 @@ def main():
                     "S_pr": 0,
                     "pl": 0,
                     "total_pl": t_pl,
+                    "prior_status": st.session_state.sb_status
                 }])
             st.session_state.temp_price = B_pr
             st.session_state.sb_status = 1
@@ -948,13 +948,13 @@ def main():
                     "S_pr": round(S_pr, 2),
                     "pl": round(pl, 2),
                     "total_pl": t_pl, ## for now
+                    "prior_status": st.session_state.sb_status
                 }])
             st.session_state.temp_price = 0
             st.session_state.sb_status = 0
             
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
-        st.success(f"✅ File created successfully as `{pe_file}`")
         st.rerun()
         
     def execute_sb(price = None):
@@ -1016,18 +1016,12 @@ def main():
 
     #display pe_table
     # Read the updated CSV file ---- example
-    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
+    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total","prior_status"])
 
     col1, col2 = st.columns(2)
     with col1: 
         st.write("pe_table:")
-        st.dataframe(updated_data.tail(5), hide_index=False)
     with col2:
-        st.write("")
-        st.write("")
-        st.write("")
-        st.write("")
-        
         if st.button("Clear data"):
             st.session_state.stop_sleep = 1
             st.session_state.sb_status = 0
@@ -1037,12 +1031,17 @@ def main():
                         "S_pr": 0,
                         "pl": 0,
                         "total_pl": 0, 
+                        "prior_status": 0
                     }])
             # clear CSV file
             new_data.to_csv(pe_file, mode="w", header=False, index=False)
-            st.success(f"✅ File emptied successfully as `{pe_file}`")
+            st.write("pl_data cleared")
+            
             st.rerun()
             
+        
+    st.dataframe(updated_data.tail(5), hide_index=False) 
+    
     st.write("---------------------")
 
     
