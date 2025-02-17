@@ -577,7 +577,7 @@ def main():
     x_values = np.arange(len(data_recent))  # Numeric x-axis
 
     # Plot actual prices and regression lines
-    ax.plot(x_values, y, color="gray", label="Actual Prices")  # Actual prices as a gray line plot
+    ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
     ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
     ax.plot(x_values, y_pred_poly, color="green", label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
 
@@ -806,6 +806,7 @@ def main():
 
         # Save the empty DataFrame to the CSV file
         df.to_csv(file_path, index=False, header=False)
+        st.success(f"✅ File created successfully as `{file_path}`")
 
     ################### evaluate score trend and save it to scoreT.csv
     score_prior = data_recent['score'].iloc[-2]
@@ -839,7 +840,8 @@ def main():
     print(data_recent.columns)
     # Append to CSV file
     
-    new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
+    #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
+    new_data.to_csv(scoreT_file, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
 
     # Read the updated CSV file
     df = pd.read_csv(file_path, header=None)
@@ -856,8 +858,28 @@ def main():
     #add column names
     df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'score_trend_1', 'score_trend']
 
+    #highlight
+    
+    def highlight_column(col):
+        return ['background-color: navy' if col.name == 'score_trend' else '' for _ in col]
+    
+    # Function to highlight only the first cell of the second column
+    def highlight_first_cell(df):
+        styles = pd.DataFrame('', index=df.index, columns=df.columns)  # Default empty styles
+        styles.iloc[0, 1] = 'background-color: yellow'  # Highlight first cell of second column
+        return styles
+
+    # Apply the column-based styling first
+    styled_df = df.style.apply(highlight_column, axis=0)
+
+    # Apply the first-cell styling and add it to the previous styles
+    styled_df = styled_df.apply(highlight_first_cell, axis=None)
+
+ 
+    st.dataframe(styled_df, hide_index=True)
+        
     #display table
-    st.dataframe(df, hide_index=True)
+    #st.dataframe(df, hide_index=True) #original table looks neater
 
     ################### all control buttons ###########################################################
     ## tempory use
@@ -916,7 +938,7 @@ def main():
 
 
 ###########################
-    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total", "prior_status"])
+    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
     b_condition = st.session_state.sb_status == 0 and ema_trend_1m == 3 and (sum_score_trend_rest >= 5) and (market_open <= now) and (market_open <= now and now < market_close)
     s_condition = st.session_state.sb_status ==  1 and ((((current_price - st.session_state.temp_price) >= 0.5) and ema_trend_1m < 3) or (((current_price - st.session_state.temp_price) <= -0.25) and ema_trend_1m <= 0) or now >= market_close)
     
@@ -933,7 +955,6 @@ def main():
                     "S_pr": 0,
                     "pl": 0,
                     "total_pl": t_pl,
-                    "prior_status": st.session_state.sb_status
                 }])
             st.session_state.temp_price = B_pr
             st.session_state.sb_status = 1
@@ -948,13 +969,13 @@ def main():
                     "S_pr": round(S_pr, 2),
                     "pl": round(pl, 2),
                     "total_pl": t_pl, ## for now
-                    "prior_status": st.session_state.sb_status
                 }])
             st.session_state.temp_price = 0
             st.session_state.sb_status = 0
             
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
+        st.success(f"✅ File created successfully as `{pe_file}`")
         st.rerun()
         
     def execute_sb(price = None):
@@ -1016,12 +1037,18 @@ def main():
 
     #display pe_table
     # Read the updated CSV file ---- example
-    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total","prior_status"])
+    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
 
     col1, col2 = st.columns(2)
     with col1: 
         st.write("pe_table:")
+        st.dataframe(updated_data.tail(5), hide_index=False)
     with col2:
+        st.write("")
+        st.write("")
+        st.write("")
+        st.write("")
+        
         if st.button("Clear data"):
             st.session_state.stop_sleep = 1
             st.session_state.sb_status = 0
@@ -1031,17 +1058,12 @@ def main():
                         "S_pr": 0,
                         "pl": 0,
                         "total_pl": 0, 
-                        "prior_status": 0
                     }])
             # clear CSV file
             new_data.to_csv(pe_file, mode="w", header=False, index=False)
-            st.write("pl_data cleared")
-            
+            st.success(f"✅ File emptied successfully as `{pe_file}`")
             st.rerun()
             
-        
-    st.dataframe(updated_data.tail(5), hide_index=False) 
-    
     st.write("---------------------")
 
     

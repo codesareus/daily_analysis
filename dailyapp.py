@@ -577,7 +577,7 @@ def main():
     x_values = np.arange(len(data_recent))  # Numeric x-axis
 
     # Plot actual prices and regression lines
-    ax.plot(x_values, y, color="gray", label="Actual Prices")  # Actual prices as a gray line plot
+    ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
     ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
     ax.plot(x_values, y_pred_poly, color="green", label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
 
@@ -840,7 +840,8 @@ def main():
     print(data_recent.columns)
     # Append to CSV file
     
-    new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
+    #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
+    new_data.to_csv(scoreT_file, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
 
     # Read the updated CSV file
     df = pd.read_csv(file_path, header=None)
@@ -857,8 +858,28 @@ def main():
     #add column names
     df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'score_trend_1', 'score_trend']
 
+    #highlight
+    
+    def highlight_column(col):
+        return ['background-color: navy' if col.name == 'score_trend' else '' for _ in col]
+    
+    # Function to highlight only the first cell of the second column
+    def highlight_first_cell(df):
+        styles = pd.DataFrame('', index=df.index, columns=df.columns)  # Default empty styles
+        styles.iloc[0, 1] = 'background-color: yellow'  # Highlight first cell of second column
+        return styles
+
+    # Apply the column-based styling first
+    styled_df = df.style.apply(highlight_column, axis=0)
+
+    # Apply the first-cell styling and add it to the previous styles
+    styled_df = styled_df.apply(highlight_first_cell, axis=None)
+
+ 
+    st.dataframe(styled_df, hide_index=True)
+        
     #display table
-    st.dataframe(df, hide_index=True)
+    #st.dataframe(df, hide_index=True) #original table looks neater
 
     ################### all control buttons ###########################################################
     ## tempory use
