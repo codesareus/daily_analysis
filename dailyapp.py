@@ -282,6 +282,10 @@ def main():
     if "sb_status" not in st.session_state:
         st.session_state.sb_status = 0
 
+    # Initialize pre_post state
+    if "prepo" not in st.session_state:
+        st.session_state.prepo = 1
+
     # Define file names
     
     scoreT_file = f"scoreT.csv"
@@ -939,8 +943,11 @@ def main():
 
 ###########################
     updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
-    b_condition = st.session_state.sb_status == 0 and ema_trend_1m == 3 and (sum_score_trend_rest >= 5) and (market_open <= now) and (market_open <= now and now < market_close)
-    s_condition = st.session_state.sb_status ==  1 and ((((current_price - st.session_state.temp_price) >= 0.5) and ema_trend_1m < 3) or (((current_price - st.session_state.temp_price) <= -0.25) and ema_trend_1m <= 0) or now >= market_close)
+    #pp_condition = ((market_open <= now) and (now < market_close)) if st.session_state.prepo == 0 else False
+    b_condition = st.session_state.sb_status == 0 and ema_trend_1m == 3 and (sum_score_trend_rest >= 5) 
+    s_condition = st.session_state.sb_status ==  1 and ((((current_price - st.session_state.temp_price) >= 0.5)
+                                                          and ema_trend_1m < 3) or (((current_price - st.session_state.temp_price) <= -0.25) and ema_trend_1m <= 0))
+                                                        
     
     ########## B and S actions
     def save_pe(SB= "", price=None):      
@@ -1046,21 +1053,35 @@ def main():
         st.write("")
         st.write("")
         st.write("")
+        st.write("")
+        #st.write(f"Pre_Post_status: {st.session_state.prepo}")
+        inner_col1, inner_col2 = st.columns(2)
+        with inner_col1:
+            if st.button("pre_po", disabled=True):
+                if st.session_state.prepo == 1:
+                    st.session_state.prepo = 0
+                    st.write("NO pre_post")
+                    st.rerun()
+                else:
+                    st.session_state.prepo = 1
+                    st.write("Yes pre_post")
+                    st.rerun()
+        with inner_col2:
+            if st.button("Clear data"):
+                st.session_state.stop_sleep = 1
+                st.session_state.sb_status = 0
+                new_data = pd.DataFrame([{
+                            "TimeStamp": f"{now}",
+                            "B_pr": 0,
+                            "S_pr": 0,
+                            "pl": 0,
+                            "total_pl": 0, 
+                        }])
+                # clear CSV file
+                new_data.to_csv(pe_file, mode="w", header=False, index=False)
+                st.success(f"✅ File emptied successfully as `{pe_file}`")
+                st.rerun()
         
-        if st.button("Clear data"):
-            st.session_state.stop_sleep = 1
-            st.session_state.sb_status = 0
-            new_data = pd.DataFrame([{
-                        "TimeStamp": f"{now}",
-                        "B_pr": 0,
-                        "S_pr": 0,
-                        "pl": 0,
-                        "total_pl": 0, 
-                    }])
-            # clear CSV file
-            new_data.to_csv(pe_file, mode="w", header=False, index=False)
-            st.success(f"✅ File emptied successfully as `{pe_file}`")
-            st.rerun()
             
     st.write("---------------------")
 
