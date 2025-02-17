@@ -8,3 +8,4 @@ pandas
 yfinance
 pytz
 gtts
+pandas_market_calendars

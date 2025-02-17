@@ -17,26 +17,47 @@ import time
 from datetime import datetime, time
 from time import sleep
 from matplotlib.lines import Line2D
+import pandas_market_calendars as mcal
 
 #midwest = pytz.timezone("America/New")
 midwest = pytz.timezone("US/Eastern")
 
 def get_time_now():
     eastern = timezone('US/Eastern')
-    now = datetime.now(eastern).time()
+    now = datetime.now(eastern)
+    now_time = now.time()
     
-    if now >= datetime.strptime("04:00", "%H:%M").time() and now < datetime.strptime("09:30", "%H:%M").time():
+    # Get market calendar for NYSE
+    nyse = mcal.get_calendar("NYSE")
+    
+    # Check if today is a market holiday
+    today = now.date()
+    holidays = nyse.holidays().holidays
+    if today in holidays:
+        return "holiday"
+
+    # Pre-market (4:00 AM - 9:30 AM)
+    if datetime.strptime("04:00", "%H:%M").time() <= now_time < datetime.strptime("09:30", "%H:%M").time():
         return "pre"
-    if now >= datetime.strptime("09:25", "%H:%M").time() and now < datetime.strptime("09:35", "%H:%M").time():
+    
+    # Open wind (9:25 AM - 9:35 AM)
+    if datetime.strptime("09:25", "%H:%M").time() <= now_time < datetime.strptime("09:35", "%H:%M").time():
         return "open_wind"
-    elif now >= datetime.strptime("09:35", "%H:%M").time() and now < datetime.strptime("15:55", "%H:%M").time():
+    
+    # Regular market hours (9:35 AM - 3:55 PM)
+    if datetime.strptime("09:35", "%H:%M").time() <= now_time < datetime.strptime("15:55", "%H:%M").time():
         return "open"
-    elif now >= datetime.strptime("15:55", "%H:%M").time() and now < datetime.strptime("16:00", "%H:%M").time():
+    
+    # Close wind-down (3:55 PM - 4:00 PM)
+    if datetime.strptime("15:55", "%H:%M").time() <= now_time < datetime.strptime("16:00", "%H:%M").time():
         return "close_wind"
-    elif now >= datetime.strptime("16:00", "%H:%M").time() and now < datetime.strptime("20:00", "%H:%M").time():
+    
+    # After-hours (4:00 PM - 8:00 PM)
+    if datetime.strptime("16:00", "%H:%M").time() <= now_time < datetime.strptime("20:00", "%H:%M").time():
         return "after_hours"
-    else:
-        return "closed"
+    
+    # Market closed
+    return "closed"
 
 # Function to calculate RSI
 def calculate_rsi(data, window1=14, window2=25):
@@ -938,7 +959,9 @@ def main():
     st.write(f"ema_trend___{trend_message} ({interval})")
      #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
-    st.write(f"sb_status: {st.session_state.sb_status}...sleep: {sleep_status}..||...temp_pr: {st.session_state.temp_price}...current_pr = {current_price:.2f}")
+    plHere = current_price - st.session_state.temp_price
+    st.write(plHere)
+    st.write(f"sb_status: {st.session_state.sb_status}...sleep: {sleep_status}..||...temp_pr: {st.session_state.temp_price}...current_pr = {current_price:.2f}...pl={plHere}")
 
 
 ###########################
