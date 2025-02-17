@@ -324,6 +324,10 @@ def main():
     if "sbOK" not in st.session_state:
         st.session_state.sbOK = 1
 
+    # Initialize prePost state
+    if "prePost" not in st.session_state:
+        st.session_state.prePost = 1
+
     # Define file names
     
     scoreT_file = f"scoreT.csv"
@@ -966,14 +970,13 @@ def main():
 
 ###########################
     updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
-    #pp_condition = ((market_open <= now) and (now < market_close)) if st.session_state.prepo == 0 else False
-    b_condition = get_time_now() == "open" and st.session_state.sbOK == 1 and st.session_state.sb_status == 0 and ema_trend_1m == 3 and sum_score_trend_rest >= 5
 
+    prePost_condition = (st.session_state.prePost == 0 and get_time_now() == "open") or (st.session_state.prePost == 1 and (get_time_now() == "pre" or get_time_now() == "open" or get_time_now() == "after_hours" ))
     conditions = [((current_price - st.session_state.temp_price) >= 0.5 and (ema_trend_1m < 3)),
                   ((current_price - st.session_state.temp_price) <= -0.25 and (ema_trend_1m <= 0)),
-                  (get_time_now() != "open")
+                  (st.session_state.prePost == 0 and get_time_now() != "open")
                     ]
-                  
+    b_condition = st.session_state.sbOK == 1 and st.session_state.sb_status == 0 and ema_trend_1m == 3 and sum_score_trend_rest >= 5 and prePost_condition
     s_condition = st.session_state.sb_status ==  1 and any(conditions)                                       
     
     ########## B and S actions
@@ -1040,7 +1043,7 @@ def main():
 
     with col3:
         if st.button("B"):
-            if st.session_state.sb_status == 0 :
+            if st.session_state.sb_status == 0:
                 save_pe("B", current_price)
                 st.session_state.temp_price = current_price 
                 st.session_state.sb_status = 1
@@ -1090,19 +1093,19 @@ def main():
         else:
             color = "orange"
         #st.write(f"sbOK: {st.session_state.sbOK}__ conditions: <b_{message1}>__<s_{message2}>")
-        st.markdown(f'<p style="color:{color}; font-weight:bold;">sbOK: {st.session_state.sbOK}__ conditions: b_{message1}__s_{message2}</s></p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="color:{color}; font-weight:bold;">sbOK: {st.session_state.sbOK}_||_prePost: {st.session_state.prePost}__ conditions: b_{message1}__s_{message2}</s></p>', unsafe_allow_html=True)
 
         #st.write(f"Pre_Post_status: {st.session_state.prepo}")
         inner_col1, inner_col2 = st.columns(2)
         with inner_col1:
-            if st.button("pre_po", disabled=True):
-                if st.session_state.prepo == 1:
-                    st.session_state.prepo = 0
-                    st.write("NO pre_post")
+            if st.button("prePost", disabled=False):
+                if st.session_state.prePost == 1:
+                    st.session_state.prePost = 0
+                    st.write("NO prePost")
                     st.rerun()
                 else:
-                    st.session_state.prepo = 1
-                    st.write("Yes pre_post")
+                    st.session_state.prePost = 1
+                    st.write("Yes prePost")
                     st.rerun()
         with inner_col2:
             if st.button("Clear data"):
@@ -1118,7 +1121,7 @@ def main():
                         }])
                 # clear CSV file
                 new_data.to_csv(pe_file, mode="w", header=False, index=False)
-                st.success(f"✅ File emptied successfully as `{pe_file}`")
+                st.success(f"✅ data cleared")
                 st.rerun()
         
             
