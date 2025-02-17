@@ -940,19 +940,31 @@ def main():
     ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
     
     if ema_trend_1m ==3:
-        message = "OK"
+        message = "___B OK"
+        color = "green"
+    elif ema_trend_1m == -3:
+        message = "___S OK"
+        color = "red"
     else:
         message = "Hold it"
-    st.write(f"ema_trend_1min: ||... {ema_trend_1m: .0f} ___ {message}")
+        color = "orange"
+    #st.write(f"ema_trend_1min: ||... {ema_trend_1m: .0f} ___ {message}")
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">ema_trend_1min: {message}</s></p>', unsafe_allow_html=True)
 
     # Sum "score_trend_1" for all the rest
     sum_score_trend_rest = df[df["tFrame"] != "1m"]["score_trend"].sum()
     
-    if sum_score_trend_rest >= 5:
-        message = "OK"
+    if sum_score_trend_rest >=5:
+        message = "___B OK"
+        color = "green"
+    elif sum_score_trend_rest <= -5:
+        message = "___S OK"
+        color = "red"
     else:
         message = "Hold it"
-    st.write(f"score_trend_others: ||... {sum_score_trend_rest} ___ {message}")
+        color = "orange"
+    #st.write(f"score_trend_others: ||... {sum_score_trend_rest} ___ {message}")
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">score_trend_others: {message}</s></p>', unsafe_allow_html=True)
 
     # Display latest score
 
@@ -960,12 +972,16 @@ def main():
         trend_message = 'Up' 
     else:
         trend_message = 'Down'
-    st.write(f"ema_trend___{trend_message} ({interval})")
+    st.write(f"ema_trend___{trend_message}___ ({interval})")
      #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
     plHere = current_price - st.session_state.temp_price
-    st.write(plHere)
-    st.write(f"sb_status: {st.session_state.sb_status}...sleep: {sleep_status}..||...temp_pr: {st.session_state.temp_price}...current_pr = {current_price:.2f}...pl={plHere}")
+    if plHere >= 0:
+        color = "green"
+    else :
+        color = "red"
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">pl: {plHere}</s></p>', unsafe_allow_html=True)
+    st.write(f"sb_status: {st.session_state.sb_status}~~~sleep: {sleep_status}~~~B_pr: {st.session_state.temp_price}~~~now: {current_price:.2f}~~~pl={plHere}")
 
 
 ###########################
