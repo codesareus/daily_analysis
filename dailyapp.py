@@ -860,26 +860,26 @@ def main():
 
     #highlight
     
-    def highlight_column(col):
-        return ['background-color: navy' if col.name == 'score_trend' else '' for _ in col]
+    #def highlight_column(col):
+      #  return ['background-color: navy' if col.name == 'score_trend' else '' for _ in col]
     
     # Function to highlight only the first cell of the second column
-    def highlight_first_cell(df):
-        styles = pd.DataFrame('', index=df.index, columns=df.columns)  # Default empty styles
-        styles.iloc[0, 1] = 'background-color: yellow'  # Highlight first cell of second column
-        return styles
+    #def highlight_first_cell(df):
+      #  styles = pd.DataFrame('', index=df.index, columns=df.columns)  # Default empty styles
+      #  styles.iloc[0, 1] = 'background-color: yellow'  # Highlight first cell of second column
+      #  return styles
 
     # Apply the column-based styling first
-    styled_df = df.style.apply(highlight_column, axis=0)
+    #styled_df = df.style.apply(highlight_column, axis=0)
 
     # Apply the first-cell styling and add it to the previous styles
-    styled_df = styled_df.apply(highlight_first_cell, axis=None)
+    #styled_df = styled_df.apply(highlight_first_cell, axis=None)
 
  
-    st.dataframe(styled_df, hide_index=True)
+   # st.dataframe(styled_df, hide_index=True)
         
     #display table
-    #st.dataframe(df, hide_index=True) #original table looks neater
+    st.dataframe(df, hide_index=True) #original table looks neater
 
     ################### all control buttons ###########################################################
     ## tempory use
@@ -975,7 +975,6 @@ def main():
             
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
-        st.success(f"✅ File created successfully as `{pe_file}`")
         st.rerun()
         
     def execute_sb(price = None):
@@ -986,7 +985,6 @@ def main():
         elif s_condition:
             #st.session_state.sb_status ==  1 and score_trend_1m == - 1 and sum_score_trend_rest <= - 5:
             save_pe("S", priceHere)
-    st.write(f"yesno: {now< market_close}")
             
     #####################################
     #st.write(f"### Controls:  ||______ current_price = {current_price:.2f}______")
@@ -1007,7 +1005,7 @@ def main():
 
     with col3:
         if st.button("B"):
-            if st.session_state.sb_status == 0 and b_condition:
+            if st.session_state.sb_status == 0 :
                 save_pe("B", current_price)
                 st.session_state.temp_price = current_price 
                 st.session_state.sb_status = 1
@@ -1019,7 +1017,7 @@ def main():
 
     with col4:
         if st.button("S"):
-            if st.session_state.sb_status == 1 and s_condition:
+            if st.session_state.sb_status == 1:
                 save_pe("S", current_price)
                 st.session_state.temp_price = 0
                 st.session_state.sb_status = 0
