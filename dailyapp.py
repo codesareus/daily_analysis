@@ -31,10 +31,8 @@ def play_music(number=0):
         pygame.mixer.init()
         pygame.mixer.music.load(music[number])  # Replace with your music file path
         pygame.mixer.music.play()
-        
-        time.sleep(60)  # Play for 1 minute
+        #time.sleep(60)  # Play for 1 minute
         pygame.mixer.music.stop()
-        
         return True
     except Exception as e:
         print(f"Error playing music: {e}")
@@ -42,6 +40,7 @@ def play_music(number=0):
 
 # Function to stop music
 #def stop_music():
+    #pygame.mixer.init()
     #pygame.mixer.music.stop()
     #st.session_state.music_played = False  # Reset the flag to allow music to play again
 
@@ -640,7 +639,7 @@ def main():
 
     # Only plot MACD if the selected timeframe is valid
     if interval in valid_macd_timeframes:
-        fig, (ax0, ax, ax2, ax3, ax4) = plt.subplots(5, 1, figsize=(20, 40), gridspec_kw={'height_ratios': [1.5, 4, 1, 1, 1.5]})
+        fig, (ax0, ax4, ax, ax2, ax3 ) = plt.subplots(5, 1, figsize=(20, 40), gridspec_kw={'height_ratios': [1.5, 1.5, 4, 1, 1 ]})
     else:
         fig, (ax, ax2) = plt.subplots(2, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [3, 1]})
 
@@ -792,7 +791,7 @@ def main():
     r2_linear = r2_score(y, y_pred_linear)
 
     # Plot actual scores and regression lines
-    ax4.plot(x_values, y, color="navy", label="Actual score")  # Actual prices as a gray line plot
+    ax4.plot(x_values, y, color="navy", linestyle="--", label="Actual score")  # Actual prices as a gray line plot
     
     ax4.plot(x_values, y_pred_linear, color="gray", linestyle="--", label=f"L.R. (R² = {r2_linear:.2f})")
     ax4.plot(x_values, y_pred_poly, color="blue", label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
@@ -1021,29 +1020,20 @@ def main():
     s_condition = st.session_state.sb_status ==  1 and any(conditions)
 
     if interval == "1m" and b_condition:
-        message = "b_condition: music playing"
-    elif s_condition:
-        message = "s_condition: music playing"
-    elif interval == "1m" and ema_trend_1m ==3:
-        message = "going up. "
-    elif interval == "1m" and ema_trend_1m ==-3:
-        message = "going down"
-    else:
-        message = "message here"
-
-    #### play music when conditions are met. NOT subject to reruns
-    #if (b_condition or s_condition) :
-    
-    if interval == "1m" and b_condition:
         play_music(0)
-    if interval == "1m" and s_condition:
+        message = "b_condition: music1 playing"
+    elif s_condition:
         play_music(1)
+        message = "s_condition: music2 playing"
     elif interval == "1m" and ema_trend_1m ==3:
         play_music(2)
+        message = "going up. music3 "
     elif interval == "1m" and ema_trend_1m ==-3:
         play_music(3)
+        message = "going down. music4"
     else:
-        pygame.mixer.music.stop()
+        #stop_music()
+        message = "no music"
 
     col1, col2, col3, col4 = st. columns(4)
     with col1:
