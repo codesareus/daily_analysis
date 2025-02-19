@@ -24,7 +24,7 @@ import base64
 music = ['1.mp3', '2.mp3', '3.mp3', '4.mp3']
 
 def play_music(number=0):
-    Assuming 'music' is a list of file paths to your audio files
+    #Assuming 'music' is a list of file paths to your audio files
     audio_file = open(music[number], "rb")
     audio_bytes = audio_file.read()
     audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
