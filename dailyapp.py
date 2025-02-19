@@ -18,9 +18,32 @@ from datetime import datetime, time
 from time import sleep
 from matplotlib.lines import Line2D
 import pandas_market_calendars as mcal
+import pygame
 
 #midwest = pytz.timezone("America/New")
 midwest = pytz.timezone("US/Eastern")
+
+# Function to play music
+music = ['1.mp3', '2.mp3', '3.mp3', '4.mp3']
+
+def play_music(number=0):
+    try:
+        pygame.mixer.init()
+        pygame.mixer.music.load(music[number])  # Replace with your music file path
+        pygame.mixer.music.play()
+        
+        time.sleep(60)  # Play for 1 minute
+        pygame.mixer.music.stop()
+        
+        return True
+    except Exception as e:
+        print(f"Error playing music: {e}")
+        return False
+
+# Function to stop music
+#def stop_music():
+    #pygame.mixer.music.stop()
+    #st.session_state.music_played = False  # Reset the flag to allow music to play again
 
 def get_time_now():
     eastern = timezone('US/Eastern')
@@ -111,9 +134,9 @@ def fetch_stock_data1mo(ticker, interval="1h"):
 # Function to fetch the previous 5 day's close price
 def fetch_daily5(ticker):
     stock = yf.Ticker(ticker)
-    daily5 = stock.history(period="5d")  # Fetch last 5 days of data
+    daily5 = stock.history(period="3mo")  # Fetch 30 days of data
     if len(daily5) >= 2:
-        return daily5['Close'] 
+        return daily5['Close'][-5:]  ## return only last 5 days 
     else:
         return None  # Handle cases where there isn't enough data
 
@@ -328,6 +351,11 @@ def main():
     if "prePost" not in st.session_state:
         st.session_state.prePost = 1
 
+    # Store whether the music has been played
+    if 'music_played' not in st.session_state:
+        st.session_state.music_played = False
+
+
     # Define file names
     
     scoreT_file = f"scoreT.csv"
@@ -387,10 +415,7 @@ def main():
         st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
         return
     #############
-    
-    if data.empty:
-        st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
-        return
+
 
     # Adjust the data based on the selected backtrack
     data_recent = data.tail(300)
@@ -931,7 +956,7 @@ def main():
     ## very important use
     current_price = round(data_recent['Close'].iloc[-1], 2)
 
-    now = datetime.now(midwest).strftime('%I:%M:%S %p')  # Correct format
+    now = datetime.now(midwest).strftime('%m-%d %I:%M:%S %p')  # Correct format
     
     ############ investigate score_trends
     
@@ -988,12 +1013,50 @@ def main():
     updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
 
     prePost_condition = (st.session_state.prePost == 0 and get_time_now() == "open") or (st.session_state.prePost == 1 and (get_time_now() == "pre" or get_time_now() == "open" or get_time_now() == "after_hours" ))
-    conditions = [((current_price - st.session_state.temp_price) >= 0.5 and (ema_trend_1m < 3)),
-                  ((current_price - st.session_state.temp_price) <= -0.25 and (ema_trend_1m <= 0)),
+    conditions = [(interval == "1m" and (current_price - st.session_state.temp_price >= 0.5) and (ema_trend_1m < 3)),
+                  (interval == "1m" and (current_price - st.session_state.temp_price <= -0.25) and (ema_trend_1m <= 0)),
                   (st.session_state.prePost == 0 and get_time_now() != "open")
                     ]
     b_condition = st.session_state.sbOK == 1 and st.session_state.sb_status == 0 and ema_trend_1m == 3 and sum_score_trend_rest >= 5 and prePost_condition
-    s_condition = st.session_state.sb_status ==  1 and any(conditions)                                       
+    s_condition = st.session_state.sb_status ==  1 and any(conditions)
+
+    if interval == "1m" and b_condition:
+        message = "b_condition: music playing"
+    elif s_condition:
+        message = "s_condition: music playing"
+    elif interval == "1m" and ema_trend_1m ==3:
+        message = "going up. "
+    elif interval == "1m" and ema_trend_1m ==-3:
+        message = "going down"
+    else:
+        message = "message here"
+
+    #### play music when conditions are met. NOT subject to reruns
+    #if (b_condition or s_condition) :
+    
+    if interval == "1m" and b_condition:
+        play_music(0)
+    if interval == "1m" and s_condition:
+        play_music(1)
+    elif interval == "1m" and ema_trend_1m ==3:
+        play_music(2)
+    elif interval == "1m" and ema_trend_1m ==-3:
+        play_music(3)
+    else:
+        pygame.mixer.music.stop()
+
+    col1, col2, col3, col4 = st. columns(4)
+    with col1:
+        st.write(f"{message}")
+    with col2:
+        if st.button("For >"):
+            st.write("text area")
+    with col3:
+        if st.button("For <"):
+            st.write("text area")
+    with col4:
+        if st.button("For "):
+            st.write("text area")
     
     ########## B and S actions
     def save_pe(SB= "", price=None):      
@@ -1363,7 +1426,7 @@ def main():
             st.session_state.rerun_count = 0
             st.session_state.index = 0
             st.rerun()
-            
+        
 
 if __name__ == "__main__":
     main()

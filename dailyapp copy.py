@@ -9,6 +9,7 @@ from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from datetime import datetime, timedelta
+from pytz import timezone
 import pytz
 from gtts import gTTS
 import os
@@ -16,9 +17,47 @@ import time
 from datetime import datetime, time
 from time import sleep
 from matplotlib.lines import Line2D
+import pandas_market_calendars as mcal
 
 #midwest = pytz.timezone("America/New")
 midwest = pytz.timezone("US/Eastern")
+
+def get_time_now():
+    eastern = timezone('US/Eastern')
+    now = datetime.now(eastern)
+    now_time = now.time()
+    
+    # Get market calendar for NYSE
+    nyse = mcal.get_calendar("NYSE")
+    
+    # Check if today is a market holiday
+    today = now.date()
+    holidays = nyse.holidays().holidays
+    if today in holidays:
+        return "holiday"
+
+    # Pre-market (4:00 AM - 9:30 AM)
+    if datetime.strptime("04:00", "%H:%M").time() <= now_time < datetime.strptime("09:30", "%H:%M").time():
+        return "pre"
+    
+    # Open wind (9:25 AM - 9:35 AM)
+    if datetime.strptime("09:25", "%H:%M").time() <= now_time < datetime.strptime("09:35", "%H:%M").time():
+        return "open_wind"
+    
+    # Regular market hours (9:35 AM - 3:55 PM)
+    if datetime.strptime("09:35", "%H:%M").time() <= now_time < datetime.strptime("15:55", "%H:%M").time():
+        return "open"
+    
+    # Close wind-down (3:55 PM - 4:00 PM)
+    if datetime.strptime("15:55", "%H:%M").time() <= now_time < datetime.strptime("16:00", "%H:%M").time():
+        return "close_wind"
+    
+    # After-hours (4:00 PM - 8:00 PM)
+    if datetime.strptime("16:00", "%H:%M").time() <= now_time < datetime.strptime("20:00", "%H:%M").time():
+        return "after_hours"
+    
+    # Market closed
+    return "closed"
 
 # Function to calculate RSI
 def calculate_rsi(data, window1=14, window2=25):
@@ -259,7 +298,6 @@ def main():
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
-    
     # Default interval
     #if 'interval' not in locals():
     #    interval = "5m"
@@ -281,6 +319,14 @@ def main():
     # Initialize sb_status state
     if "sb_status" not in st.session_state:
         st.session_state.sb_status = 0
+
+    # Initialize sbOK state
+    if "sbOK" not in st.session_state:
+        st.session_state.sbOK = 1
+
+    # Initialize prePost state
+    if "prePost" not in st.session_state:
+        st.session_state.prePost = 1
 
     # Define file names
     
@@ -860,49 +906,32 @@ def main():
 
     #highlight
     
-    def highlight_column(col):
-        return ['background-color: navy' if col.name == 'score_trend' else '' for _ in col]
+    #def highlight_column(col):
+      #  return ['background-color: navy' if col.name == 'score_trend' else '' for _ in col]
     
     # Function to highlight only the first cell of the second column
-    def highlight_first_cell(df):
-        styles = pd.DataFrame('', index=df.index, columns=df.columns)  # Default empty styles
-        styles.iloc[0, 1] = 'background-color: yellow'  # Highlight first cell of second column
-        return styles
+    #def highlight_first_cell(df):
+      #  styles = pd.DataFrame('', index=df.index, columns=df.columns)  # Default empty styles
+      #  styles.iloc[0, 1] = 'background-color: yellow'  # Highlight first cell of second column
+      #  return styles
 
     # Apply the column-based styling first
-    styled_df = df.style.apply(highlight_column, axis=0)
+    #styled_df = df.style.apply(highlight_column, axis=0)
 
     # Apply the first-cell styling and add it to the previous styles
-    styled_df = styled_df.apply(highlight_first_cell, axis=None)
+    #styled_df = styled_df.apply(highlight_first_cell, axis=None)
 
  
-    st.dataframe(styled_df, hide_index=True)
+   # st.dataframe(styled_df, hide_index=True)
         
     #display table
-    #st.dataframe(df, hide_index=True) #original table looks neater
+    st.dataframe(df, hide_index=True) #original table looks neater
 
     ################### all control buttons ###########################################################
-    ## tempory use
+    ## very important use
     current_price = round(data_recent['Close'].iloc[-1], 2)
-    
-    now = datetime.now(midwest).strftime('%I:%M:%S %p')  # Correct format
 
-    #get the time
-    
-    # U.S. stock market open and close times in Eastern Time
-    market_open_et = datetime.now(pytz.timezone('America/New_York')).replace(hour=9, minute=30, second=0, microsecond=0)
-    market_close_et = datetime.now(pytz.timezone('America/New_York')).replace(hour=16, minute=0, second=0, microsecond=0)
-
-    # convert and format with AM/PM
-    market_open = market_open_et.astimezone(midwest).strftime('%I:%M:%S %p')
-    market_close = market_close_et.astimezone(midwest).strftime('%I:%M:%S %p')
-
-    # Check if the current time is within market hours
-    if market_open <= now <= market_close:
-        message = " open (9:30am)."
-    else:
-        message = " closed (4:00pm)."
-    st.write(f"...time now:  {now}.....  {message}")
+    now = datetime.now(midwest).strftime('%m-%d %I:%M:%S %p')  # Correct format
     
     ############ investigate score_trends
     
@@ -911,19 +940,31 @@ def main():
     ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
     
     if ema_trend_1m ==3:
-        message = "OK"
+        message = "___B OK"
+        color = "green"
+    elif ema_trend_1m == -3:
+        message = "___S OK"
+        color = "red"
     else:
         message = "Hold it"
-    st.write(f"ema_trend_1min: ||... {ema_trend_1m} ___ {message}")
+        color = "orange"
+    #st.write(f"ema_trend_1min: ||... {ema_trend_1m: .0f} ___ {message}")
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">ema_trend_1min: {message}</s></p>', unsafe_allow_html=True)
 
     # Sum "score_trend_1" for all the rest
     sum_score_trend_rest = df[df["tFrame"] != "1m"]["score_trend"].sum()
     
-    if sum_score_trend_rest >= 5:
-        message = "OK"
+    if sum_score_trend_rest >=5:
+        message = "___B OK"
+        color = "green"
+    elif sum_score_trend_rest <= -5:
+        message = "___S OK"
+        color = "red"
     else:
         message = "Hold it"
-    st.write(f"score_trend_others: ||... {sum_score_trend_rest} ___ {message}")
+        color = "orange"
+    #st.write(f"score_trend_others: ||... {sum_score_trend_rest} ___ {message}")
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">score_trend_others: {message}</s></p>', unsafe_allow_html=True)
 
     # Display latest score
 
@@ -931,16 +972,28 @@ def main():
         trend_message = 'Up' 
     else:
         trend_message = 'Down'
-    st.write(f"ema_trend___{trend_message} ({interval})")
+    st.write(f"ema_trend___{trend_message}___ ({interval})")
      #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
-    st.write(f"sb_status: {st.session_state.sb_status}...sleep: {sleep_status}..||...temp_pr: {st.session_state.temp_price}...current_pr = {current_price:.2f}")
+    plHere = current_price - st.session_state.temp_price
+    if plHere >= 0:
+        color = "green"
+    else :
+        color = "red"
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">pl: {plHere}</s></p>', unsafe_allow_html=True)
+    st.write(f"sb_status: {st.session_state.sb_status}~~~sleep: {sleep_status}~~~B_pr: {st.session_state.temp_price}~~~now: {current_price:.2f}~~~pl={plHere}")
 
 
 ###########################
     updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
-    b_condition = st.session_state.sb_status == 0 and ema_trend_1m == 3 and (sum_score_trend_rest >= 5) and (market_open <= now) and (market_open <= now and now < market_close)
-    s_condition = st.session_state.sb_status ==  1 and ((((current_price - st.session_state.temp_price) >= 0.5) and ema_trend_1m < 3) or (((current_price - st.session_state.temp_price) <= -0.25) and ema_trend_1m <= 0) or now >= market_close)
+
+    prePost_condition = (st.session_state.prePost == 0 and get_time_now() == "open") or (st.session_state.prePost == 1 and (get_time_now() == "pre" or get_time_now() == "open" or get_time_now() == "after_hours" ))
+    conditions = [((current_price - st.session_state.temp_price) >= 0.5 and (ema_trend_1m < 3)),
+                  ((current_price - st.session_state.temp_price) <= -0.25 and (ema_trend_1m <= 0)),
+                  (st.session_state.prePost == 0 and get_time_now() != "open")
+                    ]
+    b_condition = st.session_state.sbOK == 1 and st.session_state.sb_status == 0 and ema_trend_1m == 3 and sum_score_trend_rest >= 5 and prePost_condition
+    s_condition = st.session_state.sb_status ==  1 and any(conditions)                                       
     
     ########## B and S actions
     def save_pe(SB= "", price=None):      
@@ -975,7 +1028,6 @@ def main():
             
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
-        st.success(f"✅ File created successfully as `{pe_file}`")
         st.rerun()
         
     def execute_sb(price = None):
@@ -986,7 +1038,6 @@ def main():
         elif s_condition:
             #st.session_state.sb_status ==  1 and score_trend_1m == - 1 and sum_score_trend_rest <= - 5:
             save_pe("S", priceHere)
-    st.write(f"yesno: {now< market_close}")
             
     #####################################
     #st.write(f"### Controls:  ||______ current_price = {current_price:.2f}______")
@@ -998,6 +1049,7 @@ def main():
             st.session_state.index = 0
             st.session_state.stop_sleep = 0
             st.session_state.sb_status = 0
+            st.session_state.sbOK = 1
             st. rerun()
             
     with col2:
@@ -1007,7 +1059,7 @@ def main():
 
     with col3:
         if st.button("B"):
-            if st.session_state.sb_status == 0 and b_condition:
+            if st.session_state.sb_status == 0:
                 save_pe("B", current_price)
                 st.session_state.temp_price = current_price 
                 st.session_state.sb_status = 1
@@ -1019,7 +1071,7 @@ def main():
 
     with col4:
         if st.button("S"):
-            if st.session_state.sb_status == 1 and s_condition:
+            if st.session_state.sb_status == 1:
                 save_pe("S", current_price)
                 st.session_state.temp_price = 0
                 st.session_state.sb_status = 0
@@ -1044,25 +1096,50 @@ def main():
         st.write("pe_table:")
         st.dataframe(updated_data.tail(5), hide_index=False)
     with col2:
-        st.write("")
-        st.write("")
-        st.write("")
-        st.write("")
+
+        st.write(":::::::::::::::::::::::::::::::::::::::::::::::::::")
+        st.write(f"now: _<{now}>_{get_time_now()}")
+        message1 = 1 if {b_condition} == True else 0
+        message2 = 1 if {s_condition} == True else 0
         
-        if st.button("Clear data"):
-            st.session_state.stop_sleep = 1
-            st.session_state.sb_status = 0
-            new_data = pd.DataFrame([{
-                        "TimeStamp": f"{now}",
-                        "B_pr": 0,
-                        "S_pr": 0,
-                        "pl": 0,
-                        "total_pl": 0, 
-                    }])
-            # clear CSV file
-            new_data.to_csv(pe_file, mode="w", header=False, index=False)
-            st.success(f"✅ File emptied successfully as `{pe_file}`")
-            st.rerun()
+        if message1 == 1  and {st.session_state.sbOK} == 1:
+            color = "green"
+        elif message2 == 1  and {st.session_state.sbOK} == 1:
+            color = "red"
+        else:
+            color = "orange"
+        #st.write(f"sbOK: {st.session_state.sbOK}__ conditions: <b_{message1}>__<s_{message2}>")
+        st.markdown(f'<p style="color:{color}; font-weight:bold;">sbOK: {st.session_state.sbOK}_||_prePost: {st.session_state.prePost}__ conditions: b_{message1}__s_{message2}</s></p>', unsafe_allow_html=True)
+
+        #st.write(f"Pre_Post_status: {st.session_state.prepo}")
+        inner_col1, inner_col2 = st.columns(2)
+        with inner_col1:
+            if st.button("prePost", disabled=False):
+                if st.session_state.prePost == 1:
+                    st.session_state.prePost = 0
+                    st.write("NO prePost")
+                    st.rerun()
+                else:
+                    st.session_state.prePost = 1
+                    st.write("Yes prePost")
+                    st.rerun()
+        with inner_col2:
+            if st.button("Clear data"):
+                st.session_state.stop_sleep = 1
+                st.session_state.sb_status = 0
+                st.session_state.sbOK = 0
+                new_data = pd.DataFrame([{
+                            "TimeStamp": f"{now}",
+                            "B_pr": 0,
+                            "S_pr": 0,
+                            "pl": 0,
+                            "total_pl": 0, 
+                        }])
+                # clear CSV file
+                new_data.to_csv(pe_file, mode="w", header=False, index=False)
+                st.success(f"✅ data cleared")
+                st.rerun()
+        
             
     st.write("---------------------")
 
