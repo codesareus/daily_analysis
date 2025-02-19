@@ -1055,12 +1055,38 @@ def main():
         #stop_music()
         message = "no music"
 
+    # Initialize session state for visibility and stored number
+    if "show_input" not in st.session_state:
+        st.session_state.show_input = False
+    if "entered_number" not in st.session_state:
+        st.session_state.entered_number = None
+    
     col1, col2, col3, col4 = st. columns(4)
     with col1:
         st.write(f"{message}")
     with col2:
-        if st.button("For >"):
-            st.write("text area")
+    
+    # Button to reveal the input field and "Set below level" button
+    if st.button("Set >"):
+        st.session_state.show_input = True
+
+    # If input field is toggled on, show it
+    if st.session_state.show_input:
+        entered_number = st.text_input("Enter a number:", key="user_input")
+    
+        if st.button("Set"):
+        # Store the entered number and hide input elements
+            st.session_state.entered_number = entered_number
+            st.session_state.show_input = False
+            
+    old_price = round(data_recent['Close'].iloc[-2], 2)
+    if (current_price > st.session_state.entered_number) and  (old_price <= st.session_state.entered_number):
+        play_music(0)
+        st.write("cross above {st.session_state.entered_number}")
+
+    # Display the entered number (optional)
+    #if st.session_state.entered_number:
+        #st.write(f"Below level set to: {st.session_state.entered_number}")
     with col3:
         if st.button("For <"):
             st.write("text area")
