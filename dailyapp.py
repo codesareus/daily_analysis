@@ -1065,7 +1065,7 @@ def main():
     with col1:
         st.write(f"{message}")
     with col2:
-    
+        st.text_input("greater >", value=st.session_state.entered_number, disabled=True)
     # Button to reveal the input field and "Set below level" button
         if st.button("Set >"):
             st.session_state.show_input = True
@@ -1081,9 +1081,7 @@ def main():
                     else:
                         st.session_state.entered_number = entered_number
                     st.session_state.show_input = False
-                    
-            st.text_input("greater >", value=st.session_state.entered_number, disabled=True)
-            st.rerun()
+                    st.rerun()      
                     
     old_price = round(data_recent['Close'].iloc[-2], 2)
     if (current_price > st.session_state.entered_number) and  (old_price <= st.session_state.entered_number):
