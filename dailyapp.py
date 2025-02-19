@@ -1056,8 +1056,6 @@ def main():
         message = "no music"
 
     # Initialize session state for visibility and stored number
-    if "show_input" not in st.session_state:
-        st.session_state.show_input = False
     if "entered_number" not in st.session_state:
         st.session_state.entered_number = 0
     
@@ -1065,23 +1063,18 @@ def main():
     with col1:
         st.write(f"{message}")
     with col2:
-        st.text_input("greater >", value=st.session_state.entered_number, disabled=True)
+        st.text_input("set greater than", key="user_input")
     # Button to reveal the input field and "Set below level" button
-        if st.button("Set >"):
-            st.session_state.show_input = True
-
-    # If input field is toggled on, show it
-            if st.session_state.show_input:
-                entered_number = st.text_input("Enter a number:", key="user_input")
-    
-                if st.button("Set"):
+        if st.button("Set"):
         # Store the entered number and hide input elements
-                    if entered_number == None:
-                        entered_number = 0
-                    else:
-                        st.session_state.entered_number = entered_number
-                    st.session_state.show_input = False
-                    st.rerun()      
+            if entered_number == None:
+                entered_number = 0
+            else:
+                st.session_state.entered_number = entered_number
+            st.rerun()      
+        if st.button("Cancel"):
+            entered_number = 0
+            st.rerun()  
                     
     old_price = round(data_recent['Close'].iloc[-2], 2)
     if (current_price > st.session_state.entered_number) and  (old_price <= st.session_state.entered_number):
