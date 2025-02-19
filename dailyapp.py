@@ -1166,6 +1166,7 @@ def main():
     with col1: 
         st.write("pe_table:")
         st.dataframe(updated_data.tail(5), hide_index=False)
+        st.write(f"{len(updated_data["total"])} rows")
     with col2:
 
         st.write(":::::::::::::::::::::::::::::::::::::::::::::::::::")
