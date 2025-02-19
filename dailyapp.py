@@ -1023,7 +1023,7 @@ def main():
         color = "green"
     else :
         color = "red"
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">pl: {plHere}</s></p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">pl: {plHere:.2f}</s></p>', unsafe_allow_html=True)
     st.write(f"sb_status: {st.session_state.sb_status}~~~sleep: {sleep_status}~~~B_pr: {st.session_state.temp_price}~~~now: {current_price:.2f}~~~pl={plHere:.2f}")
 
 
