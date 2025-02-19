@@ -1081,7 +1081,6 @@ def main():
                     "total_pl": t_pl,
                 }])
             st.session_state.temp_price = B_pr
-            st.session_state.sb_status = 1
 
         else:
             S_pr = price
@@ -1095,20 +1094,9 @@ def main():
                     "total_pl": t_pl, ## for now
                 }])
             st.session_state.temp_price = 0
-            st.session_state.sb_status = 0
             
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
-        st.rerun()
-        
-    def execute_sb(price = None):
-        priceHere = price
-        if b_condition:
-            save_pe("B", priceHere)
-            
-        elif s_condition:
-            #st.session_state.sb_status ==  1 and score_trend_1m == - 1 and sum_score_trend_rest <= - 5:
-            save_pe("S", priceHere)
             
     #####################################
     #st.write(f"### Controls:  ||______ current_price = {current_price:.2f}______")
@@ -1414,12 +1402,20 @@ def main():
     # Check if the rerun count is less than 7
 
     ### run automatic SB
-    if interval == "1m" :
-        execute_sb(current_price)
+  
+    if b_condition:
+        save_pe("B", current_price)
+        st.session_state.sb_status ==  1 
+        st.rerun()
+            
+    elif s_condition:
+        st.session_state.sb_status ==  0
+        save_pe("S", current_price)
+        st.rerun()
    
     if st.session_state.stop_sleep == 0: 
     # Sleep for 8 seconds (simulating some processing)
-        sleep(8)
+        sleep(20)
         
         # Update the index for the next interval
         if st.session_state.index < len(intervals) - 1:
@@ -1430,11 +1426,11 @@ def main():
         # Increment the rerun count
         if st.session_state.rerun_count < 7:
             st.session_state.rerun_count += 1
-            st.rerun()
         else:
             st.session_state.rerun_count = 0
             st.session_state.index = 0
-            st.rerun()
+            
+        st.rerun()
         
 
 if __name__ == "__main__":
