@@ -1117,7 +1117,7 @@ def main():
             st.session_state.stop_sleep = 1
             st.rerun()
 
-    col1, col2 = columns(2)
+    col1, col2 = st.columns(2)
     with col1:
         if st.button("B"):
             if st.session_state.sb_status == 0:
