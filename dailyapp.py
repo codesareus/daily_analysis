@@ -1032,22 +1032,21 @@ def main():
 
     #prePost_condition = (st.session_state.prePost == 0 and get_time_now() == "open") or (st.session_state.prePost == 1 and (get_time_now() == "pre" or get_time_now() == "open" or get_time_now() == "after_hours" ))
     conditions = [(interval == "1m" and (current_price - st.session_state.temp_price >= 0.5) and (ema_trend_1m < 3)),
-                  (interval == "1m" and (current_price - st.session_state.temp_price <= -0.25) and (ema_trend_1m <= 0)),
-                  (st.session_state.prePost == 0 and get_time_now() != "open")
+                  (interval == "1m" and (current_price - st.session_state.temp_price <= -0.25) and (ema_trend_1m <= 0))
                     ]
     b_condition = st.session_state.sb_status == 0 and ema_trend_1m == 3 and sum_score_trend_rest >= 5 
     s_condition = st.session_state.sb_status ==  1 and any(conditions)
 
-    if interval ==  b_condition:
+    if  b_condition:
         play_music(0)
         message = "b_condition: music1 playing"
     elif s_condition:
         play_music(1)
         message = "s_condition: music2 playing"
-    elif interval == "1m" and ema_trend_1m ==3:
+    elif interval == "1m" and ema_trend_1m == 3:
         play_music(2)
         message = "going up. music3 "
-    elif interval == "1m" and ema_trend_1m ==-3:
+    elif interval == "1m" and ema_trend_1m == -3:
         play_music(3)
         message = "going down. music4"
     else:
@@ -1081,7 +1080,6 @@ def main():
                     "pl": 0,
                     "total_pl": t_pl,
                 }])
-            st.session_state.temp_price = B_pr
 
         else:
             S_pr = price
@@ -1094,7 +1092,6 @@ def main():
                     "pl": round(pl, 2),
                     "total_pl": t_pl, ## for now
                 }])
-            st.session_state.temp_price = 0
             
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
@@ -1427,12 +1424,14 @@ def main():
 
         if b_condition:
             save_pe("B", current_price)
-            st.session_state.sb_status ==  1 
+            st.session_state.sb_status = 1 
+            st.session_state.temp_price = current_price
             st.rerun()
             
         elif s_condition:
-            st.session_state.sb_status ==  0
             save_pe("S", current_price)
+            st.session_state.sb_status =  0
+            st.session_state.temp_price = 0
             st.rerun()
         
         st.rerun()
