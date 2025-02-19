@@ -1402,7 +1402,7 @@ def main():
    
     if st.session_state.stop_sleep == 0: 
     # Sleep for 8 seconds (simulating some processing)
-        sleep(20)
+        sleep(10)
         
         # Update the index for the next interval
         if st.session_state.index < len(intervals) - 1:
