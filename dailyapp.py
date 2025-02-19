@@ -1018,12 +1018,14 @@ def main():
     st.write(f"ema_trend___{trend_message}___ ({interval})")
      #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
-    plHere = current_price - st.session_state.temp_price
+    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
+    plHere = updated_data["total"].iloc[-1]
+    #plHere = current_price - st.session_state.temp_price
     if plHere >= 0:
         color = "green"
     else :
         color = "red"
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">pl: {plHere:.2f}</s></p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">pl: {plHere:.2f}__now: {current_price:.2f}</s></p>', unsafe_allow_html=True)
     st.write(f"sb_status: {st.session_state.sb_status}~~~sleep: {sleep_status}~~~B_pr: {st.session_state.temp_price}~~~now: {current_price:.2f}~~~pl={plHere:.2f}")
 
 
@@ -1168,7 +1170,7 @@ def main():
         else:
             color = "orange"
         #st.write(f"sbOK: {st.session_state.sbOK}__ conditions: <b_{message1}>__<s_{message2}>")
-        st.markdown(f'<p style="color:{color}; font-weight:bold;">sbOK: {st.session_state.sbOK}_||_prePost: {st.session_state.prePost}__ conditions: b_{message1}__s_{message2}</s></p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="color:{color}; font-weight:bold;">sbOK: {st.session_state.sbOK}_||__ conditions: b_{message1}__s_{message2}</s></p>', unsafe_allow_html=True)
 
         #st.write(f"Pre_Post_status: {st.session_state.prepo}")
         inner_col1, inner_col2 = st.columns(2)
