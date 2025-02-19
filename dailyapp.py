@@ -27,14 +27,17 @@ midwest = pytz.timezone("US/Eastern")
 music = ['1.mp3', '2.mp3', '3.mp3', '4.mp3']
 
 def play_music(number=0):
-    try:
-        pygame.mixer.init()
-        pygame.mixer.music.load(music[number])  # Replace with your music file path
-        pygame.mixer.music.play()
-        return True
-    except Exception as e:
-        print(f"Error playing music: {e}")
-        return False
+    #try:
+    audio_file = open(music[number], "rb")
+    audio_bytes = audio_file.read()
+    st.audio(audio_bytes, format="audio/wav")
+        #pygame.mixer.init()
+        #pygame.mixer.music.load(music[number])  # Replace with your music file path
+        #pygame.mixer.music.play()
+        #return True
+    #except Exception as e:
+        #print(f"Error playing music: {e}")
+        #return False
 
 # Function to stop music
 #def stop_music():
