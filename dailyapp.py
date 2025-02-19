@@ -1059,7 +1059,7 @@ def main():
     if "show_input" not in st.session_state:
         st.session_state.show_input = False
     if "entered_number" not in st.session_state:
-        st.session_state.entered_number = None
+        st.session_state.entered_number = 0
     
     col1, col2, col3, col4 = st. columns(4)
     with col1:
