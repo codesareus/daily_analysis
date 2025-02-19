@@ -1078,7 +1078,8 @@ def main():
         # Store the entered number and hide input elements
                     st.session_state.entered_number = entered_number
                     st.session_state.show_input = False
-            
+                    
+            st.text_input(">: ", value=st.session_state.entered_number, disabled=True)
     old_price = round(data_recent['Close'].iloc[-2], 2)
     if (current_price > st.session_state.entered_number) and  (old_price <= st.session_state.entered_number):
         play_music(0)
