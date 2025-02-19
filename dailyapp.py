@@ -818,7 +818,8 @@ def main():
     ax4.axhline(y=0, color="gray", linestyle="-", label="", linewidth=3)
     ax4.axhline(y=4, color="red", linestyle="--", label="")
     ax4.axhline(y=-4, color="green", linestyle="--", label="")
-
+    ax4.axhline(y=6, color="red", linestyle="--", label="")
+    ax4.axhline(y=-6, color="green", linestyle="--", label="")
 
     # add time intervals on bottom of chart
     ax4.text(0.3, 0.05, f"Time Frame: {interval}", 
