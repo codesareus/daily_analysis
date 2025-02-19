@@ -1081,9 +1081,9 @@ def main():
                     else:
                         st.session_state.entered_number = entered_number
                     st.session_state.show_input = False
-                    st.rerun()
                     
-        st.text_input("greater >", value=st.session_state.entered_number, disabled=True)
+            st.text_input("greater >", value=st.session_state.entered_number, disabled=True)
+            st.rerun()
                     
     old_price = round(data_recent['Close'].iloc[-2], 2)
     if (current_price > st.session_state.entered_number) and  (old_price <= st.session_state.entered_number):
