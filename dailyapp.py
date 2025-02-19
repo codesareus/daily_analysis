@@ -1067,17 +1067,17 @@ def main():
     with col2:
     
     # Button to reveal the input field and "Set below level" button
-    if st.button("Set >"):
-        st.session_state.show_input = True
+        if st.button("Set >"):
+            st.session_state.show_input = True
 
     # If input field is toggled on, show it
-    if st.session_state.show_input:
-        entered_number = st.text_input("Enter a number:", key="user_input")
+            if st.session_state.show_input:
+                entered_number = st.text_input("Enter a number:", key="user_input")
     
-        if st.button("Set"):
+            if st.button("Set"):
         # Store the entered number and hide input elements
-            st.session_state.entered_number = entered_number
-            st.session_state.show_input = False
+                st.session_state.entered_number = entered_number
+                st.session_state.show_input = False
             
     old_price = round(data_recent['Close'].iloc[-2], 2)
     if (current_price > st.session_state.entered_number) and  (old_price <= st.session_state.entered_number):
