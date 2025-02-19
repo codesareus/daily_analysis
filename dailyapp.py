@@ -1057,7 +1057,7 @@ def main():
 
     # Initialize session state for visibility and stored number
     if "entered_number" not in st.session_state:
-        st.session_state.entered_number = 0
+        st.session_state.entered_number = None
     
     col1, col2, col3, col4 = st. columns(4)
     with col1:
@@ -1067,16 +1067,14 @@ def main():
     # Button to reveal the input field and "Set below level" button
         if st.button("Set"):
         # Store the entered number and hide input elements
-            if user_input == None:
-                st.session_state.entered_number = 0
-            else:
-                st.session_state.entered_number = user_input
+            
+            st.session_state.entered_number = user_input
             st.write("set > " + f"{st.session_state.entered_number}")
             st.rerun()
         
             
         if st.button("Cancel"):
-            st.session_state.entered_number = 0
+            st.session_state.entered_number = None
             st.write("set > " + f"{st.session_state.entered_number}")
             st.rerun()
                     
