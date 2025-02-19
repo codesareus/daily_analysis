@@ -2,7 +2,7 @@ import base64
 import streamlit as st
 
 # Assuming 'music' is a list of file paths to your audio files
-music = ["your_audio_file.wav"]  # Replace with your actual audio file path(s)
+music = ['1.mp3', '2.mp3', '3.mp3', '4.mp3'] # Replace with your actual audio file path(s)
 
 def play_music(number=0):
     # Open the audio file and encode it in base64
