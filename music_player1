@@ -1,0 +1,5 @@
+def play_music(number=0):
+    #try:
+    audio_file = open(music[number], "rb")
+    audio_bytes = audio_file.read()
+    st.audio(audio_bytes, format="audio/wav")
