@@ -809,7 +809,7 @@ def main():
     r2_linear = r2_score(y, y_pred_linear)
 
     # Plot actual scores and regression lines
-    ax4.plot(x_values, y, color="navy", linestyle=".", label="Actual score")  # Actual prices as a gray line plot
+    ax4.plot(x_values, y, color="navy", marker=".", linestyle="None", label="Actual score") # Actual prices as a gray line plot
     
     ax4.plot(x_values, y_pred_linear, color="gray", linestyle="--", label=f"L.R. (R² = {r2_linear:.2f})")
     ax4.plot(x_values, y_pred_poly, color="blue", label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
