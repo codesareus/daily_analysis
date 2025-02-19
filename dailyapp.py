@@ -1173,33 +1173,22 @@ def main():
         st.markdown(f'<p style="color:{color}; font-weight:bold;">sbOK: {st.session_state.sbOK}_||__ conditions: b_{message1}__s_{message2}</s></p>', unsafe_allow_html=True)
 
         #st.write(f"Pre_Post_status: {st.session_state.prepo}")
-        inner_col1, inner_col2 = st.columns(2)
-        with inner_col1:
-            if st.button("prePost", disabled=False):
-                if st.session_state.prePost == 1:
-                    st.session_state.prePost = 0
-                    st.write("NO prePost")
-                    st.rerun()
-                else:
-                    st.session_state.prePost = 1
-                    st.write("Yes prePost")
-                    st.rerun()
-        with inner_col2:
-            if st.button("Clear data"):
-                st.session_state.stop_sleep = 1
-                st.session_state.sb_status = 0
-                st.session_state.sbOK = 0
-                new_data = pd.DataFrame([{
-                            "TimeStamp": f"{now}",
-                            "B_pr": 0,
-                            "S_pr": 0,
-                            "pl": 0,
-                            "total_pl": 0, 
-                        }])
+        if st.button("Clear data"):
+            st.session_state.stop_sleep = 1
+            st.session_state.sb_status = 0
+            st.session_state.sbOK = 0
+            st.session_state.temp_price = 0
+            new_data = pd.DataFrame([{
+                        "TimeStamp": f"{now}",
+                        "B_pr": 0,
+                        "S_pr": 0,
+                        "pl": 0,
+                        "total_pl": 0, 
+                    }])
                 # clear CSV file
-                new_data.to_csv(pe_file, mode="w", header=False, index=False)
-                st.write("data cleared")
-                st.rerun()
+            new_data.to_csv(pe_file, mode="w", header=False, index=False)
+            st.write("data cleared")
+            st.rerun()
         
             
     st.write("---------------------")
