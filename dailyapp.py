@@ -27,10 +27,23 @@ midwest = pytz.timezone("US/Eastern")
 music = ['1.mp3', '2.mp3', '3.mp3', '4.mp3']
 
 def play_music(number=0):
+
+    audio_file = music[number]  # Replace with your actual file
+
+    # HTML and JavaScript to auto-play audio
+    audio_html = f"""
+    <audio autoplay>
+      <source src="{audio_file}" type="audio/wav">
+      Your browser does not support the audio element.
+    </audio>
+    """
+
+    st.markdown(audio_html, unsafe_allow_html=True)
+
     #try:
-    audio_file = open(music[number], "rb")
-    audio_bytes = audio_file.read()
-    st.audio(audio_bytes, format="audio/wav")
+    #audio_file = open(music[number], "rb")
+    #audio_bytes = audio_file.read()
+    #st.audio(audio_bytes, format="audio/wav")
         #pygame.mixer.init()
         #pygame.mixer.music.load(music[number])  # Replace with your music file path
         #pygame.mixer.music.play()
