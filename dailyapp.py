@@ -1101,7 +1101,7 @@ def main():
             
     #####################################
     #st.write(f"### Controls:  ||______ current_price = {current_price:.2f}______")
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2 = st.columns(2)
     with col1:
         # delete data button
         if st.button("Refresh_Reset"):
@@ -1117,7 +1117,8 @@ def main():
             st.session_state.stop_sleep = 1
             st.rerun()
 
-    with col3:
+    col1, col2 = columns(2)
+    with col1:
         if st.button("B"):
             if st.session_state.sb_status == 0:
                 save_pe("B", current_price)
@@ -1129,7 +1130,7 @@ def main():
                 st.write(f"sb_B: NO, Can not ||sb_status: {st.session_state.sb_status}")
                 st.rerun()
 
-    with col4:
+    with col2:
         if st.button("S"):
             if st.session_state.sb_status == 1:
                 save_pe("S", current_price)
@@ -1198,7 +1199,7 @@ def main():
                         }])
                 # clear CSV file
                 new_data.to_csv(pe_file, mode="w", header=False, index=False)
-                st.success(f"✅ data cleared")
+                st.write("data cleared")
                 st.rerun()
         
             
@@ -1400,19 +1401,7 @@ def main():
 ########################################
 
     # Sleep for 8 seconds (simulating some processing)
-    # Check if the rerun count is less than 7
 
-    ### run automatic SB
-  
-    if b_condition:
-        save_pe("B", current_price)
-        st.session_state.sb_status ==  1 
-        st.rerun()
-            
-    elif s_condition:
-        st.session_state.sb_status ==  0
-        save_pe("S", current_price)
-        st.rerun()
    
     if st.session_state.stop_sleep == 0: 
     # Sleep for 8 seconds (simulating some processing)
@@ -1430,7 +1419,22 @@ def main():
         else:
             st.session_state.rerun_count = 0
             st.session_state.index = 0
+
+            # Check if the rerun count is less than 7
+
+    ### run automatic SB
+  
+
+        if b_condition:
+            save_pe("B", current_price)
+            st.session_state.sb_status ==  1 
+            st.rerun()
             
+        elif s_condition:
+            st.session_state.sb_status ==  0
+            save_pe("S", current_price)
+            st.rerun()
+        
         st.rerun()
         
 
