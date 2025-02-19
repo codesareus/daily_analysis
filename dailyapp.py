@@ -19,18 +19,32 @@ from time import sleep
 from matplotlib.lines import Line2D
 import pandas_market_calendars as mcal
 import pygame
+import base64
+
+
+music = ['1.mp3', '2.mp3', '3.mp3', '4.mp3']
+def play_music(number=0):
+    audio_file = open(music[number], "rb")
+    audio_bytes = audio_file.read()
+    audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+    audio_html = f"""
+        <audio controls autoplay muted>
+            <source src="data:audio/wav;base64,{audio_base64}" type="audio/wav">
+        </audio>
+    """
+    st.markdown(audio_html, unsafe_allow_html=True)
 
 #midwest = pytz.timezone("America/New")
 midwest = pytz.timezone("US/Eastern")
 
 # Function to play music
-music = ['1.mp3', '2.mp3', '3.mp3', '4.mp3']
 
-def play_music(number=0):
+def play_music0(number=0):
+    st.write("old player")
     #try:
-    audio_file = open(music[number], "rb")
-    audio_bytes = audio_file.read()
-    st.audio(audio_bytes, format="audio/wav")
+    #audio_file = open(music[number], "rb")
+    #audio_bytes = audio_file.read()
+    #st.audio(audio_bytes, format="audio/wav")
         #pygame.mixer.init()
         #pygame.mixer.music.load(music[number])  # Replace with your music file path
         #pygame.mixer.music.play()
