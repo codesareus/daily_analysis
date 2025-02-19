@@ -31,8 +31,6 @@ def play_music(number=0):
         pygame.mixer.init()
         pygame.mixer.music.load(music[number])  # Replace with your music file path
         pygame.mixer.music.play()
-        #time.sleep(60)  # Play for 1 minute
-        pygame.mixer.music.stop()
         return True
     except Exception as e:
         print(f"Error playing music: {e}")
