@@ -1071,8 +1071,6 @@ def main():
                     "pl": 0,
                     "total_pl": t_pl,
                 }])
-            st.session_state.sb_status = 1 
-            st.session_state.temp_price = price
 
         else:
             S_pr = price
@@ -1085,12 +1083,9 @@ def main():
                     "pl": round(pl, 2),
                     "total_pl": t_pl, ## for now
                 }])
-            st.session_state.sb_status = 0
-            st.session_state.temp_price = 0
             
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
-        st.rerun()
             
     #####################################
     #st.write(f"### Controls:  ||______ current_price = {current_price:.2f}______")
@@ -1101,7 +1096,6 @@ def main():
             st.session_state.rerun_count = 0
             st.session_state.index = 0
             st.session_state.stop_sleep = 0
-            st.session_state.sb_status = 0
             st.session_state.sbOK = 1
             st. rerun()
             
@@ -1118,10 +1112,9 @@ def main():
                 st.session_state.temp_price = current_price 
                 st.session_state.sb_status = 1
                 st.write(f"sb_B: Yes ||sb_status: {st.session_state.sb_status}")
-                st.rerun()
             else:
                 st.write(f"sb_B: NO, Can not ||sb_status: {st.session_state.sb_status}")
-                st.rerun()
+            st.rerun()
 
     with col2:
         if st.button("S"):
@@ -1130,12 +1123,10 @@ def main():
                 st.session_state.temp_price = 0
                 st.session_state.sb_status = 0
                 st.write(f"sb_S: Yes ||sb_status: {st.session_state.sb_status}")
-                st.session_state.stop_sleep = 1
-                st.rerun()
+                
             else:
                 st.write(f"sb_S: NO, Can not ||sb_status: {st.session_state.sb_status}")
-                st.session_state.stop_sleep = 1
-                st.rerun()
+            st.rerun()
 
     #show which timeframes are in bar chart:
     timeframes = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
@@ -1398,9 +1389,15 @@ def main():
     ### run automatic SB
         if b_condition:
             save_pe("B", current_price)
+            st.session_state.temp_price = current_price
+            st.session_state.sb_status = 1
+            st.rerun()
               
         elif s_condition:
             save_pe("S", current_price)
+            st.session_state.temp_price = 0
+            st.session_state.sb_status = 0
+            st.rerun()
 
         st.rerun()
         
