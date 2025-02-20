@@ -900,7 +900,7 @@ def main():
     ################### evaluate score trend and save it to scoreT.csv
     score_prior = data_recent['score'].iloc[-2]
     score_prior2 = data_recent['score'].iloc[-3]
-    std_dev = - data_recent['std_dev'].iloc[-1]
+    std_dev = - data_recent['std_score'].iloc[-1]
 
     #if (score_prior > score_prior2) and score_prior >= 1 and data_recent['ema_trend'].iloc[-2] >= 1:
         #score_trend_1 = 1
@@ -923,7 +923,7 @@ def main():
         "rsi": round(rsi_score, 2),
         "macd": round(macd_score, 2),
         "total": round(score, 2),
-        "std_dev": std_dev,
+        "std_dev": std_score,
         "score_trend": score_trend,
     }])
 
