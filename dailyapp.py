@@ -1055,19 +1055,7 @@ def main():
         #stop_music()
         message = "no music"
 
-    col1, col2, col3, col4 = st. columns(4)
-    with col1:
-        st.write(f"{message}")
-    with col2:
-          # Button to reveal the input field and "Set below level" button
-        if st.button("Set >"):
-            st.write("text area")
-    with col3:
-        if st.button("For <"):
-            st.write("text area")
-    with col4:
-        if st.button("For "):
-            st.write("text area")
+    st.write(f"{message}")
     
     ########## B and S actions
     def save_pe(SB= "", price=None):      
@@ -1412,8 +1400,6 @@ def main():
             # Check if the rerun count is less than 7
 
     ### run automatic SB
-  
-
         if b_condition:
             save_pe("B", current_price)
             st.session_state.sb_status = 1 
