@@ -900,7 +900,6 @@ def main():
     ################### evaluate score trend and save it to scoreT.csv
     score_prior = data_recent['score'].iloc[-2]
     score_prior2 = data_recent['score'].iloc[-3]
-    std_dev = - data_recent['std_score'].iloc[-1]
 
     #if (score_prior > score_prior2) and score_prior >= 1 and data_recent['ema_trend'].iloc[-2] >= 1:
         #score_trend_1 = 1
@@ -923,7 +922,7 @@ def main():
         "rsi": round(rsi_score, 2),
         "macd": round(macd_score, 2),
         "total": round(score, 2),
-        "std_dev": std_score,
+        "std_dev": deviation_in_std,
         "score_trend": score_trend,
     }])
 
@@ -946,7 +945,7 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'score_trend_1', 'score_trend']
+    df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'std_dev', 'score_trend']
 
     #highlight
     
@@ -1317,7 +1316,7 @@ def main():
 ###################### bar chart?
     
    ## read bar data scoreT_file
-    df = pd.read_csv(scoreT_file, names=["tFrame", "ema_trend", "ema", "rsi", "macd", "total", "score_trend_1", "score_trend"])
+    df = pd.read_csv(scoreT_file, names=["tFrame", "ema_trend", "ema", "rsi", "macd", "total", "std_dev", "score_trend"])
     
     # Define custom order
     timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
