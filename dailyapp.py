@@ -1037,7 +1037,7 @@ def main():
                   (interval == "1m" and (current_price - st.session_state.temp_price <= -0.25) and (ema_trend_1m <= 0))
                     ]
     b_condition = st.session_state.sb_status == 0 and ema_trend_1m == 3 and sum_score_trend_rest >= 5 
-    s_condition = st.session_state.sb_status ==  1 and any(conditions)
+    s_condition = st.session_state.sb_status == 1 and any(conditions)
 
     if  b_condition:
         play_music(0)
@@ -1055,37 +1055,13 @@ def main():
         #stop_music()
         message = "no music"
 
-    # Initialize session state for visibility and stored number
-    if "entered_number" not in st.session_state:
-        st.session_state.entered_number = None
-    
     col1, col2, col3, col4 = st. columns(4)
     with col1:
         st.write(f"{message}")
     with col2:
           # Button to reveal the input field and "Set below level" button
-        if st.button("Set"):
-        # Store the entered number and hide input elements
-            entered_number = st.number_input("Enter a number:", min_value=0, max_value=1000, step=1, key="user_input")
-            
-            st.session_state.entered_number = entered_number
-            st.write("set > " + f"{st.session_state.entered_number}")
-            
-        
-            
-        if st.button("Cancel"):
-            st.session_state.entered_number = None
-            st.write("set > " + f"{st.session_state.entered_number}")
-        
-                    
- #   old_price = round(data_recent['Close'].iloc[-2], 2)
-   # if (current_price > st.session_state.entered_number) and  (old_price <= st.session_state.entered_number):
-  #      play_music(0)
-       # st.write("cross above {st.session_state.entered_number}")
-
-    # Display the entered number (optional)
-    #if st.session_state.entered_number:
-        #st.write(f"Below level set to: {st.session_state.entered_number}")
+        if st.button("Set >"):
+            st.write("text area")
     with col3:
         if st.button("For <"):
             st.write("text area")
