@@ -1063,7 +1063,7 @@ def main():
     with col1:
         st.write(f"{message}")
     with col2:
-        st.entered_number("set greater than", key="user_input")
+        entered_number = st.number_input("Enter a number:", min_value=0, max_value=1000, step=1, key="user_input")
     # Button to reveal the input field and "Set below level" button
         if st.button("Set"):
         # Store the entered number and hide input elements
@@ -1078,10 +1078,10 @@ def main():
             st.write("set > " + f"{st.session_state.entered_number}")
             st.rerun()
                     
-    old_price = round(data_recent['Close'].iloc[-2], 2)
-    if (current_price > st.session_state.entered_number) and  (old_price <= st.session_state.entered_number):
-        play_music(0)
-        st.write("cross above {st.session_state.entered_number}")
+ #   old_price = round(data_recent['Close'].iloc[-2], 2)
+   # if (current_price > st.session_state.entered_number) and  (old_price <= st.session_state.entered_number):
+  #      play_music(0)
+       # st.write("cross above {st.session_state.entered_number}")
 
     # Display the entered number (optional)
     #if st.session_state.entered_number:
