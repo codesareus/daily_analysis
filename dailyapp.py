@@ -1392,8 +1392,10 @@ def main():
         # Update the index for the next interval
         if st.session_state.index < len(intervals) - 1:
             st.session_state.index += 1
+        else:
+            st.session_state.index = 0
     else:
-        st.session_state.index = 0
+            st.session_state.index = 0
     
     ### run automatic SB
     if b_condition:
