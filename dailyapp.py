@@ -1063,12 +1063,12 @@ def main():
     with col1:
         st.write(f"{message}")
     with col2:
-        st.user_input("set greater than", key="user_input")
+        st.entered_number("set greater than", key="user_input")
     # Button to reveal the input field and "Set below level" button
         if st.button("Set"):
         # Store the entered number and hide input elements
             
-            st.session_state.entered_number = user_input
+            st.session_state.entered_number = entered_number
             st.write("set > " + f"{st.session_state.entered_number}")
             st.rerun()
         
