@@ -208,8 +208,8 @@ def fetch_d2_close(ticker):
     now = datetime.now(eastern)
 
     # Define US market hours
-    market_open = now.replace(hour=8, minute=30, second=0, microsecond=0)
-    market_close = now.replace(hour=15, minute=0, second=0, microsecond=0)
+    market_open = now.replace(hour=9, minute=30, second=0, microsecond=0)
+    market_close = now.replace(hour=16, minute=0, second=0, microsecond=0)
 
     if now < market_open or now > market_close:  # Pre-market or post-market
         d2_close = close_prices[-2]  # Use the previous day's close
