@@ -891,7 +891,7 @@ def main():
         # If the file doesn't exist or is empty, create a new DataFrame
         print("File does not exist or is empty. Creating a new file.")
 
-        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'total', 'score_trend'])
+        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'total', 'std_dev', 'score_trend'])
 
         # Save the empty DataFrame to the CSV file
         df.to_csv(file_path, index=False, header=False)
@@ -900,13 +900,14 @@ def main():
     ################### evaluate score trend and save it to scoreT.csv
     score_prior = data_recent['score'].iloc[-2]
     score_prior2 = data_recent['score'].iloc[-3]
+    std_dev = - data_recent['std_dev'].iloc[-1]
 
-    if (score_prior > score_prior2) and score_prior >= 1 and data_recent['ema_trend'].iloc[-2] >= 1:
-        score_trend_1 = 1
-    elif (score_prior < score_prior2) and score_prior <= -1 and data_recent['ema_trend'].iloc[-2] <= -1:
-        score_trend_1 = -1
-    else:
-        score_trend_1 = 0
+    #if (score_prior > score_prior2) and score_prior >= 1 and data_recent['ema_trend'].iloc[-2] >= 1:
+        #score_trend_1 = 1
+    #elif (score_prior < score_prior2) and score_prior <= -1 and data_recent['ema_trend'].iloc[-2] <= -1:
+       # score_trend_1 = -1
+    #else:
+       # score_trend_1 = 0
     
     if (score > score_prior) and score >= 1 and data_recent['ema_trend'].iloc[-1] >= 1:
         score_trend = 1
@@ -922,7 +923,7 @@ def main():
         "rsi": round(rsi_score, 2),
         "macd": round(macd_score, 2),
         "total": round(score, 2),
-        "score_trend_1": score_trend,
+        "std_dev": std_dev,
         "score_trend": score_trend,
     }])
 
