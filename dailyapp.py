@@ -1033,8 +1033,8 @@ def main():
     updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
 
     #prePost_condition = (st.session_state.prePost == 0 and get_time_now() == "open") or (st.session_state.prePost == 1 and (get_time_now() == "pre" or get_time_now() == "open" or get_time_now() == "after_hours" ))
-    conditions = [(interval == "1m" and (current_price - st.session_state.temp_price >= 0.5) and (ema_trend_1m < 3)),
-                  (interval == "1m" and (current_price - st.session_state.temp_price <= -0.25) and (ema_trend_1m <= 0))
+    conditions = [(interval == "1m" and (current_price - st.session_state.temp_price >= 0.5) ),
+                  (interval == "1m" and (current_price - st.session_state.temp_price <= -0.25) )
                     ]
     b_condition = st.session_state.sb_status == 0 and ema_trend_1m == 3 and sum_score_trend_rest >= 5 
     s_condition = st.session_state.sb_status == 1 and any(conditions)
