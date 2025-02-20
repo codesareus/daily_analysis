@@ -1092,7 +1092,7 @@ def main():
     if "sleepGap" not in st.session_state:
         st.session_state.sleepGap = 10
         
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
         # delete data button
         if st.button("Refresh_Reset"):
@@ -1109,6 +1109,9 @@ def main():
             st.session_state.sleepGap = 30
             st.session_state.index = 0
             st.rerun()
+
+    with col3:
+        st.write(f"now: sleep__ {st.session_state.sleepGap}")
 
     col1, col2 = st.columns(2)
     with col1:
