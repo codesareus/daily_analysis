@@ -479,7 +479,7 @@ def main():
 
     # Calculate residuals and standard deviation for the polynomial model
     #residuals = y - y_pred_poly
-    #std_dev = np.std(residuals)
+    #dev_from_std = np.std(residuals)
 
 ############ add std_dev and diviation from std_dev
     
@@ -891,7 +891,7 @@ def main():
         # If the file doesn't exist or is empty, create a new DataFrame
         print("File does not exist or is empty. Creating a new file.")
 
-        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'total', 'std_dev', 'score_trend'])
+        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'total', 'dev_from_std', 'score_trend'])
 
         # Save the empty DataFrame to the CSV file
         df.to_csv(file_path, index=False, header=False)
@@ -922,7 +922,7 @@ def main():
         "rsi": round(rsi_score, 2),
         "macd": round(macd_score, 2),
         "total": round(score, 2),
-        "std_dev": deviation_in_std,
+        "dev_from_std": deviation_in_std,
         "score_trend": score_trend,
     }])
 
@@ -945,7 +945,7 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'std_dev', 'score_trend']
+    df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'dev_from_std', 'score_trend']
 
     #highlight
     
@@ -1316,7 +1316,7 @@ def main():
 ###################### bar chart?
     
    ## read bar data scoreT_file
-    df = pd.read_csv(scoreT_file, names=["tFrame", "ema_trend", "ema", "rsi", "macd", "total", "std_dev", "score_trend"])
+    df = pd.read_csv(scoreT_file, names=["tFrame", "ema_trend", "ema", "rsi", "macd", "total", "dev_from_std", "score_trend"])
     
     # Define custom order
     timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
