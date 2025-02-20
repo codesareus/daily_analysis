@@ -1070,13 +1070,13 @@ def main():
             
             st.session_state.entered_number = entered_number
             st.write("set > " + f"{st.session_state.entered_number}")
-            st.rerun()
+            
         
             
         if st.button("Cancel"):
             st.session_state.entered_number = None
             st.write("set > " + f"{st.session_state.entered_number}")
-            st.rerun()
+        
                     
  #   old_price = round(data_recent['Close'].iloc[-2], 2)
    # if (current_price > st.session_state.entered_number) and  (old_price <= st.session_state.entered_number):
