@@ -1398,7 +1398,7 @@ def main():
             st.session_state.temp_price = 0
             st.session_state.sb_status = 0
             st.rerun()
-
+        st.empty()
         st.rerun()
         
 
