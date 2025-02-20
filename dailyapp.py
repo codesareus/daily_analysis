@@ -1063,10 +1063,10 @@ def main():
     with col1:
         st.write(f"{message}")
     with col2:
-        entered_number = st.number_input("Enter a number:", min_value=0, max_value=1000, step=1, key="user_input")
-    # Button to reveal the input field and "Set below level" button
+          # Button to reveal the input field and "Set below level" button
         if st.button("Set"):
         # Store the entered number and hide input elements
+            entered_number = st.number_input("Enter a number:", min_value=0, max_value=1000, step=1, key="user_input")
             
             st.session_state.entered_number = entered_number
             st.write("set > " + f"{st.session_state.entered_number}")
