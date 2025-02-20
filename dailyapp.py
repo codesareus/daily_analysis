@@ -37,8 +37,8 @@ def play_music(number=0):
     """
     st.markdown(audio_html, unsafe_allow_html=True)
 
-#midwest = pytz.timezone("America/New")
-midwest = pytz.timezone("US/Eastern")
+#eastern = pytz.timezone("America/New")
+eastern = pytz.timezone("US/Eastern")
 
 # Function to play music
 
@@ -182,8 +182,8 @@ def fetch_previous_close(ticker):
         return None  # Handle cases where there isn't enough data
     
     # Get current time in NY (US Eastern Time)
-    midwest = pytz.timezone("US/Eastern")
-    now = datetime.now(midwest)
+    eastern = pytz.timezone("US/Eastern")
+    now = datetime.now(eastern)
 
     # Define US market hours
     market_open = now.replace(hour=8, minute=30, second=0, microsecond=0)
@@ -204,8 +204,8 @@ def fetch_d2_close(ticker):
         return None  # Handle cases where there isn't enough data
     
     # Get current time in NY (US Eastern Time)
-    midwest = pytz.timezone("US/Eastern")
-    now = datetime.now(midwest)
+    eastern = pytz.timezone("US/Eastern")
+    now = datetime.now(eastern)
 
     # Define US market hours
     market_open = now.replace(hour=8, minute=30, second=0, microsecond=0)
@@ -458,9 +458,9 @@ def main():
     percentage_change = calculate_percentage_change(current_price, previous_close)
 
     # Get current local time
-    midwest = pytz.timezone("US/Eastern")
-    #current_time = datetime.now(midwest).strftime("%H:%M:%S")
-    current_time = datetime.now(midwest).strftime("%I:%M:%S %p")
+    eastern = pytz.timezone("US/Eastern")
+    #current_time = datetime.now(eastern).strftime("%H:%M:%S")
+    current_time = datetime.now(eastern).strftime("%I:%M:%S %p")
 
     # Display the percentage change message with current local time
     #st.write("### Current Price vs Previous Close___" f"{ticker}")
@@ -974,7 +974,7 @@ def main():
     ## very important use
     current_price = round(data_recent['Close'].iloc[-1], 2)
 
-    now = datetime.now(midwest).strftime('%m-%d %I:%M:%S %p')  # Correct format
+    now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  # Correct format
     
     ############ investigate score_trends
     
@@ -1367,7 +1367,7 @@ def main():
         Line2D([0], [0], color='orange', lw=2, label="MACD"),
         Line2D([0], [0], color='gray', lw=2, label="total"),
     ]
-    time = datetime.now(midwest).strftime('%D:%H:%M')
+    time = datetime.now(eastern).strftime('%D:%H:%M')
     ax0.set_xlabel("Time Frame")
     ax0.set_ylabel("Score")
     ax0.set_title(f"Trend Scores by Interval({time})")
