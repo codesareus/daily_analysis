@@ -656,10 +656,10 @@ def main():
     valid_macd_timeframes = ["1m","5m","15m","30m","1h", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "max"]
 
     # Only plot MACD if the selected timeframe is valid
-    if interval in valid_macd_timeframes:
-        fig, (ax0, ax4, ax, ax2, ax3 ) = plt.subplots(5, 1, figsize=(20, 40), gridspec_kw={'height_ratios': [1.5, 1.5, 4, 1, 1 ]})
-    else:
-        fig, (ax, ax2) = plt.subplots(2, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [3, 1]})
+    #if interval in valid_macd_timeframes:
+    fig, (ax0, ax4, ax, ax2, ax3 ) = plt.subplots(5, 1, figsize=(20, 40), gridspec_kw={'height_ratios': [1.5, 1.5, 4, 1, 1 ]})
+    #else:
+        #fig, (ax, ax2) = plt.subplots(2, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [3, 1]})
 
     # Use numeric x-axis for plotting to avoid duplicate time issues
     x_values = np.arange(len(data_recent))  # Numeric x-axis
@@ -899,7 +899,7 @@ def main():
 
     ################### evaluate score trend and save it to scoreT.csv
     score_prior = data_recent['score'].iloc[-2]
-    score_prior2 = data_recent['score'].iloc[-3]
+    #score_prior2 = data_recent['score'].iloc[-3]
 
     #if (score_prior > score_prior2) and score_prior >= 1 and data_recent['ema_trend'].iloc[-2] >= 1:
         #score_trend_1 = 1
