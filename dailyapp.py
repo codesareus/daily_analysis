@@ -1418,9 +1418,9 @@ def main():
 
 # Check if slope is positive or negative
     if initial_slope > 0:
-        message = "1min trend DOWN."
+        message = "1min AVG trend DOWN."
     else:
-        message = "1min trend UP."
+        message = "1min AVG trend UP."
     ax0.set_title(f"Trend Scores by Interval({time})__{message}")
     
     #########################################
