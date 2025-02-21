@@ -1383,7 +1383,7 @@ def main():
     ax0.legend(handles=legend_handles, loc="lower right")
 
 # Fit a polynomial regression (degree 2 or 3 works well for trends)
-    degree = 3  # You can adjust the degree
+    degree = 4 # You can adjust the degree
     coeffs = np.polyfit(x, total_values, degree)
     poly_eq = np.poly1d(coeffs)
 
@@ -1393,7 +1393,23 @@ def main():
 
 # Plot the polynomial regression curve
     ax0.plot(x_smooth, y_smooth, color="red", linestyle="-", linewidth=2, label="Polynomial Fit")
+############# fit pr with averag
 
+# Compute the average value across all five metrics for each interval
+    avg_values = [(ema_trend[i] + ema_values[i] + rsi_values[i] + macd_values[i] + total_values[i]) / 5 for i in range(len(unique_intervals))]
+
+# Fit a polynomial regression (adjust degree as needed)
+    degree = 4 # Adjust for smoother or more flexible fit
+    coeffs = np.polyfit(x, avg_values, degree)
+    poly_eq = np.poly1d(coeffs)
+
+# Generate smooth curve data
+    x_smooth = np.linspace(min(x), max(x), 300)
+    y_smooth = poly_eq(x_smooth)
+
+# Plot the polynomial regression curve
+    ax0.plot(x_smooth, y_smooth, color="red", linestyle="--", linewidth=2, label="Polynomial Fit (Avg)")
+    
     #########################################
 
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
