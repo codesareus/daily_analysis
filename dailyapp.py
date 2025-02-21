@@ -1383,7 +1383,7 @@ def main():
     ax0.legend(handles=legend_handles, loc="lower right")
 
 # Fit a polynomial regression (degree 2 or 3 works well for trends)
-    degree = 4 # You can adjust the degree
+    degree = 5 # You can adjust the degree
     coeffs = np.polyfit(x, total_values, degree)
     poly_eq = np.poly1d(coeffs)
 
@@ -1399,7 +1399,7 @@ def main():
     avg_values = [(ema_trend[i] + ema_values[i] + rsi_values[i] + macd_values[i] + total_values[i]) / 5 for i in range(len(unique_intervals))]
 
 # Fit a polynomial regression (adjust degree as needed)
-    degree = 4 # Adjust for smoother or more flexible fit
+    degree = 5 # Adjust for smoother or more flexible fit
     coeffs = np.polyfit(x, avg_values, degree)
     poly_eq = np.poly1d(coeffs)
 
