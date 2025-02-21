@@ -470,28 +470,30 @@ def main():
         st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **......** {current_time}")
 
     ##############################
-    degree = 3  # Default to degree 2
+    if "poly_degree" not in session_state:
+        session_state.poly_degree = 3
+    degree = session_state.poly_degree
     
     col1, col2,col3,col4 = st.columns(4)
     
     with col1:
         if st.button("degree 4"):
-            degree = 4
+            session_state.poly_degree = 4
             st.rerun()
 
     with col2:
         if st.button("degree 5"):
-            degree = 5
+            session_state.poly_degree = 5
             st.rerun()
 
     with col3:
         if st.button("degree 6"):
-            degree = 6
+            session_state.poly_degree = 6
             st.rerun()
 
     with col4:
         if st.button("degree 7"):
-            degree = 7
+            session_state.poly_degree = 7
             st.rerun()
     
     ############$$##################
