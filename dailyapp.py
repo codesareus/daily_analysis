@@ -495,6 +495,8 @@ def main():
         if st.button("degree 7"):
             st.session_state.poly_degree = 7
             st.rerun()
+
+    st.write(f"selected PR degree: {degree}")
     
     ############$$##################
     # Perform linear regression (using only the most recent 300 points)
