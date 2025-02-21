@@ -1328,7 +1328,7 @@ def main():
     df = df.sort_values("tFrame")
     
     ## plotting barchart
-    ax0.set_ylim(-12, 12)  # Adjust Y-axis limits if needed
+    ax0.set_ylim(-10, 10)  # Adjust Y-axis limits if needed
 
     # Get unique intervals and prepare x-axis locations
     unique_intervals = df["tFrame"].unique()
