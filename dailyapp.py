@@ -468,9 +468,33 @@ def main():
         st.success(f"🟢 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, previous_close **{previous_close:.2f}**)  |  **___** {current_time} **___**")
     else:
         st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **......** {current_time}")
-        
-    degree = 2  # Default to degree 2
 
+    ##############################
+    degree = 3  # Default to degree 2
+    
+    col1, col2,col3,col4 = st.columns(4)
+    
+    with col1:
+        if st.button("degree 4")
+            degree = 4
+            st.rerun()
+
+    with col2:
+        if st.button("degree 5")
+            degree = 5
+            st.rerun()
+
+    with col3:
+        if st.button("degree 6")
+            degree = 6
+            st.rerun()
+
+    with col4:
+        if st.button("degree 7")
+            degree = 7
+            st.rerun()
+    
+    ############$$##################
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
