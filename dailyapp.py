@@ -1377,7 +1377,7 @@ def main():
     time = datetime.now(eastern).strftime('%D:%H:%M')
     ax0.set_xlabel("Time Frame")
     ax0.set_ylabel("Score")
-    ax0.set_title(f"Trend Scores by Interval({time})")
+    #ax0.set_title(f"Trend Scores by Interval({time})")
     ax0.set_xticks(x)
     ax0.set_xticklabels(unique_intervals, rotation=45)
     ax0.legend(handles=legend_handles, loc="lower right")
@@ -1409,6 +1409,19 @@ def main():
 
 # Plot the polynomial regression curve
     ax0.plot(x_smooth, y_smooth, color="red", linestyle="--", linewidth=2, label="Polynomial Fit (Avg)")
+
+# Compute the derivative (slope function)
+    poly_derivative = np.polyder(poly_eq)
+
+# Evaluate slope at the first x value
+    initial_slope = poly_derivative(x[0])
+
+# Check if slope is positive or negative
+    if initial_slope > 0:
+        message("1min trend DOWN.")
+    else:
+        message("1min trend UP.")
+    ax0.set_title(f"Trend Scores by Interval({time})__{message}")
     
     #########################################
 
