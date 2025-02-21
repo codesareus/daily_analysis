@@ -657,7 +657,7 @@ def main():
 
     # Only plot MACD if the selected timeframe is valid
     #if interval in valid_macd_timeframes:
-    fig, (ax0, ax4, ax, ax2, ax3 ) = plt.subplots(5, 1, figsize=(20, 40), gridspec_kw={'height_ratios': [1.5, 1.5, 4, 1, 1 ]})
+    fig, (ax0, ax4, ax2, ax3, ax) = plt.subplots(5, 1, figsize=(20, 40), gridspec_kw={'height_ratios': [1.5, 1.5, 1, 1, 4 ]})
     #else:
         #fig, (ax, ax2) = plt.subplots(2, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [3, 1]})
 
