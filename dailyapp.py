@@ -1382,6 +1382,18 @@ def main():
     ax0.set_xticklabels(unique_intervals, rotation=45)
     ax0.legend(handles=legend_handles, loc="lower right")
 
+# Fit a polynomial regression (degree 2 or 3 works well for trends)
+    degree = 3  # You can adjust the degree
+    coeffs = np.polyfit(x, total_values, degree)
+    poly_eq = np.poly1d(coeffs)
+
+# Generate smooth curve data
+    x_smooth = np.linspace(min(x), max(x), 300)  # More points for a smooth curve
+    y_smooth = poly_eq(x_smooth)
+
+# Plot the polynomial regression curve
+    ax0.plot(x_smooth, y_smooth, color="red", linestyle="-", linewidth=2, label="Polynomial Fit")
+
     #########################################
 
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
