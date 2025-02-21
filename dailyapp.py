@@ -1353,6 +1353,13 @@ def main():
     ax0.bar(x + offsets[3], macd_values, width, color="orange", edgecolor="black", label="MACD")
     ax0.bar(x + offsets[4], total_values, width, color="gray", edgecolor="black", label="total")
 
+    # Add value labels on top of each bar
+    for i, interval in enumerate(unique_intervals):
+        ax0.text(x[i] + offsets[0], ema_trend[i] + 0.2, f"{ema_trend[i]:.2f}", ha='center', fontsize=10, color="black")
+        ax0.text(x[i] + offsets[1], ema_values[i] + 0.2, f"{ema_values[i]:.2f}", ha='center', fontsize=10, color="black")
+        ax0.text(x[i] + offsets[2], rsi_values[i] + 0.2, f"{rsi_values[i]:.2f}", ha='center', fontsize=10, color="black")
+        ax0.text(x[i] + offsets[3], macd_values[i] + 0.2, f"{macd_values[i]:.2f}", ha='center', fontsize=10, color="black")
+        ax0.text(x[i] + offsets[4], total_values[i] + 0.2, f"{total_values[i]:.2f}", ha='center', fontsize=10, color="black")
     # Add horizontal lines at y = 4 and y = -4
     ax0.axhline(y=3, color="red", linestyle="--", linewidth=1, label="Threshold (4)")
     ax0.axhline(y=-3, color="green", linestyle="--", linewidth=1, label="Threshold (-4)")
