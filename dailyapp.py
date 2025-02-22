@@ -1,4 +1,3 @@
-
 import streamlit as st
 import yfinance as yf
 import pandas as pd
@@ -471,18 +470,18 @@ def main():
 
     ##############################
     if "poly_degree" not in st.session_state:
-        st.session_state.poly_degree = 3
+        st.session_state.poly_degree = 5
     degree = st.session_state.poly_degree
     
     col1, col2,col3,col4 = st.columns(4)
     
     with col1:
-        if st.button("degree 4"):
+        if st.button("degree 3"):
             st.session_state.poly_degree = 4
             st.rerun()
 
     with col2:
-        if st.button("degree 5"):
+        if st.button("degree 4"):
             st.session_state.poly_degree = 5
             st.rerun()
 
@@ -1061,12 +1060,15 @@ def main():
     updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
 
     #prePost_condition = (st.session_state.prePost == 0 and get_time_now() == "open") or (st.session_state.prePost == 1 and (get_time_now() == "pre" or get_time_now() == "open" or get_time_now() == "after_hours" ))
-    conditions = [(interval == "1m" and (current_price - st.session_state.temp_price >= 0.5) ),
-                  (interval == "1m" and (current_price - st.session_state.temp_price <= -0.25) )
-                    ]
-    b_condition = st.session_state.sb_status == 0 and ema_trend_1m == 3 and sum_score_trend_rest >= 5 
-    s_condition = st.session_state.sb_status == 1 and any(conditions)
 
+    b_condition =  ema_trend_1m == 3 and sum_score_trend_rest >= 4
+    s_condition = ((current_price - st.session_state.temp_price) >= 0.5) or ((current_price - st.session_state.temp_price) <= -0.25))
+
+
+    short_b = ((current_price - st.session_state.temp_price) <= -0.5) or ((current_price - st.session_state.temp_price) >= 0.25) 
+                    
+    short_s = ema_trend_1m == -3 and sum_score_trend_rest <= -4
+    
     if  b_condition:
         play_music(0)
         message = "b_condition: music1 playing"
@@ -1090,26 +1092,47 @@ def main():
         total_pl = updated_data["total"].iloc[-1]
         
         if SB == "B":
-            B_pr = price
-            t_pl = total_pl
             new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
-                    "B_pr": round(B_pr, 2),
+                    "type": "B",
+                    "B_pr": round(price, 2),
                     "S_pr": 0,
                     "pl": 0,
-                    "total_pl": t_pl,
+                    "total_pl": round(total_pl, 2)
                 }])
 
-        else:
-            S_pr = price
-            pl = S_pr - st.session_state.temp_price
-            t_pl = total_pl + pl
+        elif SB == "S":
+            pl = price - st.session_state.temp_price
+            total_pl = total_pl + pl
             new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
+                    "type": "S",
                     "B_pr": 0,
-                    "S_pr": round(S_pr, 2),
+                    "S_pr": round(price, 2),
                     "pl": round(pl, 2),
-                    "total_pl": t_pl, ## for now
+                    "total_pl": round(total_pl, 2)
+                }])
+
+        elif SB == "SS":
+            new_data = pd.DataFrame([{
+                    "TimeStamp": f"{now}",
+                    "type": "SS",
+                    "S_pr": 0,
+                    "S_pr": round(price, 2),
+                    "pl": 0,
+                    "total_pl": total_pl, ## for now
+                }])
+
+        elif SB == "SB": 
+            pl = st.session_state.temp_price - price
+            total_pl = total_pl + pl
+            new_data = pd.DataFrame([{
+                    "TimeStamp": f"{now}",
+                    "type": "SB",
+                    "B_pr": round(price, 2),
+                    "S_pr": 0,
+                    "pl": round(pl, 2),
+                    "total_pl": round(total_pl, 2)
                 }])
             
         # Append to CSV file
@@ -1144,25 +1167,39 @@ def main():
     col1, col2 = st.columns(2)
     with col1:
         if st.button("B"):
-            if st.session_state.sb_status == 0:
+            if  st.session_state.sb_status == 0:
                 save_pe("B", current_price)
-                st.session_state.temp_price = current_price 
+                st.session_state.temp_price = current_price
                 st.session_state.sb_status = 1
-                st.write(f"sb_B: Yes ||sb_status: {st.session_state.sb_status}")
+                st.write(f"B: Yes ||sb_status: {st.session_state.sb_status}")
+
+            elif  st.session_state.sb_status == -1:
+                save_pe("SB", current_price)
+                st.session_state.temp_price = 0
+                st.session_state.sb_status = 0
+                st.write(f"SB: Yes ||sb_status: {st.session_state.sb_status}")
             else:
-                st.write(f"sb_B: NO, Can not ||sb_status: {st.session_state.sb_status}")
+                st.write(f"NO, Can not ||sb_status: {st.session_state.sb_status}")
+                
             st.rerun()
 
     with col2:
         if st.button("S"):
-            if st.session_state.sb_status == 1:
+            if  st.session_state.sb_status == 1:
                 save_pe("S", current_price)
                 st.session_state.temp_price = 0
                 st.session_state.sb_status = 0
-                st.write(f"sb_S: Yes ||sb_status: {st.session_state.sb_status}")
+                st.write(f"S: Yes ||sb_status: {st.session_state.sb_status}")
+
+            elif st.session_state.sb_status == 0:
+                save_pe("SS", current_price)
+                st.session_state.temp_price = current_price
+                st.session_state.sb_status = -1
+                st.write(f"SS: Yes ||sb_status: {st.session_state.sb_status}")
                 
             else:
-                st.write(f"sb_S: NO, Can not ||sb_status: {st.session_state.sb_status}")
+                st.write(f"NO, Can not ||sb_status: {st.session_state.sb_status}")
+                
             st.rerun()
 
     #show which timeframes are in bar chart:
@@ -1411,7 +1448,7 @@ def main():
     ax0.legend(handles=legend_handles, loc="lower right")
 
 # Fit a polynomial regression (degree 2 or 3 works well for trends)
-    degree = 5 # You can adjust the degree
+ # You can adjust the degree
     coeffs = np.polyfit(x, total_values, degree)
     poly_eq = np.poly1d(coeffs)
 
@@ -1457,10 +1494,6 @@ def main():
     st.pyplot(fig)  ## finally plot all 5 figures
 
 ########################################
-
-    # Sleep for 8 seconds (simulating some processing)
-
-   
    # if st.session_state.stop_sleep == 0:
     # Sleep for 8 seconds (simulating some processing)
     sleep(st.session_state.sleepGap)
@@ -1474,17 +1507,30 @@ def main():
             st.session_state.index = 0
     
     ### run automatic SB
-    if b_condition:
+    if b_condition and st.session_state.sb_status == 0:
         save_pe("B", current_price)
         st.session_state.temp_price = current_price
         st.session_state.sb_status = 1
         st.rerun()
               
-    elif s_condition:
+    elif s_condition and st.session_state.sb_status == 1:
         save_pe("S", current_price)
         st.session_state.temp_price = 0
         st.session_state.sb_status = 0
         st.rerun()
+
+    elif short_s and st.session_state.sb_status == 0:
+        save_pe("SS", current_price)
+        st.session_state.temp_price = current_price
+        st.session_state.sb_status = -1
+        st.rerun()
+
+    elif short_b and st.session_state.sb_status == -1:
+        save_pe("SB", current_price)
+        st.session_state.temp_price = 0
+        st.session_state.sb_status = 0
+        st.rerun()
+    
     st.empty()
     st.rerun()
         
