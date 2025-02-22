@@ -1166,7 +1166,7 @@ def main():
 
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("B"):
+        if st.button("B >>>>>>"):
             if  st.session_state.sb_status == 0:
                 save_pe("B", current_price)
                 st.session_state.temp_price = current_price
@@ -1184,7 +1184,7 @@ def main():
             st.rerun()
 
     with col2:
-        if st.button("S"):
+        if st.button("S >>>>>>"):
             if  st.session_state.sb_status == 1:
                 save_pe("S", current_price)
                 st.session_state.temp_price = 0
