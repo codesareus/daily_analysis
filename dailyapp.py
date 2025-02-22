@@ -1062,7 +1062,7 @@ def main():
     #prePost_condition = (st.session_state.prePost == 0 and get_time_now() == "open") or (st.session_state.prePost == 1 and (get_time_now() == "pre" or get_time_now() == "open" or get_time_now() == "after_hours" ))
 
     b_condition =  ema_trend_1m == 3 and sum_score_trend_rest >= 4
-    s_condition = ((current_price - st.session_state.temp_price) >= 0.5) or ((current_price - st.session_state.temp_price) <= -0.25))
+    s_condition = ((current_price - st.session_state.temp_price) >= 0.5) or ((current_price - st.session_state.temp_price) <= -0.25)
 
 
     short_b = ((current_price - st.session_state.temp_price) <= -0.5) or ((current_price - st.session_state.temp_price) >= 0.25) 
