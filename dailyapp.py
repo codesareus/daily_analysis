@@ -1024,10 +1024,10 @@ def main():
     # Sum "score_trend_1" for all the rest
     sum_score_trend_rest = df[df["tFrame"] != "1m"]["score_trend"].sum()
     
-    if sum_score_trend_rest >=5:
+    if sum_score_trend_rest >=4:
         message = "___B OK"
         color = "green"
-    elif sum_score_trend_rest <= -5:
+    elif sum_score_trend_rest <= -4:
         message = "___S OK"
         color = "red"
     else:
@@ -1072,13 +1072,13 @@ def main():
     if  b_condition:
         play_music(0)
         message = "b_condition: music1 playing"
-    elif s_condition:
+    elif short_s:
         play_music(1)
-        message = "s_condition: music2 playing"
-    elif interval == "1m" and ema_trend_1m == 3:
+        message = "ss_condition: music2 playing"
+    elif ema_trend_1m == 3:
         play_music(2)
         message = "going up. music3 "
-    elif interval == "1m" and ema_trend_1m == -3:
+    elif ema_trend_1m == -3:
         play_music(3)
         message = "going down. music4"
     else:
