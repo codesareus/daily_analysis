@@ -1208,7 +1208,7 @@ def main():
 
     #display pe_table
     # Read the updated CSV file ---- example
-    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
+    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total"])
 
     col1, col2 = st.columns(2)
     with col1: 
