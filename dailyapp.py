@@ -477,12 +477,12 @@ def main():
     
     with col1:
         if st.button("degree 3"):
-            st.session_state.poly_degree = 4
+            st.session_state.poly_degree = 3
             st.rerun()
 
     with col2:
         if st.button("degree 4"):
-            st.session_state.poly_degree = 5
+            st.session_state.poly_degree = 4
             st.rerun()
 
     with col3:
