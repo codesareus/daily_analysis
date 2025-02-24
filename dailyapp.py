@@ -1115,7 +1115,7 @@ def main():
             new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
                     "type": "SS",
-                    "S_pr": 0,
+                    "B_pr": 0,
                     "S_pr": round(price, 2),
                     "pl": 0,
                     "total": total, ## for now
@@ -1132,7 +1132,7 @@ def main():
                     "pl": round(pl, 2),
                     "total": round(total, 2)
                 }])
-            
+        st.write(f"total:{total}")
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
             
