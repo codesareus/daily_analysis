@@ -1239,7 +1239,7 @@ def main():
             st.session_state.temp_price = 0
             new_data = pd.DataFrame([{
                         "TimeStamp": f"{now}",
-                        "type", "None",
+                        "type": "None",
                         "B_pr": 0,
                         "S_pr": 0,
                         "pl": 0,
