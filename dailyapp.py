@@ -1258,13 +1258,10 @@ def main():
                 # clear CSV file
             new_data.to_csv(pe_file, mode="w", header=False, index=False)
             st.write("data cleared")
+            st.empty()
             st.rerun()
-        
             
     st.write("---------------------")
-
-    
-
 ################### do bar graph using scoreT_file
     
     # Load data from the CSV file
