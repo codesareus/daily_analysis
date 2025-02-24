@@ -773,8 +773,8 @@ def main():
     ax.legend()
 
     # --- RSI Plot ---
-    ax2.plot(x_values, data_recent['RSI'], color="gray", label="RSI (14)")
-    ax2.plot(x_values, data_recent['RSI2'], color="red", linestyle="--", label="RSI (25)")
+    ax2.plot(x_values, data_recent['RSI'], color="red", label="RSI (14)")
+    ax2.plot(x_values, data_recent['RSI2'], color="gray", linestyle="--", label="RSI (25)")
     ax2.axhline(y=70, color="red", linestyle="--")
     ax2.axhline(y=30, color="green", linestyle="--")
     ax2.axhline(y=50, color="gray", linestyle="--")
