@@ -1220,46 +1220,45 @@ def main():
     # Read the updated CSV file ---- example
     updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total"])
 
-    col1, col2 = st.columns(2)
-    with col1: 
-        st.write("pe_table:")
-        st.dataframe(updated_data.tail(5), hide_index=False)
-        st.write(f"{len(updated_data["total"])} rows")
-    with col2:
+    #col1, col2 = st.columns(2)
+    #with col1: 
+    st.write("pe_table:")
+    st.dataframe(updated_data.tail(5), hide_index=False)
+    st.write(f"{len(updated_data["total"])} rows")
+    #with col2:
 
-        st.write(":::::::::::::::::::::::::::::::::::::::::::::::::::")
-        st.write(f"now: _<{now}>_{get_time_now()}")
-        message1 = 1 if {b_condition} == True else 0
-        message2 = 1 if {s_condition} == True else 0
+       # st.write(":::::::::::::::::::::::::::::::::::::::::::::::::::")
+    st.write(f"now: _<{now}>_{get_time_now()}")
+    message1 = 1 if {b_condition} == True else 0
+    message2 = 1 if {s_condition} == True else 0
         
-        if message1 == 1  and {st.session_state.sbOK} == 1:
-            color = "green"
-        elif message2 == 1  and {st.session_state.sbOK} == 1:
-            color = "red"
-        else:
-            color = "orange"
+    if message1 == 1  and {st.session_state.sbOK} == 1:
+        color = "green"
+    elif message2 == 1  and {st.session_state.sbOK} == 1:
+        color = "red"
+    else:
+        color = "orange"
         #st.write(f"sbOK: {st.session_state.sbOK}__ conditions: <b_{message1}>__<s_{message2}>")
-        st.markdown(f'<p style="color:{color}; font-weight:bold;">sbOK: {st.session_state.sbOK}_||__ conditions: b_{message1}__s_{message2}</s></p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">sbOK: {st.session_state.sbOK}_||__ conditions: b_{message1}__s_{message2}</s></p>', unsafe_allow_html=True)
 
-        #st.write(f"Pre_Post_status: {st.session_state.prepo}")
-        if st.button("Clear data"):
-            st.session_state.stop_sleep = 1
-            st.session_state.sb_status = 0
-            st.session_state.sbOK = 0
-            st.session_state.temp_price = 0
-            new_data = pd.DataFrame([{
-                        "TimeStamp": f"{now}",
-                        "type": "None",
-                        "B_pr": 0,
-                        "S_pr": 0,
-                        "pl": 0,
-                        "total": 0, 
-                    }])
+    #st.write(f"Pre_Post_status: {st.session_state.prepo}")
+    if st.button("Clear data"):
+        st.session_state.stop_sleep = 1
+        st.session_state.sb_status = 0
+        st.session_state.sbOK = 0
+        st.session_state.temp_price = 0
+        new_data = pd.DataFrame([{
+                    "TimeStamp": f"{now}",
+                    "type": "None",
+                    "B_pr": 0,
+                    "S_pr": 0,
+                    "pl": 0,
+                    "total": 0, 
+                }])
                 # clear CSV file
-            new_data.to_csv(pe_file, mode="w", header=False, index=False)
-            st.write("data cleared")
-            st.empty()
-            st.rerun()
+        new_data.to_csv(pe_file, mode="w", header=False, index=False)
+        st.write("data cleared")
+        st.rerun()
             
     st.write("---------------------")
 ################### do bar graph using scoreT_file
