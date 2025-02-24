@@ -1498,7 +1498,7 @@ def main():
         message = "1min AVG trend DOWN."
     else:
         message = "1min AVG trend UP."
-    ax0.set_title(f"Trend Scores by Interval({time})__{message}")
+    ax0.set_title(f"Trend Scores by Interval({time})__pr.degree: {degree}")
     
     #########################################
 
