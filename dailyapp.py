@@ -773,8 +773,8 @@ def main():
     ax.legend()
 
     # --- RSI Plot ---
-    ax2.plot(x_values, data_recent['RSI'], color="red", linestyle="--", label="RSI (14)")
-    ax2.plot(x_values, data_recent['RSI2'], color="gray", linestyle="-", label="RSI (25)")
+    ax2.plot(x_values, data_recent['RSI'], color="navy", linestyle="-", label="RSI (14)")
+    ax2.plot(x_values, data_recent['RSI2'], color="red", linestyle="--", label="RSI (25)")
     ax2.axhline(y=70, color="red", linestyle="--")
     ax2.axhline(y=30, color="green", linestyle="--")
     ax2.axhline(y=50, color="gray", linestyle="--")
@@ -787,7 +787,7 @@ def main():
         x_values = range(1, len(data_recent) + 1)
 
         # Plot the MACD and Signal lines with numeric x-values
-        ax3.plot(x_values, data_recent['MACD'], color="blue", label="MACD Line")
+        ax3.plot(x_values, data_recent['MACD'], color="navy", label="MACD Line")
         ax3.plot(x_values, data_recent['Signal_Line'], color="red", linestyle="--", label="Signal Line")
 
         # Histogram Bars (Green for Positive, Red for Negative)
