@@ -470,19 +470,19 @@ def main():
 
     ##############################
     if "poly_degree" not in st.session_state:
-        st.session_state.poly_degree = 5
+        st.session_state.poly_degree = 3
     degree = st.session_state.poly_degree
     
     col1, col2,col3,col4 = st.columns(4)
     
     with col1:
-        if st.button("degree 3"):
-            st.session_state.poly_degree = 3
+        if st.button("degree 4"):
+            st.session_state.poly_degree = 4
             st.rerun()
 
     with col2:
-        if st.button("degree 4"):
-            st.session_state.poly_degree = 4
+        if st.button("degree 5"):
+            st.session_state.poly_degree = 5
             st.rerun()
 
     with col3:
@@ -1495,9 +1495,10 @@ def main():
 
 # Check if slope is positive or negative
     if initial_slope > 0:
-        message = "1min AVG trend DOWN."
+        message = "1min ema_trend trend DOWN."
     else:
-        message = "1min AVG trend UP."
+        message = "1min ema_trend UP."
+    st.write(message)
     ax0.set_title(f"Trend Scores by Interval({time})__pr.degree: {degree}")
     
     #########################################
