@@ -1079,8 +1079,8 @@ def main():
     st.write(f"{message}")
     
     ########## B and S actions
-    if "pl" not in session_state:
-       session_state.pl = 0
+    if "pl" not in st.session_state:
+       st.session_state.pl = 0
     
     def save_pe(SB= "", price=None, total =0):      
         pl=0
@@ -1127,8 +1127,8 @@ def main():
                     "pl": round(pl, 2),
                     "total": round(total, 2)
                 }])
-        session_state.pl = pl
-        st.write(f"current_p:{session_state.pl}")
+        st.session_state.pl = pl
+        st.write(f"current_p:{st.session_state.pl}")
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
             
