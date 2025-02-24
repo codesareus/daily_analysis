@@ -1153,12 +1153,19 @@ def main():
             st. rerun()
             
     with col2:
-        if st.button("Sleep30"):
+        if st.session_state.sleepGap = 5:
+            if st.button("Sleep30"):
             #st.session_state.stop_sleep = 1
-            st.session_state.sleepGap = 30
-            st.session_state.index = 0
-            st.rerun()
+                st.session_state.sleepGap = 30
+                st.session_state.index = 0
+                st.rerun()
 
+        else:
+            if st.button("Sleep5"):
+            #st.session_state.stop_sleep = 1
+                st.session_state.sleepGap = 5
+                st.session_state.index = 0
+                st.rerun()
     with col3:
         st.write(f"now: sleep__ {st.session_state.sleepGap}")
 
