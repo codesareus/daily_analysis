@@ -1038,7 +1038,12 @@ def main():
      #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
     updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total"])
-    plHere = current_price - st.session_state.temp_price
+    pl = current_price - st.session_state.temp_price
+    plHere = 0
+    if st.session_state.sb_status == 1 :
+        plHere = pl
+    elif st.session_state.sb_status == -1:
+        plHere = -pl
     #plHere = current_price - st.session_state.temp_price
     if plHere >= 0:
         color = "green"
