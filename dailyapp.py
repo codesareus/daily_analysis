@@ -1473,7 +1473,7 @@ def main():
 
 # Compute the average value across all five metrics for each interval
     #avg_values = [(ema_trend[i] + ema_values[i] + rsi_values[i] + macd_values[i] + total_values[i]) / 5 for i in range(len(unique_intervals))]
-    avg_values = [ema_trend[i] for i in range(len(unique_intervals))]
+    avg_values = [ema_values[i] for i in range(len(unique_intervals))]
 
 # Fit a polynomial regression (adjust degree as needed)
     degree = degree # Adjust for smoother or more flexible fit
@@ -1495,9 +1495,9 @@ def main():
 
 # Check if slope is positive or negative
     if initial_slope > 0:
-        message = "1min ema_trend trend DOWN."
+        message = "1min ema_values DOWN."
     else:
-        message = "1min ema_trend UP."
+        message = "1min ema_values UP."
     st.write(message)
     ax0.set_title(f"Trend Scores by Interval({time})__pr.degree: {degree}")
     
