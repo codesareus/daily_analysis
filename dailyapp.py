@@ -1087,8 +1087,7 @@ def main():
     st.write(f"{message}")
     
     ########## B and S actions
-    def save_pe(SB= "", price=None):      
-        total = updated_data["total"].iloc[-1]
+    def save_pe(SB= "", price=None, total =0):      
         
         if SB == "B":
             new_data = pd.DataFrame([{
@@ -1164,16 +1163,18 @@ def main():
         st.write(f"now: sleep__ {st.session_state.sleepGap}")
 
     col1, col2 = st.columns(2)
+    
+    total = updated_data["total"].iloc[-1]
     with col1:
         if st.button("B >>>>>>"):
             if  st.session_state.sb_status == 0:
-                save_pe("B", current_price)
+                save_pe("B", current_price, total)
                 st.session_state.temp_price = current_price
                 st.session_state.sb_status = 1
                 st.write(f"B: Yes ||sb_status: {st.session_state.sb_status}")
 
             elif  st.session_state.sb_status == -1:
-                save_pe("SB", current_price)
+                save_pe("SB", current_price, total)
                 st.session_state.temp_price = 0
                 st.session_state.sb_status = 0
                 st.write(f"SB: Yes ||sb_status: {st.session_state.sb_status}")
@@ -1185,13 +1186,13 @@ def main():
     with col2:
         if st.button("S >>>>>>"):
             if  st.session_state.sb_status == 1:
-                save_pe("S", current_price)
+                save_pe("S", current_price, total)
                 st.session_state.temp_price = 0
                 st.session_state.sb_status = 0
                 st.write(f"S: Yes ||sb_status: {st.session_state.sb_status}")
 
             elif st.session_state.sb_status == 0:
-                save_pe("SS", current_price)
+                save_pe("SS", current_price, total)
                 st.session_state.temp_price = current_price
                 st.session_state.sb_status = -1
                 st.write(f"SS: Yes ||sb_status: {st.session_state.sb_status}")
@@ -1507,26 +1508,27 @@ def main():
             st.session_state.index = 0
     
     ### run automatic SB
+    total = updated_data["total"].iloc[-1]
     if b_condition and st.session_state.sb_status == 0:
-        save_pe("B", current_price)
+        save_pe("B", current_price, total)
         st.session_state.temp_price = current_price
         st.session_state.sb_status = 1
        # st.rerun()
               
     elif s_condition and st.session_state.sb_status == 1:
-        save_pe("S", current_price)
+        save_pe("S", current_price, total)
         st.session_state.temp_price = 0
         st.session_state.sb_status = 0
       #  st.rerun()
 
     elif short_s and st.session_state.sb_status == 0:
-        save_pe("SS", current_price)
+        save_pe("SS", current_price,total)
         st.session_state.temp_price = current_price
         st.session_state.sb_status = -1
        # st.rerun()
 
     elif short_b and st.session_state.sb_status == -1:
-        save_pe("SB", current_price)
+        save_pe("SB", current_price,total)
         st.session_state.temp_price = 0
         st.session_state.sb_status = 0
        # st.rerun()
