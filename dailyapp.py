@@ -1089,7 +1089,7 @@ def main():
     
     ########## B and S actions
     def save_pe(SB= "", price=None):      
-        total_pl = updated_data["total"].iloc[-1]
+        total = updated_data["total"].iloc[-1]
         
         if SB == "B":
             new_data = pd.DataFrame([{
@@ -1098,19 +1098,19 @@ def main():
                     "B_pr": round(price, 2),
                     "S_pr": 0,
                     "pl": 0,
-                    "total": round(total_pl, 2)
+                    "total": round(total, 2)
                 }])
 
         elif SB == "S":
             pl = price - st.session_state.temp_price
-            total_pl = total_pl + pl
+            total = total + pl
             new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
                     "type": "S",
                     "B_pr": 0,
                     "S_pr": round(price, 2),
                     "pl": round(pl, 2),
-                    "total": round(total_pl, 2)
+                    "total": round(total, 2)
                 }])
 
         elif SB == "SS":
@@ -1120,19 +1120,19 @@ def main():
                     "S_pr": 0,
                     "S_pr": round(price, 2),
                     "pl": 0,
-                    "total": total_pl, ## for now
+                    "total": total, ## for now
                 }])
 
         elif SB == "SB": 
             pl = st.session_state.temp_price - price
-            total_pl = total_pl + pl
+            total = total + pl
             new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
                     "type": "SB",
                     "B_pr": round(price, 2),
                     "S_pr": 0,
                     "pl": round(pl, 2),
-                    "total": round(total_pl, 2)
+                    "total": round(total, 2)
                 }])
             
         # Append to CSV file
