@@ -1239,10 +1239,11 @@ def main():
             st.session_state.temp_price = 0
             new_data = pd.DataFrame([{
                         "TimeStamp": f"{now}",
+                        "type", "None",
                         "B_pr": 0,
                         "S_pr": 0,
                         "pl": 0,
-                        "total_pl": 0, 
+                        "total": 0, 
                     }])
                 # clear CSV file
             new_data.to_csv(pe_file, mode="w", header=False, index=False)
