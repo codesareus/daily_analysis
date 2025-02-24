@@ -1098,7 +1098,7 @@ def main():
                     "B_pr": round(price, 2),
                     "S_pr": 0,
                     "pl": 0,
-                    "total_pl": round(total_pl, 2)
+                    "total": round(total_pl, 2)
                 }])
 
         elif SB == "S":
@@ -1110,7 +1110,7 @@ def main():
                     "B_pr": 0,
                     "S_pr": round(price, 2),
                     "pl": round(pl, 2),
-                    "total_pl": round(total_pl, 2)
+                    "total": round(total_pl, 2)
                 }])
 
         elif SB == "SS":
@@ -1120,7 +1120,7 @@ def main():
                     "S_pr": 0,
                     "S_pr": round(price, 2),
                     "pl": 0,
-                    "total_pl": total_pl, ## for now
+                    "total": total_pl, ## for now
                 }])
 
         elif SB == "SB": 
@@ -1132,7 +1132,7 @@ def main():
                     "B_pr": round(price, 2),
                     "S_pr": 0,
                     "pl": round(pl, 2),
-                    "total_pl": round(total_pl, 2)
+                    "total": round(total_pl, 2)
                 }])
             
         # Append to CSV file
@@ -1511,27 +1511,27 @@ def main():
         save_pe("B", current_price)
         st.session_state.temp_price = current_price
         st.session_state.sb_status = 1
-        st.rerun()
+       # st.rerun()
               
     elif s_condition and st.session_state.sb_status == 1:
         save_pe("S", current_price)
         st.session_state.temp_price = 0
         st.session_state.sb_status = 0
-        st.rerun()
+      #  st.rerun()
 
     elif short_s and st.session_state.sb_status == 0:
         save_pe("SS", current_price)
         st.session_state.temp_price = current_price
         st.session_state.sb_status = -1
-        st.rerun()
+       # st.rerun()
 
     elif short_b and st.session_state.sb_status == -1:
         save_pe("SB", current_price)
         st.session_state.temp_price = 0
         st.session_state.sb_status = 0
-        st.rerun()
+       # st.rerun()
     
-    st.empty()
+   # st.empty()
     st.rerun()
         
 
