@@ -1141,7 +1141,7 @@ def main():
     #####################################
     #st.write(f"### Controls:  ||______ current_price = {current_price:.2f}______")
     if "sleepGap" not in st.session_state:
-        st.session_state.sleepGap = 10
+        st.session_state.sleepGap = 5
         
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -1497,7 +1497,7 @@ def main():
    # if st.session_state.stop_sleep == 0:
     # Sleep for 8 seconds (simulating some processing)
     sleep(st.session_state.sleepGap)
-    if st.session_state.sleepGap == 10:
+    if st.session_state.sleepGap == 5:
         # Update the index for the next interval
         if st.session_state.index < len(intervals) - 1:
             st.session_state.index += 1
