@@ -1045,7 +1045,7 @@ def main():
     st.write(f"ema_trend___{trend_message}___ ({interval})")
      #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
-    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
+    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total"])
     plHere = updated_data["total"].iloc[-1]
     #plHere = current_price - st.session_state.temp_price
     if plHere >= 0:
@@ -1057,7 +1057,6 @@ def main():
 
 
 ###########################
-    updated_data = pd.read_csv(pe_file, names=["B_pr", "S_pr", "pl", "total"])
 
     #prePost_condition = (st.session_state.prePost == 0 and get_time_now() == "open") or (st.session_state.prePost == 1 and (get_time_now() == "pre" or get_time_now() == "open" or get_time_now() == "after_hours" ))
 
