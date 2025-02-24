@@ -1035,14 +1035,6 @@ def main():
         color = "orange"
     #st.write(f"score_trend_others: ||... {sum_score_trend_rest} ___ {message}")
     st.markdown(f'<p style="color:{color}; font-weight:bold;">score_trend_others: {message}</s></p>', unsafe_allow_html=True)
-
-    # Display latest score
-
-    if ema_trend > 0:
-        trend_message = 'Up' 
-    else:
-        trend_message = 'Down'
-    st.write(f"ema_trend___{trend_message}___ ({interval})")
      #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
     updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total"])
@@ -1132,7 +1124,7 @@ def main():
                     "pl": round(pl, 2),
                     "total": round(total, 2)
                 }])
-        st.write(f"total:{total}")
+        st.write(f"current_p:{pl}")
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
             
