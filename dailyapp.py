@@ -1472,10 +1472,11 @@ def main():
 ############# fit pr with averag
 
 # Compute the average value across all five metrics for each interval
-    avg_values = [(ema_trend[i] + ema_values[i] + rsi_values[i] + macd_values[i] + total_values[i]) / 5 for i in range(len(unique_intervals))]
+    #avg_values = [(ema_trend[i] + ema_values[i] + rsi_values[i] + macd_values[i] + total_values[i]) / 5 for i in range(len(unique_intervals))]
+    avg_values = [ema_trend[i] for i in range(len(unique_intervals))]
 
 # Fit a polynomial regression (adjust degree as needed)
-    degree = 5 # Adjust for smoother or more flexible fit
+    degree = degree # Adjust for smoother or more flexible fit
     coeffs = np.polyfit(x, avg_values, degree)
     poly_eq = np.poly1d(coeffs)
 
