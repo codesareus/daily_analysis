@@ -1153,7 +1153,7 @@ def main():
             st. rerun()
             
     with col2:
-        if st.session_state.sleepGap = 5:
+        if st.session_state.sleepGap == 5:
             if st.button("Sleep30"):
             #st.session_state.stop_sleep = 1
                 st.session_state.sleepGap = 30
