@@ -1082,6 +1082,7 @@ def main():
     def save_pe(SB= "", price=None, total =0):      
         
         if SB == "B":
+            pl=0
             new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
                     "type": "B",
