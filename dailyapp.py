@@ -470,14 +470,14 @@ def main():
 
     ##############################
     if "poly_degree" not in st.session_state:
-        st.session_state.poly_degree = 3
+        st.session_state.poly_degree = 4
     degree = st.session_state.poly_degree
     
     col1, col2,col3,col4 = st.columns(4)
     
     with col1:
-        if st.button("degree 4"):
-            st.session_state.poly_degree = 4
+        if st.button("degree 3"):
+            st.session_state.poly_degree = 3
             st.rerun()
 
     with col2:
