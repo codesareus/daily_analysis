@@ -1038,7 +1038,7 @@ def main():
     st.markdown(f'<p style="color:{color}; font-weight:bold;">score_trend_others: {message}__{sum_score_trend_rest}</s></p>', unsafe_allow_html=True)
      #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
-    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total"])
+    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr"])
     pl = current_price - st.session_state.temp_price
     plHere = 0
     if st.session_state.sb_status == 1 :
@@ -1217,7 +1217,7 @@ def main():
 
     #display pe_table
     # Read the updated CSV file ---- example
-    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total"])
+    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr"])
     st.markdown(f'<p style="color:orange; font-weight:bold;">pe_table: _______now interval: {interval}</s></p>', unsafe_allow_html=True)
     #st.write(f"pe_table: _______now interval: {interval}")
     #with col1:
