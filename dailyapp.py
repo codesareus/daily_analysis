@@ -1202,7 +1202,7 @@ def main():
                 save_pe("S", current_price, total)
                 st.write(f"S: Yes ||SB_status: {SB}")
 
-            elif (SB == None or SB == "S" or SB== "SB"):
+            elif (SB == "None" or SB == "S" or SB== "SB"):
                 save_pe("SS", current_price, total)
                 st.write(f"SS: Yes ||SB_status: {SB}")
                 
