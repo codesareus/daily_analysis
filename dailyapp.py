@@ -1162,7 +1162,6 @@ def main():
     col1, col2 = st.columns(2)
     
     total = updated_data["total"].iloc[-1]
-    st.write(updated_data["type"].iloc[-1])
     SB = updated_data["type"].iloc[-1]
     with col1:
         if st.button("B >>>>>>"):
@@ -1193,6 +1192,7 @@ def main():
                 
             st.rerun()
 
+    st.write(updated_data["type"].iloc[-1])
     #show which timeframes are in bar chart:
     timeframes = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
     message_here = timeframes[:st.session_state.rerun_count]
@@ -1200,7 +1200,7 @@ def main():
     #display pe_table
     # Read the updated CSV file ---- example
     updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr"])
-    st.markdown(f'<p style="color:orange; font-weight:bold;">pe_table: _______now interval: {interval}</s></p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="color:orange; font-weight:bold;">pe_table: _______now interval___ {interval}</s></p>', unsafe_allow_html=True)
     #st.write(f"pe_table: _______now interval: {interval}")
     #with col1:
     st.dataframe(updated_data.tail(5), hide_index=False)
