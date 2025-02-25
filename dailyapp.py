@@ -363,10 +363,6 @@ def main():
     if "sbOK" not in st.session_state:
         st.session_state.sbOK = 1
 
-    # Initialize prePost state
-    if "prePost" not in st.session_state:
-        st.session_state.prePost = 1
-
     # Store whether the music has been played
     if 'music_played' not in st.session_state:
         st.session_state.music_played = False
@@ -1211,16 +1207,7 @@ def main():
     st.write(f"now: _<{now}>_{get_time_now()}")
     message1 = 1 if {b_condition} == True else 0
     message2 = 1 if {s_condition} == True else 0
-        
-    if message1 == 1  and {st.session_state.sbOK} == 1:
-        color = "green"
-    elif message2 == 1  and {st.session_state.sbOK} == 1:
-        color = "red"
-    else:
-        color = "orange"
-        #st.write(f"sbOK: {st.session_state.sbOK}__ conditions: <b_{message1}>__<s_{message2}>")
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">sbOK: {st.session_state.sbOK}_||__ conditions: b_{message1}__s_{message2}</s></p>', unsafe_allow_html=True)
-
+    
     #st.write(f"Pre_Post_status: {st.session_state.prepo}")
     if st.button("Clear data"):
         st.session_state.stop_sleep = 1
