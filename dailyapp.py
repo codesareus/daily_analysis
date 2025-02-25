@@ -621,8 +621,8 @@ def main():
         else:
             ema_trend = 0
         
-        ema_score = ((price > ema9)*0.2 + (ema9 > ema20)*0.4 + (ema20 > ema50)*0.6 + (ema50 > ema100)*0.8 +  (ema100 > ema200) - (ema200 > ema100)
-                   - (ema100 > ema50)*0.8 - (ema50 > ema20)*0.6 - (ema20 > ema9)*0.4 - (ema9 > price)*0.2) * 2/3 + ((price > ema9) and (ema9 > ema20)) - ((price < ema9) and (ema9 < ema20))
+        ema_score = ((price > ema9) + (ema9 > ema20)*0.8 + (ema20 > ema50)*0.6 + (ema50 > ema100)*0.4 +  (ema100 > ema200)*0.2 - (ema200 > ema100)*0.2
+                   - (ema100 > ema50)*0.4 - (ema50 > ema20)*0.6 - (ema20 > ema9)*0.8 - (ema9 > price)) * 2/3 + ((price > ema9) and (ema9 > ema20)) - ((price < ema9) and (ema9 < ema20))
             
         rsi_score = 0
         
