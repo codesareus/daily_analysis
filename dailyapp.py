@@ -1178,10 +1178,10 @@ def main():
     col1, col2 = st.columns(2)
     
     total = updated_data["total"].iloc[-1]
-    if updated_data["SB"].iloc[-1] == "None":
+    if updated_data["type"].iloc[-1] == "None":
         SB = "None"
     else:
-        SB = updated_data["SB"].iloc[-1]
+        SB = updated_data["type"].iloc[-1]
     with col1:
         if st.button("B >>>>>>"):
             if  (SB == "None" or SB == "S" or SB== "SB"):
@@ -1540,7 +1540,10 @@ def main():
     
     ### run automatic SB
     total = updated_data["total"].iloc[-1]
-    SB = updated_data["SB"].iloc[-1]
+    if updated_data["type"].iloc[-1] == "None":
+        SB = "None
+    else :
+        SB = updated_data["type"].iloc[-1]
     if b_condition and (SB == None or SB == "S" or SB == "SB") and interval == "1m":
         save_pe("B", current_price, total)
               
