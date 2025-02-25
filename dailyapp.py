@@ -1136,7 +1136,7 @@ def main():
                     "B_pr": round(price, 2),
                     "S_pr": 0,
                     "pl": round(pl, 2),
-                    "total": round(total, 2)
+                    "total": round(total, 2),
                     "temp_price": 0,
                 }])
         # Append to CSV file
