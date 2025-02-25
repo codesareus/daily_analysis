@@ -1464,9 +1464,23 @@ def main():
 
 # Plot the polynomial regression curve
     ax0.plot(x_smooth, y_smooth, color="red", linestyle="-", linewidth=2, label="Polynomial Fit")
-############# fit pr with averag
 
-# Compute the average value across all five metrics for each interval
+############# slope of total
+# Compute the derivative (slope function)
+    poly_derivative = np.polyder(poly_eq)
+
+# Evaluate slope at the first x value
+    initial_slope = poly_derivative(x[0])
+
+# Check if slope is positive or negative
+    if initial_slope > 0:
+        message = "1min total DOWN."
+    else:
+        message = "1min total UP."
+    st.write(message)
+    
+
+# Compute the average value across all five metrics for each interval no no changed just ema
     #avg_values = [(ema_trend[i] + ema_values[i] + rsi_values[i] + macd_values[i] + total_values[i]) / 5 for i in range(len(unique_intervals))]
     avg_values = [ema_values[i] for i in range(len(unique_intervals))]
 
