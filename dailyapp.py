@@ -1022,7 +1022,9 @@ def main():
     st.markdown(f'<p style="color:{color}; font-weight:bold;">ema_trend_1min: {message}</s></p>', unsafe_allow_html=True)
 
     # Sum "score_trend_1" for all the rest
-    sum_score_trend_rest = df[df["tFrame"] != "1m"]["score_trend"].sum()
+    #sum_score_trend_rest = df[df["tFrame"] != "1m"]["score_trend"].sum()
+    sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "6mo"])]["score_trend"].sum()
+    st.write(sum_score_trend_rest)
     
     if sum_score_trend_rest >=4:
         message = "___B OK"
@@ -1051,7 +1053,6 @@ def main():
         color = "red"
     st.markdown(f'<p style="color:{color}; font-weight:bold;">pl: {plHere:.2f}__now: {current_price:.2f}</s></p>', unsafe_allow_html=True)
     st.write(f"sb_status: {st.session_state.sb_status}~~~sleep: {sleep_status}~~~B_pr: {st.session_state.temp_price}~~~now: {current_price:.2f}~~~pl={plHere:.2f}")
-    st.write(f"interval: {interval}")
 
 ###########################
 
@@ -1220,9 +1221,8 @@ def main():
     # Read the updated CSV file ---- example
     updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total"])
 
-    #col1, col2 = st.columns(2)
-    #with col1: 
-    st.write("pe_table:")
+    st.write(f"pe_table: _______now interval: {interval}")
+    #with col1:
     st.dataframe(updated_data.tail(5), hide_index=False)
     st.write(f"{len(updated_data["total"])} rows")
     #with col2:
