@@ -1090,7 +1090,7 @@ def main():
     elif st.session_state.sb_status==-1:
         pl=-current_price+st.session_state.temp_price
     
-    def save_pe(SB= "", price=None, total =0):      
+    def save_pe(SB=None, price=None, total =0):      
         pl=0
         if SB == "B":
             new_data = pd.DataFrame([{
@@ -1099,7 +1099,8 @@ def main():
                     "B_pr": round(price, 2),
                     "S_pr": 0,
                     "pl": 0,
-                    "total": round(total, 2)
+                    "total": round(total, 2),
+                    "temp_price": round(price, 2),
                 }])
 
         elif SB == "S":
@@ -1112,6 +1113,7 @@ def main():
                     "S_pr": round(price, 2),
                     "pl": round(pl, 2),
                     "total": round(total, 2)
+                    "temp_price": 0,
                 }])
 
         elif SB == "SS":
@@ -1122,6 +1124,7 @@ def main():
                     "S_pr": round(price, 2),
                     "pl": 0,
                     "total": total, ## for now
+                    "temp_price": round(price, 2),
                 }])
 
         elif SB == "SB": 
@@ -1134,8 +1137,8 @@ def main():
                     "S_pr": 0,
                     "pl": round(pl, 2),
                     "total": round(total, 2)
+                    "temp_price": 0,
                 }])
-        st.session_state.type = SB
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
             
@@ -1175,40 +1178,33 @@ def main():
     col1, col2 = st.columns(2)
     
     total = updated_data["total"].iloc[-1]
+    SB = updated_data["SB"].iloc[-1]
     with col1:
         if st.button("B >>>>>>"):
-            if  st.session_state.sb_status == 0:
+            if  (SB == None or SB == "S" or SB== "SB"):
                 save_pe("B", current_price, total)
-                st.session_state.temp_price = current_price
-                st.session_state.sb_status = 1
-                st.write(f"B: Yes ||sb_status: {st.session_state.sb_status}")
+                st.write(f"B: Yes ||SB_status: {SB}")
 
-            elif  st.session_state.sb_status == -1:
+            elif SB == "SS":
                 save_pe("SB", current_price, total)
-                st.session_state.temp_price = 0
-                st.session_state.sb_status = 0
-                st.write(f"SB: Yes ||sb_status: {st.session_state.sb_status}")
+                st.write(f"SB: Yes ||SB_status: {SB}")
             else:
-                st.write(f"NO, Can not ||sb_status: {st.session_state.sb_status}")
+                st.write(f"NO, Can not ||SB_status: {SB}")
                 
             st.rerun()
 
     with col2:
         if st.button("S >>>>>>"):
-            if  st.session_state.sb_status == 1:
+            if  SB == "B":
                 save_pe("S", current_price, total)
-                st.session_state.temp_price = 0
-                st.session_state.sb_status = 0
-                st.write(f"S: Yes ||sb_status: {st.session_state.sb_status}")
+                st.write(f"S: Yes ||SB_status: {SB}")
 
-            elif st.session_state.sb_status == 0:
+            elif (SB == None or SB == "S" or SB== "SB"):
                 save_pe("SS", current_price, total)
-                st.session_state.temp_price = current_price
-                st.session_state.sb_status = -1
-                st.write(f"SS: Yes ||sb_status: {st.session_state.sb_status}")
+                st.write(f"SS: Yes ||SB_status: {SB}")
                 
             else:
-                st.write(f"NO, Can not ||sb_status: {st.session_state.sb_status}")
+                st.write(f"NO, Can not ||SB_status: {SB}")
                 
             st.rerun()
 
@@ -1541,29 +1537,18 @@ def main():
     
     ### run automatic SB
     total = updated_data["total"].iloc[-1]
-    if b_condition and st.session_state.sb_status == 0 and interval == "1m":
+    SB = updated_data["SB"].iloc[-1]
+    if b_condition and (SB == None or SB == "S" or SB == "SB") and interval == "1m":
         save_pe("B", current_price, total)
-        st.session_state.temp_price = current_price
-        st.session_state.sb_status = 1
-       # st.rerun()
               
-    elif s_condition and st.session_state.sb_status == 1 and interval == "1m":
+    elif s_condition and SB == "B" and interval == "1m":
         save_pe("S", current_price, total)
-        st.session_state.temp_price = 0
-        st.session_state.sb_status = 0
-      #  st.rerun()
 
-    elif short_s and st.session_state.sb_status == 0 and interval == "1m":
+    elif short_s and (SB == None or SB == "S" or SB== "SB") and interval == "1m":
         save_pe("SS", current_price,total)
-        st.session_state.temp_price = current_price
-        st.session_state.sb_status = -1
-       # st.rerun()
 
-    elif short_b and st.session_state.sb_status == -1 and interval == "1m":
+    elif short_b and SB == "SS" and interval == "1m":
         save_pe("SB", current_price,total)
-        st.session_state.temp_price = 0
-        st.session_state.sb_status = 0
-       # st.rerun()
     
    # st.empty()
     st.rerun()
