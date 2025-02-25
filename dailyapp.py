@@ -1516,25 +1516,25 @@ def main():
     
     ### run automatic SB
     total = updated_data["total"].iloc[-1]
-    if b_condition and st.session_state.sb_status == 0:
+    if b_condition and st.session_state.sb_status == 0 and interval == "1m":
         save_pe("B", current_price, total)
         st.session_state.temp_price = current_price
         st.session_state.sb_status = 1
        # st.rerun()
               
-    elif s_condition and st.session_state.sb_status == 1:
+    elif s_condition and st.session_state.sb_status == 1 and interval == "1m":
         save_pe("S", current_price, total)
         st.session_state.temp_price = 0
         st.session_state.sb_status = 0
       #  st.rerun()
 
-    elif short_s and st.session_state.sb_status == 0:
+    elif short_s and st.session_state.sb_status == 0 and interval == "1m":
         save_pe("SS", current_price,total)
         st.session_state.temp_price = current_price
         st.session_state.sb_status = -1
        # st.rerun()
 
-    elif short_b and st.session_state.sb_status == -1:
+    elif short_b and st.session_state.sb_status == -1 and interval == "1m":
         save_pe("SB", current_price,total)
         st.session_state.temp_price = 0
         st.session_state.sb_status = 0
