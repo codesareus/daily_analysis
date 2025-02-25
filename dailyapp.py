@@ -1084,28 +1084,30 @@ def main():
     st.write(f"{message}")
     
     ########## B and S actions
-    pl=0
-    if st.session_state.sb_status==1:
-        pl=current_price-st.session_state.temp_price
-    elif st.session_state.sb_status==-1:
-        pl=-current_price+st.session_state.temp_price
     
-    def save_pe(SB=None, price=None, total =0):      
+    def save_pe(type="AAA", price=None, total =0): 
+        updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr"])
         pl=0
-        if SB == "B":
+        if type == "S":
+            pl = price - updated_data["temp_pr"].iloc[-1]
+        elif type == "SB":
+            pl = updated_data["temp_pr"].iloc[-1] - price
+        else:
+            pl = 0
+        total = total + pl
+            
+        if type == "B":
             new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
                     "type": "B",
                     "B_pr": round(price, 2),
                     "S_pr": 0,
-                    "pl": 0,
+                    "pl": pl,
                     "total": round(total, 2),
                     "temp_price": round(price, 2),
                 }])
 
-        elif SB == "S":
-            pl = price - st.session_state.temp_price
-            total = total + pl
+        elif type == "S":
             new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
                     "type": "S",
@@ -1116,7 +1118,7 @@ def main():
                     "temp_price": 0,
                 }])
 
-        elif SB == "SS":
+        elif type == "SS":
             new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
                     "type": "SS",
@@ -1127,9 +1129,7 @@ def main():
                     "temp_price": round(price, 2),
                 }])
 
-        elif SB == "SB": 
-            pl = st.session_state.temp_price - price
-            total = total + pl
+        elif type == "SB": 
             new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
                     "type": "SB",
@@ -1538,17 +1538,14 @@ def main():
     
     ### run automatic SB
     total = updated_data["total"].iloc[-1]
-    if updated_data["type"].iloc[-1] == "None":
-        SB = "None"
-    else :
-        SB = updated_data["type"].iloc[-1]
-    if b_condition and (SB == None or SB == "S" or SB == "SB") and interval == "1m":
+    SB = updated_data["type"].iloc[-1]
+    if b_condition and (SB == "AAA" or SB == "S" or SB == "SB") and interval == "1m":
         save_pe("B", current_price, total)
               
     elif s_condition and SB == "B" and interval == "1m":
         save_pe("S", current_price, total)
 
-    elif short_s and (SB == None or SB == "S" or SB== "SB") and interval == "1m":
+    elif short_s and (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m":
         save_pe("SS", current_price,total)
 
     elif short_b and SB == "SS" and interval == "1m":
