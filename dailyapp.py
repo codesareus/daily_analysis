@@ -1039,31 +1039,15 @@ def main():
      #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
     updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr"])
-    pl = current_price - st.session_state.temp_price
-    plHere = 0
-    if st.session_state.sb_status == 1 :
-        plHere = pl
-    elif st.session_state.sb_status == -1:
-        plHere = -pl
-    #plHere = current_price - st.session_state.temp_price
-    if plHere >= 0:
-        color = "green"
-    else :
-        color = "red"
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">pl: {plHere:.2f}__now: {current_price:.2f}</s></p>', unsafe_allow_html=True)
-    st.write(f"sb_status: {st.session_state.sb_status}~~~sleep: {sleep_status}~~~B_pr: {st.session_state.temp_price}~~~now: {current_price:.2f}~~~pl={plHere:.2f}")
 
 ###########################
 
     #prePost_condition = (st.session_state.prePost == 0 and get_time_now() == "open") or (st.session_state.prePost == 1 and (get_time_now() == "pre" or get_time_now() == "open" or get_time_now() == "after_hours" ))
 
-    b_condition =  ema_trend_1m >= 1 and sum_score_trend_rest >= 4
+    b_condition =  ema_trend_1m >= -3 and sum_score_trend_rest >= 4
     s_condition = ((current_price - st.session_state.temp_price) >=1.0) or ((current_price - st.session_state.temp_price) <= -0.5)
-
-
-    short_b = ((current_price - st.session_state.temp_price) <= -1.0) or ((current_price - st.session_state.temp_price) >= 0.5) 
-                    
-    short_s = ema_trend_1m <= -1 and sum_score_trend_rest <= -4
+    short_b = ((current_price - st.session_state.temp_price) <= -1.0) or ((current_price - st.session_state.temp_price) >= 0.5)              
+    short_s = ema_trend_1m <= 3 and sum_score_trend_rest <= -4
     
     if  b_condition:
         play_music(0)
@@ -1155,7 +1139,7 @@ def main():
             st.session_state.index = 0
            # st.session_state.stop_sleep = 0
             st.session_state.sbOK = 1
-            st.session_state.sleepGap = 10
+            st.session_state.sleepGap = 5
             st. rerun()
             
     with col2:
@@ -1182,30 +1166,30 @@ def main():
     SB = updated_data["type"].iloc[-1]
     with col1:
         if st.button("B >>>>>>"):
-            if  (SB == "AAA" or SB == "S" or SB== "SB"):
+            if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m":
                 save_pe("B", current_price, total)
                 st.write(f"B: Yes ||SB_status: {SB}")
 
-            elif SB == "SS":
+            elif SB == "SS" and interval == "1m":
                 save_pe("SB", current_price, total)
                 st.write(f"SB: Yes ||SB_status: {SB}")
             else:
-                st.write(f"NO, Can not ||SB_status: {SB}")
+                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}")
                 
             st.rerun()
 
     with col2:
         if st.button("S >>>>>>"):
-            if  SB == "B":
+            if  SB == "B" and interval == "1m":
                 save_pe("S", current_price, total)
                 st.write(f"S: Yes ||SB_status: {SB}")
 
-            elif (SB == "AAA" or SB == "S" or SB== "SB"):
+            elif (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m":
                 save_pe("SS", current_price, total)
                 st.write(f"SS: Yes ||SB_status: {SB}")
                 
             else:
-                st.write(f"NO, Can not ||SB_status: {SB}")
+                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}")
                 
             st.rerun()
 
