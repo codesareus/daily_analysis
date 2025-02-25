@@ -1178,10 +1178,11 @@ def main():
     col1, col2 = st.columns(2)
     
     total = updated_data["total"].iloc[-1]
+    st.write(updated_data["type"].iloc[-1])
     SB = updated_data["type"].iloc[-1]
     with col1:
         if st.button("B >>>>>>"):
-            if  (SB == nan or SB == "S" or SB== "SB"):
+            if  (SB == "AAA" or SB == "S" or SB== "SB"):
                 save_pe("B", current_price, total)
                 st.write(f"B: Yes ||SB_status: {SB}")
 
@@ -1199,7 +1200,7 @@ def main():
                 save_pe("S", current_price, total)
                 st.write(f"S: Yes ||SB_status: {SB}")
 
-            elif (SB == nan or SB == "S" or SB== "SB"):
+            elif (SB == "AAA" or SB == "S" or SB== "SB"):
                 save_pe("SS", current_price, total)
                 st.write(f"SS: Yes ||SB_status: {SB}")
                 
