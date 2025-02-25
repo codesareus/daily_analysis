@@ -1475,10 +1475,15 @@ def main():
 # Check if slope is positive or negative
     if initial_slope > 0:
         message = "1min total DOWN."
-    else:
+        color = "red"
+    elif initial_slope < 0:
         message = "1min total UP."
-    st.write(message)
-    
+        color ="green"
+    else:
+        message ="1min total flat"
+        color ="gray"
+    #st.write(message)
+    st.markdown(f"<h3 style='color:{color};'>{message} </h3>", unsafe_allow_html=True)
 
 # Compute the average value across all five metrics for each interval no no changed just ema
     #avg_values = [(ema_trend[i] + ema_values[i] + rsi_values[i] + macd_values[i] + total_values[i]) / 5 for i in range(len(unique_intervals))]
@@ -1505,9 +1510,15 @@ def main():
 # Check if slope is positive or negative
     if initial_slope > 0:
         message = "1min ema_values DOWN."
-    else:
+        color="red"
+    elif initial_slope < 0:
         message = "1min ema_values UP."
-    st.write(message)
+        color="green"
+    else:
+        message ="1min ema_value flat"
+        color ="gray"
+    #st.write(message)
+    st.markdown(f"<h3 style='color:{color};'>{message} </h3>", unsafe_allow_html=True)
     ax0.set_title(f"Trend Scores by Interval({time})__pr.degree: {degree}")
     
     #########################################
