@@ -1541,7 +1541,7 @@ def main():
     ### run automatic SB
     total = updated_data["total"].iloc[-1]
     if updated_data["type"].iloc[-1] == "None":
-        SB = "None
+        SB = "None"
     else :
         SB = updated_data["type"].iloc[-1]
     if b_condition and (SB == None or SB == "S" or SB == "SB") and interval == "1m":
