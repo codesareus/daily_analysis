@@ -1192,7 +1192,7 @@ def main():
                 
             st.rerun()
 
-    st.write(updated_data["type"].iloc[-1])
+    st.write(f"SB_type: {updated_data["type"].iloc[-1]}")
     #show which timeframes are in bar chart:
     timeframes = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
     message_here = timeframes[:st.session_state.rerun_count]
