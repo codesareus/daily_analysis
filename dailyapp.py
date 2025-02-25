@@ -1112,7 +1112,7 @@ def main():
                     "B_pr": 0,
                     "S_pr": round(price, 2),
                     "pl": round(pl, 2),
-                    "total": round(total, 2)
+                    "total": round(total, 2),
                     "temp_price": 0,
                 }])
 
