@@ -1178,7 +1178,10 @@ def main():
     col1, col2 = st.columns(2)
     
     total = updated_data["total"].iloc[-1]
-    SB = updated_data["SB"].iloc[-1]
+    if updated_data["SB"].iloc[-1] == None:
+        SB = "None"
+    else:
+        SB = updated_data["SB"].iloc[-1]
     with col1:
         if st.button("B >>>>>>"):
             if  (SB == None or SB == "S" or SB== "SB"):
