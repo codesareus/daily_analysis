@@ -1118,14 +1118,13 @@ def main():
     with col1:
         if st.button("B >>>>>>"):
             if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m":
-                if st.session_state.setpr == 0.0 or current_price <= st.session_state.setpr :
-                    save_pe("B", current_price, total)
-                    st.write(f"B: Yes ||SB_status: {SB}")
+                save_pe("B", current_price, total)
+                st.write(f"B: Yes ||SB_status: {SB}")
 
             elif SB == "SS" and interval == "1m":
-                if st.session_state.setpr == 0.0 or current_price <= st.session_state.setpr :
-                    save_pe("SB", current_price, total)
-                    st.write(f"SB: Yes ||SB_status: {SB}")
+                save_pe("SB", current_price, total)
+                st.write(f"SB: Yes ||SB_status: {SB}")
+                
             else:
                 st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}")
                 
