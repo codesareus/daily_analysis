@@ -1160,6 +1160,7 @@ def main():
     #display pe_table
     # Read the updated CSV file ---- example
     updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr"])
+    plnow = 0
     if updated_data["type"].iloc[-1]=="B":
         plnow = current_price - updated_data["temp_pr"].iloc[-1]
     elif updated_data["type"].iloc[-1]=="SS":
