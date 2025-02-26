@@ -1067,7 +1067,7 @@ def main():
     with col3:
         if st.button("clear: check all"):
             new_data = pd.DataFrame([{
-                "tFrame": "1m", "5m",
+                "tFrame": "1m", "5m":
                 "ema_trend": 0,0,
                 "ema": 0,0,
                 "rsi": 0,0,
