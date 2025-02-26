@@ -1094,16 +1094,22 @@ def main():
 # Initialize the session state variable if it doesn't exist
     if "setpr" not in st.session_state:
         st.session_state.setpr = 0.0
-
+    if "settype" not in st.session_state:
+        st.session_state.settype = "zz"
 # Create a text input that displays the current session state value
-    setpr_input = st.text_input("Enter set pr: ", value=str(st.session_state.setpr))
-
+    col1, col2=st.columns(2)
+    with col1:
+        setpr_input = st.text_input("Enter set pr: ", value=str(st.session_state.setpr))
+    with col2:
+        settype_input = st.text_input("Enter set type (only needed if B or SS): ", value=str(st.session_state.settype))
+    #set them
     col1, col2=st.columns(2)
     with col1:
         if st.button("set"):
             try:
     # Attempt to convert the input to a float and update the session state
                 st.session_state.setpr = float(setpr_input)
+                st.session_state.settype = float(settype_input)
             except ValueError:
     # Handle invalid input (non-numeric values)
                 st.error("Please enter a valid number.")
@@ -1467,7 +1473,7 @@ def main():
     ### run automatic SB
     total = updated_data["total"].iloc[-1]
     SB = updated_data["type"].iloc[-1]
-    if (b_condition or current_price <= st.session_state.setpr) and (SB == "AAA" or SB == "S" or SB == "SB") and interval == "1m":
+    if (b_condition or (current_price <= st.session_state.setpr and st.session_state.settype =="B") and (SB == "AAA" or SB == "S" or SB == "SB") and interval == "1m":
         save_pe("B", current_price, total)
         st.write(f"B: Yes ||SB_status: {SB}")
               
@@ -1475,7 +1481,7 @@ def main():
         save_pe("S", current_price, total)
         st.write(f"S: Yes ||SB_status: {SB}")
 
-    elif (short_s or current_price >= st.session_state.setpr) and (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m":
+    elif (short_s or (current_price >= st.session_state.setpr and st.session_state.settype =="SS") and (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m":
         save_pe("SS", current_price, total)
         st.write(f"SS: Yes ||SB_status: {SB}")
 
