@@ -1125,7 +1125,7 @@ def main():
         #st.session_state.stop_sleep = 1
         new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
-                    "type": "None",
+                    "type": "AAA",
                     "B_pr": 0,
                     "S_pr": 0,
                     "pl": 0,
