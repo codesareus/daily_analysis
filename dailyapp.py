@@ -904,10 +904,6 @@ def main():
         "dev_from_std": deviation_in_std,
         "score_trend": score_trend,
     }])
-
-    print(data_recent.columns)
-    # Append to CSV file
-    
     #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
     new_data.to_csv(scoreT_file, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
 
@@ -1054,7 +1050,7 @@ def main():
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         # delete data button
-        if st.button("Ready SB: keep 1min"):
+        if st.button("Ready SB: 1min"):
             #st.session_state.rerun_count = 0
             st.session_state.index = 0
            # st.session_state.stop_sleep = 0
@@ -1073,8 +1069,10 @@ def main():
             st. rerun()
             
     with col3:
-        if st.button("slp5: check all"):
-            #st.session_state.stop_sleep = 1
+        if st.button("clear: check all"):
+            new_data = pd.DataFrame([{
+                }])
+            new_data.to_csv(scoreT_file, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
             st.session_state.sleepGap = 5
             st.session_state.index = 0
             st.rerun()
