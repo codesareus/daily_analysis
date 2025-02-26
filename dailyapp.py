@@ -1116,7 +1116,7 @@ def main():
             st.rerun()
 # Display the current value of setpr from the session state
     with col2:
-        st.write(f"setpr: {st.session_state.setpr}___current: {current_price}")
+        st.write(f"setpr: {st.session_state.setpr}__now: {current_price}__settype:{st.session_state.settype}")
     
     col1, col2 = st.columns(2)
     total = updated_data["total"].iloc[-1]
