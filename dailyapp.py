@@ -1122,10 +1122,7 @@ def main():
     
     #st.write(f"Pre_Post_status: {st.session_state.prepo}")
     if st.button("Clear data"):
-        st.session_state.stop_sleep = 1
-        st.session_state.sb_status = 0
-        st.session_state.sbOK = 0
-        st.session_state.temp_price = 0
+        #st.session_state.stop_sleep = 1
         new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
                     "type": "None",
@@ -1133,6 +1130,7 @@ def main():
                     "S_pr": 0,
                     "pl": 0,
                     "total": 0, 
+                    "temp_pr": 0
                 }])
                 # clear CSV file
         new_data.to_csv(pe_file, mode="w", header=False, index=False)
