@@ -1110,9 +1110,10 @@ def main():
     # Attempt to convert the input to a float and update the session state
                 st.session_state.setpr = float(setpr_input)
                 st.session_state.settype = settype_input
+                st.session_state.confirmation_message = f"Success!"
             except ValueError:
     # Handle invalid input (non-numeric values)
-                st.error("Please enter a valid number.")
+                st.error("Please enter a valid number or type")
             st.rerun()
 # Display the current value of setpr from the session state
     with col2:
