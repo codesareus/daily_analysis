@@ -293,10 +293,6 @@ def main():
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
-    # Default interval
-    #if 'interval' not in locals():
-    #    interval = "5m"
-
     # Initialize session state for index
     if 'index' not in st.session_state:
         st.session_state.index = 0
@@ -1092,9 +1088,10 @@ def main():
     st.write("wait for 15min, 30min, 1hr, 3mo to line up")
     st.write("wait for 1min, 5min to curve up or down")
     st.write("wait for 1min, 5min pr to push to opposit")
-    
+
+# Input box for set pr
+    setpr = st.text_input("Enter set pr: ", value="0")
     col1, col2 = st.columns(2)
-    
     total = updated_data["total"].iloc[-1]
     SB = updated_data["type"].iloc[-1]
     with col1:
