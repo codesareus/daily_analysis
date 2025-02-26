@@ -1094,7 +1094,8 @@ def main():
         st.session_state.setpr = 0.0
         
     setpr = st.text_input("Enter set pr: ", value= 0.0)
-    st.write(st.session_state.setpr)
+    
+    st.write(f"setpr: {st.session_state.setpr}")
     
     col1, col2 = st.columns(2)
     total = updated_data["total"].iloc[-1]
