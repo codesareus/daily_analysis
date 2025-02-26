@@ -1051,7 +1051,7 @@ def main():
     if "sleepGap" not in st.session_state:
         st.session_state.sleepGap = 5
         
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
         # delete data button
         if st.button("Ready SB: keep 1min"):
@@ -1061,15 +1061,25 @@ def main():
             #st.session_state.sbOK = 1
             st.session_state.sleepGap = 6 # !=5: will keep 1min
             st. rerun()
-            
+
     with col2:
+        # delete data button
+        if st.button("keep 5min"):
+            #st.session_state.rerun_count = 0
+            st.session_state.index = 1
+           # st.session_state.stop_sleep = 0
+            #st.session_state.sbOK = 1
+            st.session_state.sleepGap = 7 # !=5 or 6 will keep 5min
+            st. rerun()
+            
+    with col3:
         if st.button("slp5: check all"):
             #st.session_state.stop_sleep = 1
             st.session_state.sleepGap = 5
             st.session_state.index = 0
             st.rerun()
 
-    with col3:
+    with col4:
         st.write(f"now: sleep__ {st.session_state.sleepGap}")
         st.write(f"interval: {interval}")
 
@@ -1424,7 +1434,9 @@ def main():
             st.session_state.index += 1
         else:
             st.session_state.index = 0
-    else:
+    elif st.session_state.sleepGap == 7:
+        st.session_state.index = 1
+    elif st.session_state.sleepGap == 6:
         st.session_state.index = 0
     
     ### run automatic SB
