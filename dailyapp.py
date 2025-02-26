@@ -1090,19 +1090,26 @@ def main():
     st.write("wait for 1min, 5min pr to push to opposit")
 
 # Input box for set pr
-    setpr = st.text_input("Enter set pr: ", value="0")
+    if "setpr" not in st.session_state:
+        st.session_state.setpr = 0.0
+        
+    setpr = st.text_input("Enter set pr: ", value= 0.0)
+    st.write(st.session_state.setpr)
+    
     col1, col2 = st.columns(2)
     total = updated_data["total"].iloc[-1]
     SB = updated_data["type"].iloc[-1]
     with col1:
         if st.button("B >>>>>>"):
             if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m":
-                save_pe("B", current_price, total)
-                st.write(f"B: Yes ||SB_status: {SB}")
+                if st.session_state.setpr == 0.0 or current_price <= st.session_state.setpr :
+                    save_pe("B", current_price, total)
+                    st.write(f"B: Yes ||SB_status: {SB}")
 
             elif SB == "SS" and interval == "1m":
-                save_pe("SB", current_price, total)
-                st.write(f"SB: Yes ||SB_status: {SB}")
+                if st.session_state.setpr == 0.0 or current_price <= st.session_state.setpr :
+                    save_pe("SB", current_price, total)
+                    st.write(f"SB: Yes ||SB_status: {SB}")
             else:
                 st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}")
                 
