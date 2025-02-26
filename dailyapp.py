@@ -1165,7 +1165,7 @@ def main():
         plnow = current_price - updated_data["temp_pr"].iloc[-1]
     elif updated_data["type"].iloc[-1]=="SS":
         plnow = - current_price + updated_data["temp_pr"].iloc[-1]
-    st.markdown(f'<p style="color:orange; font-weight:bold;">pe_table: ___now interval__{interval}___now pl:__{plnow}</s></p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="color:orange; font-weight:bold;">pe_table: ___now interval__{interval}___now pl:__{plnow:.2f}</s></p>', unsafe_allow_html=True)
     #st.write(f"pe_table: _______now interval: {interval}")
     #with col1:
     st.dataframe(updated_data.tail(5), hide_index=False)
