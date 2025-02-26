@@ -1467,25 +1467,21 @@ def main():
     ### run automatic SB
     total = updated_data["total"].iloc[-1]
     SB = updated_data["type"].iloc[-1]
-    if b_condition and (SB == "AAA" or SB == "S" or SB == "SB") and interval == "1m":
-        if st.session_state.setpr == 0.0 or current_price <= st.session_state.setpr :
-            save_pe("B", current_price, total)
-            st.write(f"B: Yes ||SB_status: {SB}")
+    if (b_condition or current_price <= st.session_state.setpr) and (SB == "AAA" or SB == "S" or SB == "SB") and interval == "1m":
+        save_pe("B", current_price, total)
+        st.write(f"B: Yes ||SB_status: {SB}")
               
-    elif s_condition and SB == "B" and interval == "1m":
-        if st.session_state.setpr == 0.0 or current_price >= st.session_state.setpr :
-            save_pe("S", current_price, total)
-            st.write(f"S: Yes ||SB_status: {SB}")
+    elif (s_condition or current_price >= st.session_state.setpr) and SB == "B" and interval == "1m":
+        save_pe("S", current_price, total)
+        st.write(f"S: Yes ||SB_status: {SB}")
 
-    elif short_s and (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m":
-        if st.session_state.setpr == 0.0 or current_price >= st.session_state.setpr :
-            save_pe("SS", current_price, total)
-            st.write(f"SS: Yes ||SB_status: {SB}")
+    elif (short_s or current_price >= st.session_state.setpr) and (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m":
+        save_pe("SS", current_price, total)
+        st.write(f"SS: Yes ||SB_status: {SB}")
 
-    elif short_b and SB == "SS" and interval == "1m":
-        if st.session_state.setpr == 0.0 or current_price <= st.session_state.setpr :
-            save_pe("SB", current_price, total)
-            st.write(f"SB: Yes ||SB_status: {SB}")
+    elif (short_b or current_price <= st.session_state.setpr) and SB == "SS" and interval == "1m":
+        save_pe("SB", current_price, total)
+        st.write(f"SB: Yes ||SB_status: {SB}")
     
    # st.empty()
     st.rerun()
