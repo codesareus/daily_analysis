@@ -1089,12 +1089,23 @@ def main():
     st.write("wait for 1min, 5min to curve up or down")
     st.write("wait for 1min, 5min pr to push to opposit")
 
-# Input box for set pr
+# Input box for setpr
+
+# Initialize the session state variable if it doesn't exist
     if "setpr" not in st.session_state:
         st.session_state.setpr = 0.0
-        
-    setpr = st.text_input("Enter set pr: ", value= 0.0)
-    
+
+# Create a text input that displays the current session state value
+    setpr_input = st.text_input("Enter set pr: ", value=str(st.session_state.setpr))
+
+    try:
+    # Attempt to convert the input to a float and update the session state
+        st.session_state.setpr = float(setpr_input)
+    except ValueError:
+    # Handle invalid input (non-numeric values)
+        st.error("Please enter a valid number.")
+
+# Display the current value of setpr from the session state
     st.write(f"setpr: {st.session_state.setpr}")
     
     col1, col2 = st.columns(2)
