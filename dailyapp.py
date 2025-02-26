@@ -1098,15 +1098,19 @@ def main():
 # Create a text input that displays the current session state value
     setpr_input = st.text_input("Enter set pr: ", value=str(st.session_state.setpr))
 
-    try:
+    col1, col2=st.columns(2)
+    with col1:
+        if st.button("set"):
+            try:
     # Attempt to convert the input to a float and update the session state
-        st.session_state.setpr = float(setpr_input)
-    except ValueError:
+                st.session_state.setpr = float(setpr_input)
+            except ValueError:
     # Handle invalid input (non-numeric values)
-        st.error("Please enter a valid number.")
-
+                st.error("Please enter a valid number.")
+            st.rerun()
 # Display the current value of setpr from the session state
-    st.write(f"setpr: {st.session_state.setpr}")
+    with col2:
+        st.write(f"setpr: {st.session_state.setpr}")
     
     col1, col2 = st.columns(2)
     total = updated_data["total"].iloc[-1]
