@@ -17,49 +17,9 @@ from datetime import datetime, time
 from time import sleep
 from matplotlib.lines import Line2D
 import pandas_market_calendars as mcal
-#import pygame
-import base64
-
-music = ['1.mp3', '2.mp3', '3.mp3', '4.mp3']
-
-def play_music(number=0):
-    # Assuming 'music' is a list of file paths to your audio files
-    audio_file = open(music[number], "rb")
-    audio_bytes = audio_file.read()
-    audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
-    
-    # Remove the 'muted' attribute to allow sound
-    audio_html = f"""
-        <audio controls autoplay>
-            <source src="data:audio/wav;base64,{audio_base64}" type="audio/wav">
-        </audio>
-    """
-    st.markdown(audio_html, unsafe_allow_html=True)
 
 #eastern = pytz.timezone("America/New")
 eastern = pytz.timezone("US/Eastern")
-
-# Function to play music
-
-def play_music0(number=0):
-    st.write("old player")
-    #try:
-    #audio_file = open(music[number], "rb")
-    #audio_bytes = audio_file.read()
-    #st.audio(audio_bytes, format="audio/wav")
-        #pygame.mixer.init()
-        #pygame.mixer.music.load(music[number])  # Replace with your music file path
-        #pygame.mixer.music.play()
-        #return True
-    #except Exception as e:
-        #print(f"Error playing music: {e}")
-        #return False
-
-# Function to stop music
-#def stop_music():
-    #pygame.mixer.init()
-    #pygame.mixer.music.stop()
-    #st.session_state.music_played = False  # Reset the flag to allow music to play again
 
 def get_time_now():
     eastern = timezone('US/Eastern')
@@ -256,10 +216,6 @@ def regression_analysis(data_recent, interval):
     # Ensure index is datetime
      
     data_recent.index = pd.to_datetime(data_recent.index)
-
-    # Sort by timestamp to avoid disorder  (1hr timeframe disorganized before this)
-    #data_recent = data_recent.sort_index()
-
     # Instead of using time in seconds, use a simple range index
     data_recent["TimeIndex"] = np.arange(len(data_recent))
     
@@ -969,26 +925,6 @@ def main():
 
     #add column names
     df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'dev_from_std', 'score_trend']
-
-    #highlight
-    
-    #def highlight_column(col):
-      #  return ['background-color: navy' if col.name == 'score_trend' else '' for _ in col]
-    
-    # Function to highlight only the first cell of the second column
-    #def highlight_first_cell(df):
-      #  styles = pd.DataFrame('', index=df.index, columns=df.columns)  # Default empty styles
-      #  styles.iloc[0, 1] = 'background-color: yellow'  # Highlight first cell of second column
-      #  return styles
-
-    # Apply the column-based styling first
-    #styled_df = df.style.apply(highlight_column, axis=0)
-
-    # Apply the first-cell styling and add it to the previous styles
-    #styled_df = styled_df.apply(highlight_first_cell, axis=None)
-
- 
-   # st.dataframe(styled_df, hide_index=True)
         
     #display table
     st.dataframe(df, hide_index=True) #original table looks neater
@@ -1005,27 +941,24 @@ def main():
     # Extract "score_trend" for "1m"  ## messages
     ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
     
-    if ema_trend_1m ==3:
-        message = "___B OK"
+    if ema_trend_1m <=0:
+        message = "B OK <= 0"
         color = "green"
-    elif ema_trend_1m == -3:
-        message = "___S OK"
+    elif ema_trend_1m >=0:
+        message = "S OK >= 0"
         color = "red"
     else:
         message = "Hold it"
         color = "orange"
     #st.write(f"ema_trend_1min: ||... {ema_trend_1m: .0f} ___ {message}")
     st.markdown(f'<p style="color:{color}; font-weight:bold;">ema_trend_1min: {message}</s></p>', unsafe_allow_html=True)
-
-    # Sum "score_trend_1" for all the rest
-    #sum_score_trend_rest = df[df["tFrame"] != "1m"]["score_trend"].sum()
     sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "6mo"])]["score_trend"].sum()
     
     if sum_score_trend_rest >=4:
-        message = "___B OK"
+        message = "___B OK >=4"
         color = "green"
     elif sum_score_trend_rest <= -4:
-        message = "___S OK"
+        message = "___S OK <=-4"
         color = "red"
     else:
         message = "Hold it"
@@ -1038,33 +971,12 @@ def main():
 
 ###########################
 
-    #prePost_condition = (st.session_state.prePost == 0 and get_time_now() == "open") or (st.session_state.prePost == 1 and (get_time_now() == "pre" or get_time_now() == "open" or get_time_now() == "after_hours" ))
-
-    b_condition =  ema_trend_1m >= -3 and sum_score_trend_rest >= 4
+    b_condition =  ema_trend_1m >= -3 and ema_trend_1m <= 1 and sum_score_trend_rest >= 4
     s_condition = ((current_price - st.session_state.temp_price) >=1.0) or ((current_price - st.session_state.temp_price) <= -0.5)
     short_b = ((current_price - st.session_state.temp_price) <= -1.0) or ((current_price - st.session_state.temp_price) >= 0.5)              
-    short_s = ema_trend_1m <= 3 and sum_score_trend_rest <= -4
-    
-    if  b_condition:
-        play_music(0)
-        message = "b_condition: music1 playing"
-    elif short_s:
-        play_music(1)
-        message = "ss_condition: music2 playing"
-    elif ema_trend_1m == 3:
-        play_music(2)
-        message = "going up. music3 "
-    elif ema_trend_1m == -3:
-        play_music(3)
-        message = "going down. music4"
-    else:
-        #stop_music()
-        message = "no music"
+    short_s = ema_trend_1m <= 3 and ema_trend_1m >= -1 and sum_score_trend_rest <= -4
 
-    st.write(f"{message}")
-    
     ########## B and S actions
-    
     def save_pe(type="AAA", price=None, total =0): 
         updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr"])
         pl=0
