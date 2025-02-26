@@ -1042,30 +1042,24 @@ def main():
     col1, col2, col3 = st.columns(3)
     with col1:
         # delete data button
-        if st.button("Refresh_Reset"):
-            st.session_state.rerun_count = 0
+        if st.button("Ready SB: keep 1min"):
+            #st.session_state.rerun_count = 0
             st.session_state.index = 0
            # st.session_state.stop_sleep = 0
-            st.session_state.sbOK = 1
-            st.session_state.sleepGap = 5
+            #st.session_state.sbOK = 1
+            st.session_state.sleepGap = 6 # !=5: will keep 1min
             st. rerun()
             
     with col2:
-        if st.session_state.sleepGap == 5:
-            if st.button("Sleep30"):
+        if st.button("slp5: check all"):
             #st.session_state.stop_sleep = 1
-                st.session_state.sleepGap = 30
-                st.session_state.index = 0
-                st.rerun()
+            st.session_state.sleepGap = 5
+            st.session_state.index = 0
+            st.rerun()
 
-        else:
-            if st.button("Sleep5"):
-            #st.session_state.stop_sleep = 1
-                st.session_state.sleepGap = 5
-                st.session_state.index = 0
-                st.rerun()
     with col3:
         st.write(f"now: sleep__ {st.session_state.sleepGap}")
+        st.write(f"interval: {interval}")
 
     col1, col2 = st.columns(2)
     
@@ -1415,7 +1409,7 @@ def main():
         else:
             st.session_state.index = 0
     else:
-            st.session_state.index = 0
+        st.session_state.index = 0
     
     ### run automatic SB
     total = updated_data["total"].iloc[-1]
