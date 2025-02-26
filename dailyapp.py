@@ -1066,19 +1066,19 @@ def main():
             
     with col3:
         if st.button("clear: check all"):
+            st.session_state.index = 0
             new_data = pd.DataFrame([{
-                "tFrame": "1m", "5m":
-                "ema_trend": 0,0,
-                "ema": 0,0,
-                "rsi": 0,0,
-                "macd": 0,0,
-                "total": 0,0,
-                "dev_from_std": 0,0,
-                "score_trend": 0,0
+                "tFrame": "5m", 
+                "ema_trend": 0,
+                "ema": 0,
+                "rsi": 0,
+                "macd": 0,
+                "total": 0,
+                "dev_from_std": 0,
+                "score_trend": 0,
             }])
             new_data.to_csv(scoreT_file, mode="w", header=False, index=False, float_format="%.2f") ## chatGPT
             st.session_state.sleepGap = 5
-            st.session_state.index = 0
             st.rerun()
 
     with col4:
