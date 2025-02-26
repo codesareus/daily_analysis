@@ -940,6 +940,7 @@ def main():
     st.write(f"interval: {interval}")
     # Extract "score_trend" for "1m"  ## messages
     ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
+    ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
     
     if ema_trend_1m <=0:
         message = "B OK <= 0"
@@ -950,9 +951,20 @@ def main():
     else:
         message = "Hold it"
         color = "orange"
+
+    if ema_trend_5m <=0:
+        message5 = "B OK <= 0"
+        color5 = "green"
+    elif ema_trend_5m >=0:
+        message5 = "S OK >= 0"
+        color5 = "red"
+    else:
+        message5 = "Hold it"
+        color5 = "orange"
     #st.write(f"ema_trend_1min: ||... {ema_trend_1m: .0f} ___ {message}")
     st.markdown(f'<p style="color:{color}; font-weight:bold;">ema_trend_1min: {message}</s></p>', unsafe_allow_html=True)
-    sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "6mo"])]["score_trend"].sum()
+    st.markdown(f'<p style="color:{color5}; font-weight:bold;">ema_trend_5min: {message5}</s></p>', unsafe_allow_html=True)
+    sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "5m", "6mo"])]["score_trend"].sum()
     
     if sum_score_trend_rest >=4:
         message = "___B OK >=4"
@@ -1061,6 +1073,10 @@ def main():
         st.write(f"now: sleep__ {st.session_state.sleepGap}")
         st.write(f"interval: {interval}")
 
+    st.write("wait for 15min, 30min, 1hr, 3mo to line up")
+    st.write("wait for 1min, 5min to curve up or down")
+    st.write("wait for 1min, 5min pr to push to opposit")
+    
     col1, col2 = st.columns(2)
     
     total = updated_data["total"].iloc[-1]
