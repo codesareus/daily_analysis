@@ -1072,7 +1072,7 @@ def main():
         if st.button("clear: check all"):
             new_data = pd.DataFrame([{
                 }])
-            new_data.to_csv(scoreT_file, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
+            new_data.to_csv(scoreT_file, mode="w", header=False, index=False, float_format="%.2f") ## chatGPT
             st.session_state.sleepGap = 5
             st.session_state.index = 0
             st.rerun()
