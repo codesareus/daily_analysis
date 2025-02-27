@@ -889,6 +889,8 @@ def main():
         score_trend = -1
     else:
         score_trend = 0
+
+    score4 = (ema_score>0) + (rsi_score>0) + (macd_score>0) + (score>0) + (ema_score<0) + (rsi_score><0) + (macd_score<0) + (score<0)
         
     new_data = pd.DataFrame([{
         "tFrame": f"{interval}",
@@ -899,6 +901,7 @@ def main():
         "total": round(score, 2),
         "dev_from_std": deviation_in_std,
         "score_trend": score_trend,
+        "score4": score4
     }])
     #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
     new_data.to_csv(scoreT_file, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
