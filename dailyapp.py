@@ -942,7 +942,7 @@ def main():
     
     ############ investigate score_trends
     
-    st.write(f"interval: {interval}")
+    st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
     # Extract "score_trend" for "1m"  ## messages
     ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
     ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
@@ -1100,7 +1100,6 @@ def main():
 
     with col4:
         st.write(f"now: sleep__ {st.session_state.sleepGap}")
-        st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
 
     st.write("wait for 15min, 30min, 1hr, 3mo to line up")
     st.write("wait for 1min, 5min to curve up or down")
