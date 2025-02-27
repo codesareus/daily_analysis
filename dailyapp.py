@@ -1073,7 +1073,7 @@ def main():
         if st.button("keep 1m 5m"):
             #st.session_state.rerun_count = 0
             
-            st.session_state.index =  = 0
+            st.session_state.index == 0
             #st.session_state.sbOK = 1
             st.session_state.sleepGap = 7 # !=5 or 6 will keep 5min
             st. rerun()
