@@ -1070,10 +1070,10 @@ def main():
 
     with col2:
         # delete data button
-        if st.button("keep 5min"):
+        if st.button("keep 1m 5m"):
             #st.session_state.rerun_count = 0
-            st.session_state.index = 1
-           # st.session_state.stop_sleep = 0
+            
+            st.session_state.index =  = 0
             #st.session_state.sbOK = 1
             st.session_state.sleepGap = 7 # !=5 or 6 will keep 5min
             st. rerun()
@@ -1486,7 +1486,10 @@ def main():
         else:
             st.session_state.index = 0
     elif st.session_state.sleepGap == 7:
-        st.session_state.index = 1
+        if st.session_state.index ==0:
+                st.session_state.index = 1
+            else:
+                st.session_state.index =  = 0
     elif st.session_state.sleepGap == 6:
         st.session_state.index = 0
     
