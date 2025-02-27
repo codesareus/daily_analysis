@@ -1079,19 +1079,21 @@ def main():
             st. rerun()
             
     with col3:
-        if st.button("clear: check all"):
+        if st.button("check all"):
+            if st.button("clear first"):
+                new_data = pd.DataFrame([{
+                    "tFrame": "5m", 
+                    "ema_trend": 0,
+                    "ema": 0,
+                    "rsi": 0,
+                    "macd": 0,
+                    "total": 0,
+                    "dev_from_std": 0,
+                    "score_trend": 0,
+                }])
+                new_data.to_csv(scoreT_file, mode="w", header=False, index=False, float_format="%.2f") ## chatGPT
+                st.rerun()
             st.session_state.index = 0
-            new_data = pd.DataFrame([{
-                "tFrame": "5m", 
-                "ema_trend": 0,
-                "ema": 0,
-                "rsi": 0,
-                "macd": 0,
-                "total": 0,
-                "dev_from_std": 0,
-                "score_trend": 0,
-            }])
-            new_data.to_csv(scoreT_file, mode="w", header=False, index=False, float_format="%.2f") ## chatGPT
             st.session_state.sleepGap = 5
             st.rerun()
 
