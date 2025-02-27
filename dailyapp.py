@@ -380,9 +380,20 @@ def main():
         return
     #############
 
+# Add a slider for backtracking
+    backtrack_options = [0, 2, 5, 7, 10, 20, 30, 45, 60, 90, 100, 120]
+    selected_backtrack = st.slider(
+        "Select number of points to backtrack:",
+        min_value=min(backtrack_options),
+        max_value=max(backtrack_options),
+        value=0,  # Default value
+        step=1,  # Step size
+        key="backtrack_slider"
+    )
 
     # Adjust the data based on the selected backtrack
-    data_recent = data.tail(300)
+    data_recent = data.tail(300 + selected_backtrack)  # Get the most recent 300 + selected_backtrack data points
+    data_recent = data_recent.head(300)  # Use only the first 300 points after backtracking
 
     # Calculate EMAs
     data_recent = calculate_emas(data_recent)
