@@ -1080,26 +1080,27 @@ def main():
             
     with col3:
         if st.button("check all"):
-            if st.button("clear first"):
-                new_data = pd.DataFrame([{
-                    "tFrame": "5m", 
-                    "ema_trend": 0,
-                    "ema": 0,
-                    "rsi": 0,
-                    "macd": 0,
-                    "total": 0,
-                    "dev_from_std": 0,
-                    "score_trend": 0,
-                }])
-                new_data.to_csv(scoreT_file, mode="w", header=False, index=False, float_format="%.2f") ## chatGPT
-                st.rerun()
+           # if st.button("clear first"):
+              #  new_data = pd.DataFrame([{
+                  ##  "tFrame": "5m", 
+                  #  "ema_trend": 0,
+                #    "ema": 0,
+                   # "rsi": 0,
+                  #  "macd": 0,
+                    #"total": 0,
+                  #  "dev_from_std": 0,
+                   # "score_trend": 0,
+               # }])
+                #new_data.to_csv(scoreT_file, mode="w", header=False, index=False, float_format="%.2f") ## chatGPT
+              #  st.rerun()
             st.session_state.index = 0
+            st.session_state.rerun_count = 0
             st.session_state.sleepGap = 5
             st.rerun()
 
     with col4:
         st.write(f"now: sleep__ {st.session_state.sleepGap}")
-        st.write(f"interval: {interval}")
+        st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
 
     st.write("wait for 15min, 30min, 1hr, 3mo to line up")
     st.write("wait for 1min, 5min to curve up or down")
@@ -1487,6 +1488,7 @@ def main():
             st.session_state.index += 1
         else:
             st.session_state.index = 0
+        st.session_state.rerun_count +=1
     elif st.session_state.sleepGap == 7:
         if st.session_state.index ==0:
             st.session_state.index = 1
