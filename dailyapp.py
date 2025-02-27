@@ -890,7 +890,7 @@ def main():
     else:
         score_trend = 0
 
-    score4 = (ema_score>0) + (rsi_score>0) + (macd_score>0) + (score>0) + (ema_score<0) + (rsi_score><0) + (macd_score<0) + (score<0)
+    score4 = (ema_score>0) + (rsi_score>0) + (macd_score>0) + (score>0) + (ema_score<0) + (rsi_score<0) + (macd_score<0) + (score<0)
         
     new_data = pd.DataFrame([{
         "tFrame": f"{interval}",
