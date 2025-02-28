@@ -836,6 +836,7 @@ def main():
     ax4.legend()
 
     st.write("---------------------")
+    st.write(data_recent.tail(5))
 
     ### get scores functions
     def get_scores():
