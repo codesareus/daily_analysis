@@ -959,6 +959,7 @@ def main():
     current_price = round(data_recent['Close'].iloc[-1], 2)
     now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  # Correct format
     ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
+    ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
     ############ investigate score_trends
     
     st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
@@ -986,7 +987,6 @@ def main():
     st.markdown(f'<p style="color:{color}; font-weight:bold;">ema_trend_1min: {message}</s></p>', unsafe_allow_html=True)
     st.markdown(f'<p style="color:{color5}; font-weight:bold;">ema_trend_5min: {message5}</s></p>', unsafe_allow_html=True)
 
-    ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
     sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "6mo"])]["score_trend"].sum()
     
     if sum_score_trend_rest >=4:
