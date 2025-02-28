@@ -962,7 +962,7 @@ def main():
     df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'dev_from_std', 'score_trend']
         
     #display table
-    #st.dataframe(df, hide_index=True) #original table looks neater
+    st.dataframe(df, hide_index=True) #original table looks neater
 
     ################### all control buttons ###########################################################
     ## very important use
