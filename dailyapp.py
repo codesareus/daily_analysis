@@ -661,8 +661,9 @@ def main():
     ax.fill_between(x_values, y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="red", alpha=0.1, label="")
 
 ################# Fit linear regression model
+    lookback_period = 100  # Set the number of data points to consider (e.g., last 100)
 # Calculate the maximum distance between the regression line and actual prices
-    dist = np.max(np.abs(y_pred_linear - y))
+    dist = np.max(np.abs(y_pred_linear[-lookback_period:] - y))
     
 # Upper and lower channel lines
     upper_lr = y_pred_linear + dist
