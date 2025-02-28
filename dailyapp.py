@@ -1,3 +1,5 @@
+### daily analysis 02-28-25
+
 import streamlit as st
 import yfinance as yf
 import pandas as pd
@@ -661,23 +663,17 @@ def main():
     ax.fill_between(x_values, y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="red", alpha=0.1, label="")
 
 ################# Fit linear regression model
-    lookback_period = 100 
-    data_recent_now = data_recent[-lookback_period:]
-    #st.write(data_recent_now.tail(10))
     
-    x_values_channel = np.arange(len(data_recent_now)) 
-    Xaxis = data_recent_now[["Datetime"]].values
-    y_pred_linear_channel = linear_model.predict(Xaxis)
 # Calculate the maximum distance between the regression line and actual prices
-    dist = np.max(np.abs(y_pred_linear_channel - y))
+    dist = np.max(np.abs(y_pred_linear - y))
     
 # Upper and lower channel lines
-    upper_lr = y_pred_linear_channel + dist
-    lower_lr = y_pred_linear_channel - dist
+    upper_lr = y_pred_linear + dist
+    lower_lr = y_pred_linear - dist
 
 # Plot actual prices and regression lines
-    ax.plot(x_values_channel, upper_lr, color="blue", linestyle="--", label="Upper Channel")
-    ax.plot(x_values_channel, lower_lr, color="blue", linestyle="--", label="Lower Channel")
+    ax.plot(x_values, upper_lr, color="blue", linestyle="--", label="Upper Channel")
+    ax.plot(x_values, lower_lr, color="blue", linestyle="--", label="Lower Channel")
 ############### Draw horizontal lines from the lowest and highest points
     
     min_price = np.min(y)
