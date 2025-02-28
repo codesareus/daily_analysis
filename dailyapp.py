@@ -662,16 +662,19 @@ def main():
 
 ################# Fit linear regression model
     lookback_period = 100  # Set the number of data points to consider (e.g., last 100)
+    x_values_channel = np.arange(len(data_recent[-lookback_period:])) 
+    Xaxis = data_recent[-lookback_period:][["TimeIndex"]].values
+    y_pred_linear_channel = linear_model.predict(Xaxis)
 # Calculate the maximum distance between the regression line and actual prices
     dist = np.max(np.abs(y_pred_linear[-lookback_period:] - y))
     
 # Upper and lower channel lines
-    upper_lr = y_pred_linear[-lookback_period:] + dist
-    lower_lr = y_pred_linear[-lookback_period:] - dist
+    upper_lr = y_pred_linear_channel + dist
+    lower_lr = y_pred_linear_channel - dist
 
 # Plot actual prices and regression lines
-    ax.plot(x_values[-lookback_period:], upper_lr, color="blue", linestyle="--", label="Upper Channel")
-    ax.plot(x_values[-lookback_period:], lower_lr, color="blue", linestyle="--", label="Lower Channel")
+    ax.plot(x_values_channel, upper_lr, color="blue", linestyle="--", label="Upper Channel")
+    ax.plot(x_values_channel, lower_lr, color="blue", linestyle="--", label="Lower Channel")
 ############### Draw horizontal lines from the lowest and highest points
     
     min_price = np.min(y)
