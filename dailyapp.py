@@ -907,9 +907,9 @@ def main():
        # score_trend_1 = 0
       
     ema_score, ema_trend, rsi_score, macd_score, score
-    if ema_score >=1 and rsi_score > 0 and macd_score > 0 and score >= 4 :
+    if ema_score >=1 and rsi_score > 0 and macd_score > 0 and score >= 4 and dev_from_std <= -1:
         score_trend = 1
-    elif ema_score <=-1 and rsi_score < 0  and macd_score < 0 and score <= -4 :
+    elif ema_score <=-1 and rsi_score < 0  and macd_score < 0 and score <= -4 and dev_from_std >= 1:
         score_trend = -1
     else:
         score_trend = 0
