@@ -666,12 +666,12 @@ def main():
     dist = np.max(np.abs(y_pred_linear[-lookback_period:] - y))
     
 # Upper and lower channel lines
-    upper_lr = y_pred_linear + dist
-    lower_lr = y_pred_linear - dist
+    upper_lr = y_pred_linear[-lookback_period:] + dist
+    lower_lr = y_pred_linear[-lookback_period:] - dist
 
 # Plot actual prices and regression lines
-    ax.plot(x_values, upper_lr, color="blue", linestyle="--", label="Upper Channel")
-    ax.plot(x_values, lower_lr, color="blue", linestyle="--", label="Lower Channel")
+    ax.plot(x_values[-lookback_period:], upper_lr, color="blue", linestyle="--", label="Upper Channel")
+    ax.plot(x_values[-lookback_period:], lower_lr, color="blue", linestyle="--", label="Lower Channel")
 ############### Draw horizontal lines from the lowest and highest points
     
     min_price = np.min(y)
