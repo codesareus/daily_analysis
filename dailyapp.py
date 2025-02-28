@@ -845,7 +845,11 @@ def main():
         rsi_score = data_recent["rsi_score"].iloc[-1]
         macd_score = data_recent["macd_score"].iloc[-1]
         score = data_recent["score"].iloc[-1]
-        dev_from_std = data_recent["dev_from_std"].iloc[-1]
+        
+        std_dev = data_recent["std_dev"].iloc[-1]
+        y_pred_poly = data_recent["y_pred_poly"].iloc[-1]
+        delta = current_price - y_pred_poly
+        dev_from_std = delta/std_dev
         
         return ema_score, ema_trend, rsi_score, macd_score, score, dev_from_std
 
