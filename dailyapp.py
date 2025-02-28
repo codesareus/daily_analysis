@@ -313,13 +313,16 @@ def main():
     if "sb_status" not in st.session_state:
         st.session_state.sb_status = 0
 
+    if "sleepGap" not in st.session_state:
+        st.session_state.sleepGap = 5
+
     # Initialize sbOK state
-    if "sbOK" not in st.session_state:
-        st.session_state.sbOK = 1
+    #if "sbOK" not in st.session_state:
+        #st.session_state.sbOK = 1
 
     # Store whether the music has been played
-    if 'music_played' not in st.session_state:
-        st.session_state.music_played = False
+    #if 'music_played' not in st.session_state:
+    #    st.session_state.music_played = False
 
 
     # Define file names
@@ -1081,8 +1084,6 @@ def main():
             
     #####################################
     #st.write(f"### Controls:  ||______ current_price = {current_price:.2f}______")
-    if "sleepGap" not in st.session_state:
-        st.session_state.sleepGap = 5
         
     col1, col2, col3, col4 = st.columns(4)
     with col1:
