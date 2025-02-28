@@ -896,7 +896,7 @@ def main():
         st.success(f"✅ File created successfully as `{file_path}`")
 
     ################### evaluate score trend and save it to scoreT.csv
-    score_prior = data_recent['score'].iloc[-2]
+    #score_prior = data_recent['score'].iloc[-2]
     #score_prior2 = data_recent['score'].iloc[-3]
 
     #if (score_prior > score_prior2) and score_prior >= 1 and data_recent['ema_trend'].iloc[-2] >= 1:
@@ -905,13 +905,20 @@ def main():
        # score_trend_1 = -1
     #else:
        # score_trend_1 = 0
-    
-    if (score > score_prior) and score >= 1 and data_recent['ema_trend'].iloc[-1] >= 1:
+    ema_score, ema_trend, rsi_score, macd_score, score
+    if ema_score >=1 and rsi_score >= 1 and macd_score >= 1 and score >= 4 :
         score_trend = 1
-    elif (score < score_prior) and score <= -1 and data_recent['ema_trend'].iloc[-1] <= -1:
+    elif ema_score <=-1 and rsi_score <= -1 and macd_score <= -1 and score <= -4 :
         score_trend = -1
     else:
         score_trend = 0
+        
+    #if (score > score_prior) and score >= 1 and data_recent['ema_trend'].iloc[-1] >= 1:
+        #score_trend = 1
+    #elif (score < score_prior) and score <= -1 and data_recent['ema_trend'].iloc[-1] <= -1:
+        #score_trend = -1
+    #else:
+        #score_trend = 0
 
     #score4 = (ema_score>0) + (rsi_score>0) + (macd_score>0) + (score>0) + (ema_score<0) + (rsi_score<0) + (macd_score<0) + (score<0)
         
@@ -955,10 +962,7 @@ def main():
     ############ investigate score_trends
     
     st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
-    # Extract "score_trend" for "1m"  ## messages
-    ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
-    ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
-    
+    # Extract "score_trend" for "1m"  ## message
     if ema_trend_1m <=0:
         message = "B OK <= 0"
         color = "green"
@@ -981,7 +985,9 @@ def main():
     #st.write(f"ema_trend_1min: ||... {ema_trend_1m: .0f} ___ {message}")
     st.markdown(f'<p style="color:{color}; font-weight:bold;">ema_trend_1min: {message}</s></p>', unsafe_allow_html=True)
     st.markdown(f'<p style="color:{color5}; font-weight:bold;">ema_trend_5min: {message5}</s></p>', unsafe_allow_html=True)
-    
+
+    ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
+    ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
     sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "6mo"])]["score_trend"].sum()
     
     if sum_score_trend_rest >=4:
