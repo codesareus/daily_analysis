@@ -844,8 +844,9 @@ def main():
         rsi_score = data_recent["rsi_score"].iloc[-1]
         macd_score = data_recent["macd_score"].iloc[-1]
         score = data_recent["score"].iloc[-1]
+        dev_from_std = data_recent["dev_from_std"].iloc[-1]
         
-        return ema_score, ema_trend, rsi_score, macd_score, score
+        return ema_score, ema_trend, rsi_score, macd_score, score, dev_from_std
 
     def get_scores_more():
         price = data_recent['Close'].iloc[-1]
@@ -863,7 +864,7 @@ def main():
         return price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal
 
     #get all scores:
-    ema_score, ema_trend, rsi_score, macd_score, score = get_scores()
+    ema_score, ema_trend, rsi_score, macd_score, score, dev_from_std = get_scores()
     price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal = get_scores_more()
 
     ##################### e_trend scoreT.csv for bar charts
