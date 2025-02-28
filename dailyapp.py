@@ -663,9 +663,10 @@ def main():
 ################# Fit linear regression model
     lookback_period = 100 
     data_recent_now = data_recent[-lookback_period:]
-    st.write(data_recent_now.tail(10))
+    #st.write(data_recent_now.tail(10))
+    
     x_values_channel = np.arange(len(data_recent_now)) 
-    Xaxis = data_recent_now[["TimeIndex"]].values
+    Xaxis = data_recent_now[["Datetime"]].values
     y_pred_linear_channel = linear_model.predict(Xaxis)
 # Calculate the maximum distance between the regression line and actual prices
     dist = np.max(np.abs(y_pred_linear_channel - y))
