@@ -660,7 +660,22 @@ def main():
     ax.fill_between(x_values, y_pred_poly - 2*std_dev, y_pred_poly + 2*std_dev, color="green", alpha=0.2, label="")
     ax.fill_between(x_values, y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="red", alpha=0.1, label="")
 
-    # Draw horizontal lines from the lowest and highest points
+################# Fit linear regression model
+    linear_reg = LinearRegression()
+    linear_reg.fit(x_values, y)
+    y_pred_linear = linear_reg.predict(x_values)  # Middle line (linear regression line)
+
+# Calculate the maximum distance between the regression line and actual prices
+    dist = np.max(np.abs(y_pred_linear - y))
+
+# Upper and lower channel lines
+    upper_lr = y_pred_linear + dist
+    lower_lr = y_pred_linear - dist
+
+# Plot actual prices and regression lines
+    ax.plot(x_values, upper_lr, color="blue", linestyle="--", label="Upper Channel")
+    ax.plot(x_values, lower_lr, color="blue", linestyle="--", label="Lower Channel")
+############### Draw horizontal lines from the lowest and highest points
     min_price = np.min(y)
     max_price = np.max(y)
     ax.axhline(y=min_price, color="green", linestyle="--", label="")
