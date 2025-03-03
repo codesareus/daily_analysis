@@ -24,6 +24,15 @@ from scipy.signal import find_peaks
 #eastern = pytz.timezone("America/New")
 eastern = pytz.timezone("US/Eastern")
 
+def on_click(event):
+    # event.ydata is the y-coordinate in data units where the click occurred.
+    y_value = event.ydata
+    if y_value is not None:
+        # Add a horizontal line at the clicked y-coordinate.
+        plt.axhline(y=y_value, color='red', linestyle='--', linewidth=1)
+        # Redraw the plot to show the line immediately.
+        plt.draw()
+
 def get_time_now():
     eastern = timezone('US/Eastern')
     now = datetime.now(eastern)
@@ -752,6 +761,7 @@ def main():
     ax.plot(x_values, data_recent['EMA_100'], color="gray", linestyle="--", label="EMA 100")
     ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
 
+    fig.canvas.mpl_connect('button_press_event', on_click)
     # Add price labels for EMAs
     ax.text(x_values[-1], data_recent['EMA_9'].iloc[-1], f'^^^^^^e9', color='red', verticalalignment='top')
     ax.text(x_values[-1], data_recent['EMA_20'].iloc[-1], f'^^^^^^^^e20', color='blue', verticalalignment='top')
