@@ -685,7 +685,7 @@ def main():
     peaks, _ = find_peaks(y)
     troughs, _ = find_peaks(-y)  # Invert y to find troughs
 
-    n_std = 2  # Set threshold (e.g., 2 standard deviations)
+    n_std = 1.5  # Set threshold (e.g., 2 standard deviations)
     significant_peaks = [p for p in peaks if abs(y[p] - y_pred_poly[p]) >= n_std * std_dev]
     significant_troughs = [t for t in troughs if abs(y[t] - y_pred_poly[t]) >= n_std * std_dev]
 
