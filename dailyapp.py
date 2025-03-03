@@ -1467,7 +1467,7 @@ def main():
         Line2D([0], [0], color='orange', lw=2, label="MACD"),
         Line2D([0], [0], color='gray', lw=2, label="total"),
     ]
-    time = datetime.now(midwest).strftime('%D:%H:%M')
+    time = datetime.now(eastern).strftime('%D:%H:%M')
     ax0.set_xlabel("Time Frame")
     ax0.set_ylabel("Score")
     ax0.set_title(f"Trend Scores by Interval({time})")
