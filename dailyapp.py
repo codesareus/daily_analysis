@@ -633,7 +633,7 @@ def main():
         
         std_score = - deviation_in_std
 
-        score = ema_score + rsi_score + macd_score  + std_score + pred_score
+        score = ema_score + rsi_score + macd_score  + std_score
 
         return pd.Series([ema_trend, ema_score, rsi_score, macd_score, score], 
                          index=["ema_trend", "ema_score", "rsi_score", "macd_score", "score"])
