@@ -679,6 +679,29 @@ def main():
 # Plot actual prices and regression lines
     ax.plot(x_values, upper_lr, color="blue", linestyle="--", label="Upper Channel")
     ax.plot(x_values, lower_lr, color="blue", linestyle="--", label="Lower Channel")
+#############
+
+    # Detect peaks and troughs
+    peaks, _ = find_peaks(y)
+    troughs, _ = find_peaks(-y)  # Invert y to find troughs
+
+    n_std = 2  # Set threshold (e.g., 2 standard deviations)
+    significant_peaks = [p for p in peaks if abs(y[p] - y_pred_poly[p]) >= n_std * std_dev]
+    significant_troughs = [t for t in troughs if abs(y[t] - y_pred_poly[t]) >= n_std * std_dev]
+
+# Add arrows for significant peaks (pointing downward)
+    for p in significant_peaks:
+        ax.annotate('', xy=(x_values[p], y[p]),
+                    xytext=(x_values[p], y[p] + 0.5),  # Adjust offset as needed
+                    arrowprops=dict(arrowstyle='->', color='red', lw=1))
+
+# Add arrows for significant troughs (pointing upward)
+    for t in significant_troughs:
+        ax.annotate('', xy=(x_values[t], y[t]),
+                    xytext=(x_values[t], y[t] - 0.5),  # Adjust offset as needed
+                    arrowprops=dict(arrowstyle='->', color='blue', lw=1))
+
+
 ############### Draw horizontal lines from the lowest and highest points
     
     min_price = np.min(y)
