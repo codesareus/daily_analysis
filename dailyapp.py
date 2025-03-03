@@ -746,14 +746,14 @@ def main():
     ax.text(0, d2_close, f'{d2_close:.2f}__c2', color='navy', verticalalignment='top')
 
     # Draw exponential moving averages with dashed lines
-    ax.plot(x_values, data_recent['EMA_9'], color="orange", linestyle="--", label="EMA 9/20_blue")
+    ax.plot(x_values, data_recent['EMA_9'], color="red", linestyle="--", label="EMA 9/20_blue")
     ax.plot(x_values, data_recent['EMA_20'], color="blue", linestyle="--", label="")
     ax.plot(x_values, data_recent['EMA_50'], color="gold", linestyle="--", label="EMA 50")
     ax.plot(x_values, data_recent['EMA_100'], color="gray", linestyle="--", label="EMA 100")
     ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
 
     # Add price labels for EMAs
-    ax.text(x_values[-1], data_recent['EMA_9'].iloc[-1], f'^^^^^^e9', color='orange', verticalalignment='top')
+    ax.text(x_values[-1], data_recent['EMA_9'].iloc[-1], f'^^^^^^e9', color='red', verticalalignment='top')
     ax.text(x_values[-1], data_recent['EMA_20'].iloc[-1], f'^^^^^^^^e20', color='blue', verticalalignment='top')
     ax.text(x_values[-1], data_recent['EMA_50'].iloc[-1], f'^^^^^^^^e50', color='gold', verticalalignment='top')
     ax.text(x_values[-1], data_recent['EMA_100'].iloc[-1], f'^^^^^^^^e100', color='gray', verticalalignment='top')
