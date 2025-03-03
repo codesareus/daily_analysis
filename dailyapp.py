@@ -1375,7 +1375,7 @@ def main():
 ###################### bar chart?
     
    ## read bar data scoreT_file
-    df = pd.read_csv(scoreT_file, names=["tFrame", "ema_trend", "ema", "rsi", "macd", "total", "dev_from_std", "score_trend"])
+    df = pd.read_csv(scoreT_file, names=['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'dev_from_std', "y_pred_p_trend", 'score_trend'])
     
     # Define custom order
     timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
