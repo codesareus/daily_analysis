@@ -19,6 +19,7 @@ from datetime import datetime, time
 from time import sleep
 from matplotlib.lines import Line2D
 import pandas_market_calendars as mcal
+from scipy.signal import find_peaks
 
 #eastern = pytz.timezone("America/New")
 eastern = pytz.timezone("US/Eastern")
