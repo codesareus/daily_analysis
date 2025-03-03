@@ -693,13 +693,13 @@ def main():
     for p in significant_peaks:
         ax.annotate('', xy=(x_values[p], y[p]),
                     xytext=(x_values[p], y[p] + 0.5),  # Adjust offset as needed
-                    arrowprops=dict(arrowstyle='->', color='red', lw=1))
+                    arrowprops=dict(arrowstyle='->', color='red', lw=3))
 
 # Add arrows for significant troughs (pointing upward)
     for t in significant_troughs:
         ax.annotate('', xy=(x_values[t], y[t]),
                     xytext=(x_values[t], y[t] - 0.5),  # Adjust offset as needed
-                    arrowprops=dict(arrowstyle='->', color='blue', lw=1))
+                    arrowprops=dict(arrowstyle='->', color='blue', lw=3))
 
 
 ############### Draw horizontal lines from the lowest and highest points
