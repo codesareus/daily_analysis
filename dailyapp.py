@@ -962,9 +962,9 @@ def main():
     else:
         y_pred_p_trend = -1
         
-    if ema_score >=1 and rsi_score > 0 and macd_score > 0 and y_pred_p_trend == 1:
+    if ema_score >=1 and rsi_score > 0 and macd_score > 0 :
         score_trend = 1
-    elif ema_score <=-1 and rsi_score < 0  and macd_score < 0 and  y_pred_p_trend == -1:
+    elif ema_score <=-1 and rsi_score < 0  and macd_score < 0 :
         score_trend = -1
     else:
         score_trend = 0
@@ -1065,7 +1065,7 @@ def main():
     b_condition =  ema_trend_1m >= -3 and ema_trend_5m >= -3 and ema_trend_1m <= 1 and y_pred_p_trend == 1 and sum_score_trend_rest >= 3
     s_condition = ((current_price - st.session_state.temp_price) >=1.0) or ((current_price - st.session_state.temp_price) <= -0.5)
     short_b = ((current_price - st.session_state.temp_price) <= -1.0) or ((current_price - st.session_state.temp_price) >= 0.5)              
-    short_s = ema_trend_1m <= 3 and ema_trend_5m <= 3 and ema_trend_1m >= -1 and y_pred_p_trend == -1 and sum_score_trend_rest <= -3
+    short_s = ema_trend_1m <= 3 and ema_trend_5m <= 3 and ema_trend_1m >= -1  and sum_score_trend_rest <= -3
 
     ########## B and S actions
     def save_pe(type="AAA", price=None, total =0): 
