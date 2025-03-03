@@ -1475,74 +1475,7 @@ def main():
     ax0.set_xticklabels(unique_intervals, rotation=45)
     ax0.legend(handles=legend_handles, loc="lower right")
 
-# Fit a polynomial regression (degree 2 or 3 works well for trends)
- # You can adjust the degree
-    coeffs = np.polyfit(x, total_values, degree)
-    poly_eq = np.poly1d(coeffs)
 
-# Generate smooth curve data
-    x_smooth = np.linspace(min(x), max(x), 300)  # More points for a smooth curve
-    y_smooth = poly_eq(x_smooth)
-
-# Plot the polynomial regression curve
-    ax0.plot(x_smooth, y_smooth, color="red", linestyle="-", linewidth=2, label="Polynomial Fit")
-
-############# slope of total
-# Compute the derivative (slope function)
-    poly_derivative = np.polyder(poly_eq)
-
-# Evaluate slope at the first x value
-    initial_slope = poly_derivative(x[0])
-
-# Check if slope is positive or negative
-    if initial_slope > 0:
-        message = "1min total DOWN."
-        color = "red"
-    elif initial_slope < 0:
-        message = "1min total UP."
-        color ="green"
-    else:
-        message ="1min total flat"
-        color ="gray"
-    #st.write(message)
-    st.markdown(f"<h3 style='color:{color};'>{message} </h3>", unsafe_allow_html=True)
-
-# Compute the average value across all five metrics for each interval no no changed just ema
-    #avg_values = [(ema_trend[i] + ema_values[i] + rsi_values[i] + macd_values[i] + total_values[i]) / 5 for i in range(len(unique_intervals))]
-    avg_values = [ema_values[i] for i in range(len(unique_intervals))]
-
-# Fit a polynomial regression (adjust degree as needed)
-    degree = degree # Adjust for smoother or more flexible fit
-    coeffs = np.polyfit(x, avg_values, degree)
-    poly_eq = np.poly1d(coeffs)
-
-# Generate smooth curve data
-    x_smooth = np.linspace(min(x), max(x), 300)
-    y_smooth = poly_eq(x_smooth)
-
-# Plot the polynomial regression curve
-    ax0.plot(x_smooth, y_smooth, color="red", linestyle="--", linewidth=2, label="Polynomial Fit (Avg)")
-
-# Compute the derivative (slope function)
-    poly_derivative = np.polyder(poly_eq)
-
-# Evaluate slope at the first x value
-    initial_slope = poly_derivative(x[0])
-
-# Check if slope is positive or negative
-    if initial_slope > 0:
-        message = "1min ema_values DOWN."
-        color="red"
-    elif initial_slope < 0:
-        message = "1min ema_values UP."
-        color="green"
-    else:
-        message ="1min ema_value flat"
-        color ="gray"
-    #st.write(message)
-    st.markdown(f"<h3 style='color:{color};'>{message} </h3>", unsafe_allow_html=True)
-    ax0.set_title(f"Trend Scores by Interval({time})__pr.degree: {degree}")
-    
     #########################################
 
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
