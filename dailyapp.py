@@ -962,9 +962,9 @@ def main():
     else:
         y_pred_p_trend = -1
         
-    if ema_score >=1 and rsi_score > 0 and macd_score > 0 :
+    if ema_score >=1 and rsi_score > 0 and macd_score > 0 and total > 0:
         score_trend = 1
-    elif ema_score <=-1 and rsi_score < 0  and macd_score < 0 :
+    elif ema_score <=-1 and rsi_score < 0  and macd_score < 0 and total < 0 :
         score_trend = -1
     else:
         score_trend = 0
