@@ -761,7 +761,7 @@ def main():
     ax.plot(x_values, data_recent['EMA_100'], color="gray", linestyle="--", label="EMA 100")
     ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
 
-    fig.canvas.mpl_connect('button_press_event', on_click)
+    #fig.canvas.mpl_connect('button_press_event', on_click)
     # Add price labels for EMAs
     ax.text(x_values[-1], data_recent['EMA_9'].iloc[-1], f'^^^^^^e9', color='red', verticalalignment='top')
     ax.text(x_values[-1], data_recent['EMA_20'].iloc[-1], f'^^^^^^^^e20', color='blue', verticalalignment='top')
@@ -903,12 +903,14 @@ def main():
         rsi2 = data_recent['RSI2'].iloc[-1]
         macd = data_recent['MACD'].iloc[-1]
         signal = data_recent['Signal_Line'].iloc[-1]
+        y_pred_poly = data_recent['y_pred_poly'].iloc[-1]
+        y_pred_poly1 = data_recent['y_pred_poly'].iloc[-2]
 
-        return price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal
+        return price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal, y_pred_poly, y_pred_poly1
 
     #get all scores:
     ema_score, ema_trend, rsi_score, macd_score, score, dev_from_std = get_scores()
-    price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal = get_scores_more()
+    price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal, y_pred_poly, y_pred_poly1 = get_scores_more()
 
     ##################### e_trend scoreT.csv for bar charts
 
@@ -953,10 +955,16 @@ def main():
     #else:
        # score_trend_1 = 0
       
-    ema_score, ema_trend, rsi_score, macd_score, score
-    if ema_score >=1 and rsi_score > 0 and macd_score > 0 and score >= 4 and dev_from_std <= -1:
+    #ema_score, ema_trend, rsi_score, macd_score, score
+    y_pred_p_trend 0
+    if y_pred_poly  >= y_pred_poly1:
+        y_pred_p_trend = 1
+    else:
+        y_pred_p_trend = -1
+        
+    if ema_score >=1 and rsi_score > 0 and macd_score > 0 and y_pred_p_trend == 1:
         score_trend = 1
-    elif ema_score <=-1 and rsi_score < 0  and macd_score < 0 and score <= -4 and dev_from_std >= 1:
+    elif ema_score <=-1 and rsi_score < 0  and macd_score < 0 and  y_pred_p_trend == -1:
         score_trend = -1
     else:
         score_trend = 0
@@ -978,6 +986,7 @@ def main():
         "macd": round(macd_score, 2),
         "total": round(score, 2),
         "dev_from_std": deviation_in_std,
+        "y_pred_p_trend": y_pred_p_trend,
         "score_trend": score_trend,
     }])
     #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
@@ -996,7 +1005,7 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'dev_from_std', 'score_trend']
+    df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'dev_from_std', "y_pred_p_trend", 'score_trend']
         
     #display table
     st.dataframe(df, hide_index=True) #original table looks neater
@@ -1034,13 +1043,13 @@ def main():
     st.markdown(f'<p style="color:{color}; font-weight:bold;">ema_trend_1min: {message}</s></p>', unsafe_allow_html=True)
     st.markdown(f'<p style="color:{color5}; font-weight:bold;">ema_trend_5min: {message5}</s></p>', unsafe_allow_html=True)
 
-    sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "6mo"])]["score_trend"].sum()
+    sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "3mo", "6mo"])]["score_trend"].sum()
     
-    if sum_score_trend_rest >=4:
-        message = "___B OK >=4"
+    if sum_score_trend_rest >=3:
+        message = "___B OK >=3"
         color = "green"
-    elif sum_score_trend_rest <= -4:
-        message = "___S OK <=-4"
+    elif sum_score_trend_rest <= -3:
+        message = "___S OK <=-3"
         color = "red"
     else:
         message = "Hold it"
@@ -1053,10 +1062,10 @@ def main():
 
 ###########################
 
-    b_condition =  ema_trend_1m >= -3 and ema_trend_5m >= -3 and ema_trend_1m <= 1 and sum_score_trend_rest >= 4
+    b_condition =  ema_trend_1m >= -3 and ema_trend_5m >= -3 and ema_trend_1m <= 1 and sum_score_trend_rest >= 3
     s_condition = ((current_price - st.session_state.temp_price) >=1.0) or ((current_price - st.session_state.temp_price) <= -0.5)
     short_b = ((current_price - st.session_state.temp_price) <= -1.0) or ((current_price - st.session_state.temp_price) >= 0.5)              
-    short_s = ema_trend_1m <= 3 and ema_trend_5m <= 3 and ema_trend_1m >= -1 and sum_score_trend_rest <= -4
+    short_s = ema_trend_1m <= 3 and ema_trend_5m <= 3 and ema_trend_1m >= -1 and sum_score_trend_rest <= -3
 
     ########## B and S actions
     def save_pe(type="AAA", price=None, total =0): 
