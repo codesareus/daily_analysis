@@ -956,7 +956,7 @@ def main():
        # score_trend_1 = 0
       
     #ema_score, ema_trend, rsi_score, macd_score, score
-    y_pred_p_trend 0
+    y_pred_p_trend = 0
     if y_pred_poly  >= y_pred_poly1:
         y_pred_p_trend = 1
     else:
