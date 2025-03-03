@@ -962,9 +962,9 @@ def main():
     else:
         y_pred_p_trend = -1
         
-    if ema_score >=1 and rsi_score > 0 and macd_score > 0 and total > 0:
+    if ema_score >=1 and rsi_score > 0 and macd_score > 0 and score > 0:
         score_trend = 1
-    elif ema_score <=-1 and rsi_score < 0  and macd_score < 0 and total < 0 :
+    elif ema_score <=-1 and rsi_score < 0  and macd_score < 0 and score < 0 :
         score_trend = -1
     else:
         score_trend = 0
@@ -977,7 +977,7 @@ def main():
         #score_trend = 0
 
     #score4 = (ema_score>0) + (rsi_score>0) + (macd_score>0) + (score>0) + (ema_score<0) + (rsi_score<0) + (macd_score<0) + (score<0)
-        
+    # total == score (above) 
     new_data = pd.DataFrame([{
         "tFrame": f"{interval}",
         "ema_trend": round(ema_trend, 2),
