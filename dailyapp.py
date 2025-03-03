@@ -1467,16 +1467,15 @@ def main():
         Line2D([0], [0], color='orange', lw=2, label="MACD"),
         Line2D([0], [0], color='gray', lw=2, label="total"),
     ]
-    time = datetime.now(eastern).strftime('%D:%H:%M')
+    time = datetime.now(midwest).strftime('%D:%H:%M')
     ax0.set_xlabel("Time Frame")
     ax0.set_ylabel("Score")
-    #ax0.set_title(f"Trend Scores by Interval({time})")
+    ax0.set_title(f"Trend Scores by Interval({time})")
     ax0.set_xticks(x)
     ax0.set_xticklabels(unique_intervals, rotation=45)
     ax0.legend(handles=legend_handles, loc="lower right")
 
-
-    #########################################
+    #################################
 
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
     st.pyplot(fig)  ## finally plot all 5 figures
