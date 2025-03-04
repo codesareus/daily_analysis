@@ -924,9 +924,11 @@ def main():
     #ema_score, ema_trend, rsi_score, macd_score, score
     y_pred_p_trend = 0
     if y_pred_poly >= y_pred_poly1:
-        y_pred_p_trend = "↑"
+        y_pred_p_trend = 1
+        #y_pred_p_trend = "↑"
     else:
-        y_pred_p_trend = "↓"
+       # y_pred_p_trend = "↓"
+        y_pred_p_trend = -1
         
     if ema_score >=1 and rsi_score > 0 and macd_score > 0 and score > 0:
         score_trend = 1
