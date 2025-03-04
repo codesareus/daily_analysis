@@ -904,7 +904,7 @@ def main():
         # If the file doesn't exist or is empty, create a new DataFrame
         print("File does not exist or is empty. Creating a new file.")
 
-        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'total', 'dev_from_std', 'score_trend'])
+        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'score', 'dev_from_std', 'score_trend'])
 
         # Save the empty DataFrame to the CSV file
         df.to_csv(file_path, index=False, header=False)
