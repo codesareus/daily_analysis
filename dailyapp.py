@@ -1126,7 +1126,7 @@ def main():
 
     with col4:
         if st.button("stop slp"):
-            st.session_state.stop_sleep == 1:
+            st.session_state.stop_sleep =1
             st.rerun()
 
     st.write("wait for 15min, 30min, 1hr, 3mo to line up")
