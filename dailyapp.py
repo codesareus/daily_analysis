@@ -710,7 +710,7 @@ def main():
     ax.text(0, previous_close, f'{previous_close:.2f}__c1', color='navy', verticalalignment='top')
 
     # add time intervals on bottom of chart
-    ax.text(0.4, 0.95, f"Time Frame: {interval}", 
+    ax.text(0.4, 0.95, f"Time Frame: {interval}__Now: {current_price:.2f}", 
         horizontalalignment='left', verticalalignment='center', 
         transform=ax.transAxes, fontsize=16, color="blue")
     
