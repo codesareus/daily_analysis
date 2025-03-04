@@ -1541,6 +1541,10 @@ def main():
             save_pe("SB", current_price, total)
             st.write(f"SB: Yes ||SB_status: {SB}")
 
+        else:
+            save_pe("SS", current_price, total)
+            st.write(f"SS: Yes ||SB_status: {SB}")
+
         st.write(f"B: {b_condition}__SS: {short_s}__S: {s_condition}__SB:{short_b}__Status_0: {SB == "AAA" or SB == "S" or SB == "SB"}__interval: {interval}")
        # st.empty()
         st.rerun()
