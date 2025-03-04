@@ -1129,9 +1129,7 @@ def main():
             st.session_state.stop_sleep =1
             st.rerun()
 
-    st.write("wait for 15min, 30min, 1hr, 3mo to line up")
-    st.write("wait for 1min, 5min to curve up or down")
-    st.write("wait for 1min, 5min pr to push to opposit")
+    st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}"
 
 # Input box for setpr
 
