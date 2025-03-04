@@ -1119,26 +1119,15 @@ def main():
             
     with col3:
         if st.button("check all"):
-           # if st.button("clear first"):
-              #  new_data = pd.DataFrame([{
-                  ##  "tFrame": "5m", 
-                  #  "ema_trend": 0,
-                #    "ema": 0,
-                   # "rsi": 0,
-                  #  "macd": 0,
-                    #"total": 0,
-                  #  "dev_from_std": 0,
-                   # "score_trend": 0,
-               # }])
-                #new_data.to_csv(scoreT_file, mode="w", header=False, index=False, float_format="%.2f") ## chatGPT
-              #  st.rerun()
             st.session_state.index = 0
             st.session_state.rerun_count = 0
             st.session_state.sleepGap = 5
             st.rerun()
 
     with col4:
-        st.write(f"now: sleep__ {st.session_state.sleepGap}")
+        if st.button("stop slp"):
+            st.session_state.stop_sleep == 1:
+            st.rerun()
 
     st.write("wait for 15min, 30min, 1hr, 3mo to line up")
     st.write("wait for 1min, 5min to curve up or down")
@@ -1517,45 +1506,45 @@ def main():
     st.pyplot(fig)  ## finally plot all 5 figures
 
 ########################################
-   # if st.session_state.stop_sleep == 0:
-    # Sleep for 8 seconds (simulating some processing)
-    sleep(st.session_state.sleepGap)
-    if st.session_state.sleepGap == 5:
-        # Update the index for the next interval
-        if st.session_state.index < len(intervals) - 1:
-            st.session_state.index += 1
-        else:
+    if st.session_state.stop_sleep == 0:
+        # Sleep for 8 seconds (simulating some processing)
+        sleep(st.session_state.sleepGap)
+        if st.session_state.sleepGap == 5:
+            # Update the index for the next interval
+            if st.session_state.index < len(intervals) - 1:
+                st.session_state.index += 1
+            else:
+                st.session_state.index = 0
+            st.session_state.rerun_count +=1
+        elif st.session_state.sleepGap == 7:
+            if st.session_state.index ==0:
+                st.session_state.index = 1
+            else:
+                st.session_state.index = 0
+        elif st.session_state.sleepGap == 6:
             st.session_state.index = 0
-        st.session_state.rerun_count +=1
-    elif st.session_state.sleepGap == 7:
-        if st.session_state.index ==0:
-            st.session_state.index = 1
-        else:
-            st.session_state.index = 0
-    elif st.session_state.sleepGap == 6:
-        st.session_state.index = 0
+        
+        ### run automatic SB
+        total = updated_data["total"].iloc[-1]
+        SB = updated_data["type"].iloc[-1]
+        if (b_condition or (current_price <= st.session_state.setpr and st.session_state.settype =="B")) and (SB == "AAA" or SB == "S" or SB == "SB") and interval == "1m":
+            save_pe("B", current_price, total)
+            st.write(f"B: Yes ||SB_status: {SB}")
+                  
+        elif (s_condition or current_price >= st.session_state.setpr) and SB == "B" and interval == "1m":
+            save_pe("S", current_price, total)
+            st.write(f"S: Yes ||SB_status: {SB}")
     
-    ### run automatic SB
-    total = updated_data["total"].iloc[-1]
-    SB = updated_data["type"].iloc[-1]
-    if (b_condition or (current_price <= st.session_state.setpr and st.session_state.settype =="B")) and (SB == "AAA" or SB == "S" or SB == "SB") and interval == "1m":
-        save_pe("B", current_price, total)
-        st.write(f"B: Yes ||SB_status: {SB}")
-              
-    elif (s_condition or current_price >= st.session_state.setpr) and SB == "B" and interval == "1m":
-        save_pe("S", current_price, total)
-        st.write(f"S: Yes ||SB_status: {SB}")
-
-    elif (short_s or (current_price >= st.session_state.setpr and st.session_state.settype =="SS")) and (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m":
-        save_pe("SS", current_price, total)
-        st.write(f"SS: Yes ||SB_status: {SB}")
-
-    elif (short_b or current_price <= st.session_state.setpr) and SB == "SS" and interval == "1m":
-        save_pe("SB", current_price, total)
-        st.write(f"SB: Yes ||SB_status: {SB}")
+        elif (short_s or (current_price >= st.session_state.setpr and st.session_state.settype =="SS")) and (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m":
+            save_pe("SS", current_price, total)
+            st.write(f"SS: Yes ||SB_status: {SB}")
     
-   # st.empty()
-    st.rerun()
+        elif (short_b or current_price <= st.session_state.setpr) and SB == "SS" and interval == "1m":
+            save_pe("SB", current_price, total)
+            st.write(f"SB: Yes ||SB_status: {SB}")
+        
+       # st.empty()
+        st.rerun()
         
 
 if __name__ == "__main__":
