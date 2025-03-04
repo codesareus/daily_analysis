@@ -1540,7 +1540,8 @@ def main():
         elif (short_b or current_price <= st.session_state.setpr) and SB == "SS" and interval == "1m":
             save_pe("SB", current_price, total)
             st.write(f"SB: Yes ||SB_status: {SB}")
-        
+
+        st.write(f"b_condition: {b_condition}__s_condition: {s_condition}")
        # st.empty()
         st.rerun()
         
