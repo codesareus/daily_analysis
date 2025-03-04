@@ -234,7 +234,7 @@ def regression_analysis(data_recent, interval):
     y = data_recent["score"].fillna(0).values
 
     # Polynomial Regression
-    poly = PolynomialFeatures(degree=2)
+    poly = PolynomialFeatures(degree=3)
     X_poly = poly.fit_transform(X)
     poly_model = LinearRegression()
     poly_model.fit(X_poly, y)
