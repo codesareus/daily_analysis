@@ -973,7 +973,7 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'dev_from_std', "y_pred_p_trend", 'score_trend']
+    df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'score', 'dev_from_std', "y_pred_p_trend", 'score_trend']
         
     #display table
     st.dataframe(df, hide_index=True) #original table looks neater
