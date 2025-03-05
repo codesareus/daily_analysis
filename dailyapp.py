@@ -1296,7 +1296,7 @@ def main():
     }
 
     close_values = {
-        "price": data_recent['Close'].iloc[-1],
+        "price": round(data_recent['Close'].iloc[-1],2)'
         "prev_close": previous_close,
         "d2_close": d2_close,
     }
@@ -1393,10 +1393,10 @@ def main():
     #########price vs close
 
         close_df = pd.DataFrame(list(close_values.items()), columns=["price", "Value"])
-        macd_df = macd_df.sort_values(by="Value", ascending=False)
+        close_df = macd_df.sort_values(by="Value", ascending=False)
 
         # Reset index and drop the numbers column
-        macd_df = macd_df.reset_index(drop=True)
+        close_df = macd_df.reset_index(drop=True)
 
         ## message
         message = " "
