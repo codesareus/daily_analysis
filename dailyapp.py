@@ -1385,6 +1385,32 @@ def main():
         st.markdown(f"### <span style='color:{color3};'>MACD: {message}</span>", unsafe_allow_html=True)
         st.dataframe(macd_df, hide_index=True)
 
+    #########price vs close
+
+        close_df = pd.DataFrame(list(MACD_values.items()), columns=["Indicator", "Value"])
+        macd_df = macd_df.sort_values(by="Value", ascending=False)
+
+        # Reset index and drop the numbers column
+        macd_df = macd_df.reset_index(drop=True)
+
+        ## message
+        message = " "
+        color3 = " "
+        if macd > signal and macd > 0:
+            message = "Up "
+            color3 = "green"
+            
+        elif macd < signal and macd < 0:
+            message = "Down"
+            color3 = "red"
+            
+        else:
+            message = "Neutral "
+            color3 = "gray"
+            
+        # Display the table
+        st.markdown(f"### <span style='color:{color3};'>MACD: {message}</span>", unsafe_allow_html=True)
+        st.dataframe(macd_df, hide_index=True)
 
 ###################### bar chart?
     
