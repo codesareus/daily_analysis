@@ -1126,7 +1126,7 @@ def main():
     with col3:
         if st.button("check all"):
             new_data = pd.DataFrame([{
-                "tFrame": "1m","5m",
+                "tFrame": 1m, 5m,
                 "ema_trend": round(ema_trend, 2),0,
                 "ema": round(ema_score, 2),0,
                 "rsi": round(rsi_score, 2),0,
