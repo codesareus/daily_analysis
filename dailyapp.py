@@ -1012,19 +1012,6 @@ def main():
     st.markdown(f'<p style="color:{color}; font-weight:bold;">ema_trend_1min: {message}</s></p>', unsafe_allow_html=True)
     #st.markdown(f'<p style="color:{color5}; font-weight:bold;">ema_trend_5min: {message5}</s></p>', unsafe_allow_html=True)
 
-    sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "6mo"])]["score_trend"].sum()
-    
-    if sum_score_trend_rest >=4:
-        message = "___B OK >=4"
-        color = "green"
-    elif sum_score_trend_rest <= -4:
-        message = "___S OK <=-4"
-        color = "red"
-    else:
-        message = "Hold it"
-        color = "orange"
-    #st.write(f"score_trend_others: ||... {sum_score_trend_rest} ___ {message}")
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">score_trend_others: {message}__{sum_score_trend_rest}</s></p>', unsafe_allow_html=True)
     if pr1 ==1:
         message = "___B OK 1"
         color = "green"
@@ -1045,6 +1032,20 @@ def main():
         message = "Hold it"
         color = "orange"
     st.markdown(f'<p style="color:{color}; font-weight:bold;">polynomial 5min: {message}</s></p>', unsafe_allow_html=True)
+
+    sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "6mo"])]["score_trend"].sum()
+    
+    if sum_score_trend_rest >=4:
+        message = "___B OK >=4"
+        color = "green"
+    elif sum_score_trend_rest <= -4:
+        message = "___S OK <=-4"
+        color = "red"
+    else:
+        message = "Hold it"
+        color = "orange"
+    #st.write(f"score_trend_others: ||... {sum_score_trend_rest} ___ {message}")
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">score_trend_others: {message}__{sum_score_trend_rest}</s></p>', unsafe_allow_html=True)
 
     #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
