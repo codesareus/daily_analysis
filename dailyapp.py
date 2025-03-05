@@ -1296,7 +1296,7 @@ def main():
     }
 
     close_values = {
-        "price": round(data_recent['Close'].iloc[-1],2)'
+        "price": round(data_recent['Close'].iloc[-1],2),
         "prev_close": previous_close,
         "d2_close": d2_close,
     }
