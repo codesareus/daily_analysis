@@ -1007,11 +1007,10 @@ def main():
     else:
         message5 = "Hold it"
         color5 = "orange"
-    st.write(f"ema_trend_1min: ||... {ema_trend_1m: .0f} ___ {message}")
-    #st.markdown(f'<p style="color:{color}; font-weight:bold;">ema_trend_1min: {message}</s></p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">ema_trend_1min: {message}</s></p>', unsafe_allow_html=True)
     #st.markdown(f'<p style="color:{color5}; font-weight:bold;">ema_trend_5min: {message5}</s></p>', unsafe_allow_html=True)
 
-    sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "3mo", "6mo"])]["score_trend"].sum()
+    sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "6mo"])]["score_trend"].sum()
     
     if sum_score_trend_rest >=4:
         message = "___B OK >=4"
