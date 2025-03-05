@@ -1295,6 +1295,11 @@ def main():
         "Signal_Line": data_recent['Signal_Line'].iloc[-1],
     }
 
+    close_values = {
+        "Current_pr": current_price,
+        "prev_close": previous_close,
+        "d2_close": d2_close,
+    }
 ############################## display ema, rsi, macd trends columns
 
     st.write(f"### Indicator trend ({interval})")
@@ -1387,7 +1392,7 @@ def main():
 
     #########price vs close
 
-        close_df = pd.DataFrame(list(MACD_values.items()), columns=["Indicator", "Value"])
+        close_df = pd.DataFrame(list(close_values.items()), columns=["price", "Value"])
         macd_df = macd_df.sort_values(by="Value", ascending=False)
 
         # Reset index and drop the numbers column
@@ -1396,11 +1401,11 @@ def main():
         ## message
         message = " "
         color3 = " "
-        if macd > signal and macd > 0:
+        if current_pr > previous_close and current_pr > d2_close :
             message = "Up "
             color3 = "green"
             
-        elif macd < signal and macd < 0:
+        elif current_pr < previous_close and current_pr < d2_close :
             message = "Down"
             color3 = "red"
             
@@ -1409,8 +1414,8 @@ def main():
             color3 = "gray"
             
         # Display the table
-        st.markdown(f"### <span style='color:{color3};'>MACD: {message}</span>", unsafe_allow_html=True)
-        st.dataframe(macd_df, hide_index=True)
+        st.markdown(f"### <span style='color:{color3};'>price: {message}</span>", unsafe_allow_html=True)
+        st.dataframe(close_df, hide_index=True)
 
 ###################### bar chart?
     
