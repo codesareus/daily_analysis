@@ -984,6 +984,8 @@ def main():
     now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  # Correct format
     ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
     ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
+    pr1=df[df["tFrame"] == "1m"]["y_pred_p_trend"].values[0]
+    pr5=df[df["tFrame"] == "5m"]["y_pred_p_trend"].values[0]
     ############ investigate score_trends
     
     st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
@@ -1023,16 +1025,37 @@ def main():
         color = "orange"
     #st.write(f"score_trend_others: ||... {sum_score_trend_rest} ___ {message}")
     st.markdown(f'<p style="color:{color}; font-weight:bold;">score_trend_others: {message}__{sum_score_trend_rest}</s></p>', unsafe_allow_html=True)
-     #display message about app status
+    if pr1 ==1:
+        message = "___B OK 1"
+        color = "green"
+    elif pr1==-1:
+        message = "___S OK -1"
+        color = "red"
+    else:
+        message = "Hold it"
+        color = "orange"
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">polynomial 1min: {message}</s></p>', unsafe_allow_html=True)
+    if pr5 ==1:
+        message = "___B OK 1"
+        color = "green"
+    elif pr5==-1:
+        message = "___S OK -1"
+        color = "red"
+    else:
+        message = "Hold it"
+        color = "orange"
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">polynomial 5min: {message}</s></p>', unsafe_allow_html=True)
+
+    #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
     updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr"])
 
 ###########################
 
-    b_condition =  sum_score_trend_rest >= 4 and ema_trend_1m <=-1
-    s_condition = ((current_price - st.session_state.temp_price) >=1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) <= -0.5 and st.session_state.temp_price != 0)
-    short_b = ((current_price - st.session_state.temp_price) <= -1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) >= 0.5 and st.session_state.temp_price != 0)              
-    short_s =  sum_score_trend_rest <= -4 and ema_trend_1m >=1
+    b_condition =  sum_score_trend_rest >= 4 and ema_trend_1m <=-1 and pr1 ==1 and pr5==1
+    short_b = b_condition or ((current_price - st.session_state.temp_price) <= -1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) >= 0.5 and st.session_state.temp_price != 0)              
+    short_s =  sum_score_trend_rest <= -4 and ema_trend_1m >=1  and pr1==-1 and pr5==-1
+    s_condition = short_s or ((current_price - st.session_state.temp_price) >=1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) <= -0.5 and st.session_state.temp_price != 0)
 
     ########## B and S actions
     def save_pe(type="AAA", price=None, total =0): 
