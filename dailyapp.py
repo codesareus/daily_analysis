@@ -1393,10 +1393,10 @@ def main():
     #########price vs close
 
         close_df = pd.DataFrame(list(close_values.items()), columns=["price", "Value"])
-        close_df = macd_df.sort_values(by="Value", ascending=False)
+        close_df = close_df.sort_values(by="Value", ascending=False)
 
         # Reset index and drop the numbers column
-        close_df = macd_df.reset_index(drop=True)
+        close_df = close_df.reset_index(drop=True)
 
         ## message
         message = " "
