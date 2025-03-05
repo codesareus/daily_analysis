@@ -1296,7 +1296,7 @@ def main():
     }
 
     close_values = {
-        "Current_pr": current_price,
+        "current_pr": current_price,
         "prev_close": previous_close,
         "d2_close": d2_close,
     }
