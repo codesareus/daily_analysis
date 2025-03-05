@@ -988,8 +988,8 @@ def main():
     ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
     pr1=df[df["tFrame"] == "1m"]["y_pred_p_trend"].values[0]
     pr5=df[df["tFrame"] == "5m"]["y_pred_p_trend"].values[0]
-    div1=df[df["tFrame"] == "1m"]["div_from_std"].values[0]
-    div5=df[df["tFrame"] == "5m"]["div_from_std"].values[0]
+    dev1=df[df["tFrame"] == "1m"]["dev_from_std"].values[0]
+    dev5=df[df["tFrame"] == "5m"]["dev_from_std"].values[0]
     ############ investigate score_trends
     
     st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
@@ -1036,9 +1036,9 @@ def main():
 
 ###########################
 
-    b_condition =  sum_score_trend_rest >= 4 and pr1 ==1 and pr5==1 and div1<=-1 and div5<=-1
+    b_condition =  sum_score_trend_rest >= 4 and pr1 ==1 and pr5==1 and dev1<=-1 and dev5<=-1
     short_b = b_condition or ((current_price - st.session_state.temp_price) <= -1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) >= 0.5 and st.session_state.temp_price != 0)              
-    short_s =  sum_score_trend_rest <= -4 and pr1==-1 and pr5==-1 and div5>=1 and div5>=1
+    short_s =  sum_score_trend_rest <= -4 and pr1==-1 and pr5==-1 and dev1>=1 and dev5>=1
     s_condition = short_s or ((current_price - st.session_state.temp_price) >=1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) <= -0.5 and st.session_state.temp_price != 0)
 
     ########## B and S actions
