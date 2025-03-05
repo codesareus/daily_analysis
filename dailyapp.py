@@ -1296,7 +1296,7 @@ def main():
     }
 
     close_values = {
-        "current_pr": current_price,
+        "price": data_recent['Close'].iloc[-1],
         "prev_close": previous_close,
         "d2_close": d2_close,
     }
@@ -1401,11 +1401,11 @@ def main():
         ## message
         message = " "
         color3 = " "
-        if current_pr > previous_close and current_pr > d2_close :
+        if price > previous_close and price > d2_close :
             message = "Up "
             color3 = "green"
             
-        elif current_pr < previous_close and current_pr < d2_close :
+        elif price < previous_close and price < d2_close :
             message = "Down"
             color3 = "red"
             
