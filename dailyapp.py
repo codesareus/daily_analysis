@@ -991,29 +991,8 @@ def main():
     ############ investigate score_trends
     
     st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
-    # Extract "score_trend" for "1m"  ## message
-    if ema_trend_1m <=-1:
-        message = "B OK <= -1"
-        color = "green"
-    elif ema_trend_1m >=1:
-        message = "S OK >= 1"
-        color = "red"
-    else:
-        message = "Hold it"
-        color = "orange"
-
-    if ema_trend_5m <=0:
-        message5 = "B OK <= 0"
-        color5 = "green"
-    elif ema_trend_5m >=0:
-        message5 = "S OK >= 0"
-        color5 = "red"
-    else:
-        message5 = "Hold it"
-        color5 = "orange"
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">ema_trend_1min: {message}</s></p>', unsafe_allow_html=True)
-    #st.markdown(f'<p style="color:{color5}; font-weight:bold;">ema_trend_5min: {message5}</s></p>', unsafe_allow_html=True)
-
+    # Extract "score_trend" for "1m"  ## 
+    
     if pr1 ==1:
         message = "___B OK 1"
         color = "green"
@@ -1055,9 +1034,9 @@ def main():
 
 ###########################
 
-    b_condition =  sum_score_trend_rest >= 4 and ema_trend_1m <=-1 and pr1 ==1 and pr5==1
+    b_condition =  sum_score_trend_rest >= 4 and pr1 ==1 and pr5==1
     short_b = b_condition or ((current_price - st.session_state.temp_price) <= -1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) >= 0.5 and st.session_state.temp_price != 0)              
-    short_s =  sum_score_trend_rest <= -4 and ema_trend_1m >=1  and pr1==-1 and pr5==-1
+    short_s =  sum_score_trend_rest <= -4 and pr1==-1 and pr5==-1
     s_condition = short_s or ((current_price - st.session_state.temp_price) >=1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) <= -0.5 and st.session_state.temp_price != 0)
 
     ########## B and S actions
