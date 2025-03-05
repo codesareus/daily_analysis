@@ -984,8 +984,8 @@ def main():
     ## very important use
     current_price = round(data_recent['Close'].iloc[-1], 2)
     now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  # Correct format
-    ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
-    ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
+  #  ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
+ #   ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
     pr1=df[df["tFrame"] == "1m"]["y_pred_p_trend"].values[0]
     pr5=df[df["tFrame"] == "5m"]["y_pred_p_trend"].values[0]
     dev1=df[df["tFrame"] == "1m"]["dev_from_std"].values[0]
@@ -1126,15 +1126,15 @@ def main():
     with col3:
         if st.button("check all"):
             new_data = pd.DataFrame([{
-                "tFrame": f"{interval}",
-                "ema_trend": round(ema_trend, 2),
-                "ema": round(ema_score, 2),
-                "rsi": round(rsi_score, 2),
-                "macd": round(macd_score, 2),
-                "score": round(score, 2),
-                "dev_from_std": deviation_in_std,
-                "y_pred_p_trend": y_pred_p_trend,
-                "score_trend": score_trend,
+                "tFrame": "1m","5m",
+                "ema_trend": round(ema_trend, 2),0,
+                "ema": round(ema_score, 2),0,
+                "rsi": round(rsi_score, 2),0,
+                "macd": round(macd_score, 2),0,
+                "score": round(score, 2),0,
+                "dev_from_std": deviation_in_std,0,
+                "y_pred_p_trend": y_pred_p_trend,0,
+                "score_trend": score_trend,0,
             }])
             new_data.to_csv(scoreT_file, mode="w", header=False, index=False, float_format="%.2f") ## chatGPT
 
