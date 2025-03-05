@@ -1136,7 +1136,7 @@ def main():
                 "y_pred_p_trend": y_pred_p_trend,
                 "score_trend": score_trend,
             }])
-            new_data.to_csv(scoreT_file, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
+            new_data.to_csv(scoreT_file, mode="w", header=False, index=False, float_format="%.2f") ## chatGPT
 
             st.session_state.index = 0
             st.session_state.rerun_count = 0
