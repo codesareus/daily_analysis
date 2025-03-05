@@ -1125,19 +1125,7 @@ def main():
             
     with col3:
         if st.button("check all"):
-            new_data = pd.DataFrame([{
-                "tFrame": 1m, 5m,
-                "ema_trend": round(ema_trend, 2),0,
-                "ema": round(ema_score, 2),0,
-                "rsi": round(rsi_score, 2),0,
-                "macd": round(macd_score, 2),0,
-                "score": round(score, 2),0,
-                "dev_from_std": deviation_in_std,0,
-                "y_pred_p_trend": y_pred_p_trend,0,
-                "score_trend": score_trend,0,
-            }])
-            new_data.to_csv(scoreT_file, mode="w", header=False, index=False, float_format="%.2f") ## chatGPT
-
+            
             st.session_state.index = 0
             st.session_state.rerun_count = 0
             st.session_state.sleepGap = 5
