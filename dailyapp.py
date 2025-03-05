@@ -988,11 +988,11 @@ def main():
     
     st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
     # Extract "score_trend" for "1m"  ## message
-    if ema_trend_1m <=0:
-        message = "B OK <= 0"
+    if ema_trend_1m <=-1:
+        message = "B OK <= -1"
         color = "green"
-    elif ema_trend_1m >=0:
-        message = "S OK >= 0"
+    elif ema_trend_1m >=1:
+        message = "S OK >= 1"
         color = "red"
     else:
         message = "Hold it"
@@ -1007,17 +1007,17 @@ def main():
     else:
         message5 = "Hold it"
         color5 = "orange"
-    #st.write(f"ema_trend_1min: ||... {ema_trend_1m: .0f} ___ {message}")
+    st.write(f"ema_trend_1min: ||... {ema_trend_1m: .0f} ___ {message}")
     #st.markdown(f'<p style="color:{color}; font-weight:bold;">ema_trend_1min: {message}</s></p>', unsafe_allow_html=True)
     #st.markdown(f'<p style="color:{color5}; font-weight:bold;">ema_trend_5min: {message5}</s></p>', unsafe_allow_html=True)
 
     sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "3mo", "6mo"])]["score_trend"].sum()
     
-    if sum_score_trend_rest >=3:
-        message = "___B OK >=3"
+    if sum_score_trend_rest >=4:
+        message = "___B OK >=4"
         color = "green"
-    elif sum_score_trend_rest <= -3:
-        message = "___S OK <=-3"
+    elif sum_score_trend_rest <= -4:
+        message = "___S OK <=-4"
         color = "red"
     else:
         message = "Hold it"
@@ -1030,10 +1030,10 @@ def main():
 
 ###########################
 
-    b_condition =  sum_score_trend_rest >= 3
+    b_condition =  sum_score_trend_rest >= 4 and ema_trend_1m <=-1
     s_condition = ((current_price - st.session_state.temp_price) >=1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) <= -0.5 and st.session_state.temp_price != 0)
     short_b = ((current_price - st.session_state.temp_price) <= -1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) >= 0.5 and st.session_state.temp_price != 0)              
-    short_s =  sum_score_trend_rest <= -3
+    short_s =  sum_score_trend_rest <= -4 and ema_trend_1m >=1
 
     ########## B and S actions
     def save_pe(type="AAA", price=None, total =0): 
