@@ -930,9 +930,9 @@ def main():
        # y_pred_p_trend = "↓"
         y_pred_p_trend = -1
         
-    if ema_score >=0.9 and rsi_score > 0 and macd_score > 0 and score > 0:
+    if ema_score >=0.67and rsi_score > 0 and macd_score > 0 and score > 1:
         score_trend = 1
-    elif ema_score <=-0.9 and rsi_score < 0  and macd_score < 0 and score < 0 :
+    elif ema_score <=-0.67 and rsi_score < 0  and macd_score < 0 and score < -1 :
         score_trend = -1
     else:
         score_trend = 0
