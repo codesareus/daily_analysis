@@ -285,7 +285,7 @@ def regression_analysis(data_recent, interval):
     # Show plot in Streamlit
     st.pyplot(plt)
 
-def barplot()
+def barplot():
     #################### bar chart?
    ## read bar data scoreT_file
     df = pd.read_csv(scoreT_file, names=['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'dev_from_std', "y_pred_p_trend", 'score_trend'])
