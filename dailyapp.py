@@ -1342,7 +1342,7 @@ def main():
 
     #display pe_table
     # Read the updated CSV file ---- example
-    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "note"])
+    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "scoreTrendRest","note"])
     ###plnow = 0
    # if updated_data["type"].iloc[-1]=="B":
         #plnow = current_price - updated_data["temp_pr"].iloc[-1]
@@ -1371,6 +1371,7 @@ def main():
                     "pl": 0,
                     "total": 0, 
                     "temp_pr": 0,
+                    "scoreTrendRest": 0,
                     "note": "1min & 5min ema9 must cross poly-reg"
                 }])
                 # clear CSV file
@@ -1382,11 +1383,11 @@ def main():
 ################### do bar graph using scoreT_file
     
     # Load data from the CSV file
-    try:
-        df = pd.read_csv(scoreT_file, names=["tFrame", "ema_trend", "ema", "rsi", "macd", "total", "score_trend"])
-    except Exception as e:
-        st.error(f"Error loading file: {e}")
-        return
+    #try:
+       # df = pd.read_csv(scoreT_file, names=["tFrame", "ema_trend", "ema", "rsi", "macd", "total", "score_trend"])
+    #except Exception as e:
+        #st.error(f"Error loading file: {e}")
+       # return
 
 ############################# status 3
    
