@@ -1181,8 +1181,8 @@ def main():
     SB = updated_data["type"].iloc[-1]
     with col1:
         if st.button("B >>>"):
-            if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m" and float(setpr_input) !=0:
-                save_pe("B", float(setpr_input), total, st.session_state.setnote)
+            if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m" and st.session_state.setpr !=0:
+                save_pe("B", st.session_state.setpr, total, st.session_state.setnote)
                 st.session_state.temp_price = st.session_state.setpr
                 st.write(f"B: Yes ||SB_status: {SB}")
             else:
