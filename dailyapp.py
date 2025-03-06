@@ -1035,7 +1035,7 @@ def main():
 
     #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
-    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr"])
+    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "note"])
 
 ###########################
 
@@ -1046,7 +1046,7 @@ def main():
 
     ########## B and S actions
     def save_pe(type="AAA", price=None, total =0, note="zz"): 
-        updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr"])
+        updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "note"])
         pl=0
         if type == "S":
             pl = price - updated_data["temp_pr"].iloc[-1]
