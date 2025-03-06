@@ -1116,27 +1116,8 @@ def main():
 
     st.write("Fetch the current price of any stock using Finnhub API.")
 
-    # Input for stock symbol
-    #symbol = st.text_input("Enter Stock Symbol (e.g., AAPL):").upper()
-
-   # if st.button("Get Price"):
-        #if symbol:
-         #   price = fetch_stock_price(symbol)
-          #  if price:
-              #  st.success(f"The current price of {symbol} is ${price:.2f}")
-       # else:
-           # st.warning("Please enter a valid stock symbol.")
-
-        
-# Create a text input that displays the current session state value
-    #col1, col3=st.columns(2)
-    #with col1:
-        #setpr_input = st.text_input("Enter set pr: ", value=str(st.session_state.setpr))
- #   with col2:
-#        settype_input = st.text_input("Enter set type (only needed if B or SS): ", value=str(st.session_state.settype))
-    #with col3:
     setnote_input = st.text_input("Enter note): ", value=str(st.session_state.setnote))
-    st.session_state.setpr = fetch_stock_price("SPY")
+    st.session_state.setpr = current_price
     
     SB = updated_data["type"].iloc[-1]
     plnow = 0
