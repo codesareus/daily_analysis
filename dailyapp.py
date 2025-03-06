@@ -1211,7 +1211,7 @@ def main():
     finndata = pd.read_csv(finnpath, names=["TimeStamp", "Close"])
 
 # Display the latest closing price and the current time
-    now = datetime.now()
+    
     st.write(f"finndata: {finndata['Close'].iloc[-1]}")
     st.write(f"{now}")
     st.write(finndata.tail())
@@ -1238,8 +1238,8 @@ def main():
 
     plt.figure(figsize=(6, 3))
     plt.xticks(rotation=45)
-    plt.plot(x_values, y, color="black", label="Actual Prices")  # Ac
-    plt.title(f"{interval}__{current_time}")
+    plt.plot(x_values, y, color="black", label=f"now pr:_{current_price}")  # Ac
+    plt.title(f"{interval}__{now}")
     plt.xlabel("Time")
     plt.ylabel("Close Price")
     plt.legend()
