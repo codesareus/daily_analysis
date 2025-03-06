@@ -1211,7 +1211,13 @@ def main():
     st.write(finndata.tail())
 
 # Convert TimeStamp to datetime (if it's a Unix timestamp)
-    finndata["TimeStamp"] = pd.to_datetime(finndata["TimeStamp"], unit="s")  # Use unit="s" if it's a Unix timestamp
+    # Convert to datetime with proper format
+    finndata["TimeStamp"] = pd.to_datetime(
+        finndata["TimeStamp"],
+        format="%Y-%m-%d %I:%M:%S %p"  # Format matching "YYYY-MM-DD HH:MM:SS AM"
+    )
+    
+    #finndata["TimeStamp"] = pd.to_datetime(finndata["TimeStamp"], unit="s")  # Use unit="s" if it's a Unix timestamp
 
 # Plot the data
     plt.figure(figsize=(10, 6))
