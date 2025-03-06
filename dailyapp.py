@@ -316,6 +316,14 @@ def main():
     if "sleepGap" not in st.session_state:
         st.session_state.sleepGap = 5
 
+    # Initialize the session state variable if it doesn't exist
+    if "setpr" not in st.session_state:
+        st.session_state.setpr = 0
+  #  if "settype" not in st.session_state:
+   #     st.session_state.settype = "zz"
+    if "setnote" not in st.session_state:
+        st.session_state.setnote = "zz"
+
     # Initialize sbOK state
     #if "sbOK" not in st.session_state:
         #st.session_state.sbOK 
@@ -1140,13 +1148,7 @@ def main():
 
 # Input box for setpr
 
-# Initialize the session state variable if it doesn't exist
-    if "setpr" not in st.session_state:
-        st.session_state.setpr = 0.0
-  #  if "settype" not in st.session_state:
-   #     st.session_state.settype = "zz"
-    if "setnote" not in st.session_state:
-        st.session_state.setnote = "zz"
+
         
 # Create a text input that displays the current session state value
     col1, col3=st.columns(2)
@@ -1180,42 +1182,42 @@ def main():
     SB = updated_data["type"].iloc[-1]
     with col1:
         if st.button("B >>>"):
-            if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m":
+            if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m" and st.session_state.setpr !=0:
                 save_pe("B", st.session_state.setpr, total, st.session_state.setnote)
                 st.session_state.temp_price = st.session_state.setpr
                 st.write(f"B: Yes ||SB_status: {SB}")
             else:
-                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}")
+                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}__setpr: { st.session_state.setpr}")  
             st.rerun()
             
     with col2:
         if st.button("S >>>"):
-            if SB == "B" and interval == "1m":
+            if SB == "B" and interval == "1m" and st.session_state.setpr !=0:
                 save_pe("S", st.session_state.setpr, total,st.session_state.setnote)
                 st.session_state.temp_price = 0
                 st.write(f"S: Yes ||SB_status: {SB}")
             else:
-                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}")    
+                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}__setpr: { st.session_state.setpr}")  
             st.rerun()
 
     with col3:
         if st.button("SS >>>"):
-            if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m":
+            if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m" and st.session_state.setpr !=0:
                 save_pe("SS", st.session_state.setpr, total, st.session_state.setnote)
                 st.session_state.temp_price = st.session_state.setpr
                 st.write(f"SS: Yes ||SB_status: {SB}")
             else:
-                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}")
+                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}__setpr: { st.session_state.setpr}")  
             st.rerun()
         
     with col4:
         if st.button("SB >>>"):
-            if SB == "SS"  and interval == "1m":
+            if SB == "SS"  and interval == "1m" and st.session_state.setpr !=0:
                 save_pe("SB", st.session_state.setpr, total, st.session_state.setnote)
                 st.session_state.temp_price = 0
                 st.write(f"SB: Yes ||SB_status: {SB}")
             else:
-                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}")       
+                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}__setpr: { st.session_state.setpr}")       
             st.rerun()
 
     st.write(f"SB_type: {updated_data["type"].iloc[-1]}")
