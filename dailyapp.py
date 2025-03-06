@@ -1197,7 +1197,7 @@ def main():
     plnow = 0
 
     ################plot finndata
-    finnpath = finndata.csv
+    finnpath = f"finndata.csv"
     
     new_data = pd.DataFrame([{
         "TimeStamp": f"{now}",
