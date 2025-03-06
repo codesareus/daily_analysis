@@ -1191,12 +1191,11 @@ def main():
 #        settype_input = st.text_input("Enter set type (only needed if B or SS): ", value=str(st.session_state.settype))
     #with col3:
     setnote_input = st.text_input("Enter note): ", value=str(st.session_state.setnote))
-    price = fetch_stock_price("SPY")
-    if price:
-        st.session_state.setpr = price
-        st.success(f"The current price of SPY is ${price:.2f}")
+    st.session_state.setpr = fetch_stock_price("SPY")
+    if st.session_state.setpr != 0:
+        st.success(f"The current price of SPY is ${st.session_state.setpr:.2f}")
     else:
-        st.warning("Please enter a valid stock symbol.")
+        st.warning("error fetching SPY.")
     #set them
     col1, col2=st.columns(2)
     with col1:
