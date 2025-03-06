@@ -1192,15 +1192,28 @@ def main():
     #with col3:
     setnote_input = st.text_input("Enter note): ", value=str(st.session_state.setnote))
     st.session_state.setpr = fetch_stock_price("SPY")
-
+    
+    SB = updated_data["type"].iloc[-1]
     plnow = 0
+    
     if st.session_state.temp_price !=0:
-        plnow=  round(st.session_state.setpr - st.session_state.temp_price,2)
+        if SB="B":
+            plnow=  round(st.session_state.setpr - st.session_state.temp_price,2)
+        elif SB="SS":
+            plnow=  - round(st.session_state.setpr - st.session_state.temp_price,2)
     
     if st.session_state.setpr != 0:
-        st.success(f"SPY now: ${st.session_state.setpr:.2f}_____plNow: {plnow}_____yf: {current_price:.2f}")
+        st.success(f"SPY now: ${st.session_state.setpr:.2f}_________yf: {current_price:.2f}")
     else:
         st.warning("error fetching SPY.")
+
+    if plnow >= 0:
+        color="green"
+    else:
+        color="red"
+
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">now pl:__{plnow:.2f}</s></p>', unsafe_allow_html=True)
+
     #set them
     col1, col2=st.columns(2)
     with col1:
@@ -1222,7 +1235,7 @@ def main():
     
     col1, col2, col3, col4 = st.columns(4)
     total = updated_data["total"].iloc[-1]
-    SB = updated_data["type"].iloc[-1]
+    
     with col1:
         if st.button("B >>>"):
             if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m" and st.session_state.setpr !=0:
@@ -1275,11 +1288,11 @@ def main():
     #display pe_table
     # Read the updated CSV file ---- example
     updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "note"])
-    plnow = 0
-    if updated_data["type"].iloc[-1]=="B":
-        plnow = current_price - updated_data["temp_pr"].iloc[-1]
-    elif updated_data["type"].iloc[-1]=="SS":
-        plnow = - current_price + updated_data["temp_pr"].iloc[-1]
+    ###plnow = 0
+   # if updated_data["type"].iloc[-1]=="B":
+        #plnow = current_price - updated_data["temp_pr"].iloc[-1]
+    #elif updated_data["type"].iloc[-1]=="SS":
+        #plnow = - current_price + updated_data["temp_pr"].iloc[-1]
     st.markdown(f'<p style="color:orange; font-weight:bold;">pe_table: ___now interval__{interval}___now pl:__{plnow:.2f}</s></p>', unsafe_allow_html=True)
     #st.write(f"pe_table: _______now interval: {interval}")
     #with col1:
