@@ -337,16 +337,6 @@ def plot_bar():
     ax0.axhline(y=0, color="gray", linestyle="-", linewidth=1, label="Zero Line")
     
     # Create legend with proper elements
-    legend_handles = [
-        patches.Patch(color='cyan', label='ema_trend'),
-        patches.Patch(color='purple', label='EMA'),
-        patches.Patch(color='navy', label='RSI'),
-        patches.Patch(color='orange', label='MACD'),
-        patches.Patch(color='gray', label='Total'),
-        patches.Patch(color='red', label='Threshold (4)'),
-        patches.Patch(color='green', label='Threshold (-4)'),
-        patches.Patch(color='gray', label='Zero Line')
-    ]
     
     # Set labels and title (ensure 'degree' variable is defined)
     current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
@@ -359,7 +349,6 @@ def plot_bar():
     ax0.set_xticklabels(unique_intervals, rotation=45)
     
     # Add legend and adjust layout
-    ax0.legend(handles=legend_handles, loc="lower right", bbox_to_anchor=(1.2, 0))
     plt.tight_layout()
     
     # Correct show() call
