@@ -285,13 +285,11 @@ def regression_analysis(data_recent, interval):
     # Show plot in Streamlit
     st.pyplot(plt)
 
-
 def plot_bar():
+    # Assuming 'eastern' timezone is defined elsewhere
+    eastern = 'US/Eastern'  # Example timezone, replace with actual timezone if needed
 
-# Correct subplots assignment (returns fig and ax)
-    fig, ax0 = plt.subplots(1, 1, figsize=(12, 6))
-
-# Assuming 'scoreT_file' and 'eastern' timezone are defined elsewhere
+    # Read the data
     df = pd.read_csv("scoreT.csv", names=['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'dev_from_std', "y_pred_p_trend", 'score_trend'])
     
     # Define custom order
@@ -300,9 +298,6 @@ def plot_bar():
     # Convert 'tFrame' to categorical with order
     df["tFrame"] = pd.Categorical(df["tFrame"], categories=timeframe_order, ordered=True)
     df = df.sort_values("tFrame")
-    
-    # Set y-axis limits
-    ax0.set_ylim(-10, 10)
     
     # Prepare data
     unique_intervals = df["tFrame"].unique()
@@ -320,38 +315,37 @@ def plot_bar():
     offsets = [-2 * width, -width, 0, width, 2 * width]
     
     # Plot bars
-    ax0.bar(x + offsets[0], ema_trend, width, color="cyan", edgecolor="black", label="ema_trend")
-    ax0.bar(x + offsets[1], ema_values, width, color="purple", edgecolor="black", label="EMA")
-    ax0.bar(x + offsets[2], rsi_values, width, color="navy", edgecolor="black", label="RSI")
-    ax0.bar(x + offsets[3], macd_values, width, color="orange", edgecolor="black", label="MACD")
-    ax0.bar(x + offsets[4], total_values, width, color="gray", edgecolor="black", label="total")
+    plt.figure(figsize=(12, 6))
+    plt.bar(x + offsets[0], ema_trend, width, color="cyan", edgecolor="black", label="ema_trend")
+    plt.bar(x + offsets[1], ema_values, width, color="purple", edgecolor="black", label="EMA")
+    plt.bar(x + offsets[2], rsi_values, width, color="navy", edgecolor="black", label="RSI")
+    plt.bar(x + offsets[3], macd_values, width, color="orange", edgecolor="black", label="MACD")
+    plt.bar(x + offsets[4], total_values, width, color="gray", edgecolor="black", label="total")
     
     # Add value labels
     for i, interval in enumerate(unique_intervals):
         for offset, values in zip(offsets, [ema_trend, ema_values, rsi_values, macd_values, total_values]):
-            ax0.text(x[i] + offset, values[i] + 0.2, f"{values[i]:.1f}", ha='center', fontsize=10)
+            plt.text(x[i] + offset, values[i] + 0.2, f"{values[i]:.1f}", ha='center', fontsize=10)
     
-    # Add threshold lines (corrected to match labels)
-    ax0.axhline(y=4, color="red", linestyle="--", linewidth=1, label="Threshold (4)")
-    ax0.axhline(y=-4, color="green", linestyle="--", linewidth=1, label="Threshold (-4)")
-    ax0.axhline(y=0, color="gray", linestyle="-", linewidth=1, label="Zero Line")
+    # Add threshold lines
+    plt.axhline(y=4, color="red", linestyle="--", linewidth=1, label="Threshold (4)")
+    plt.axhline(y=-4, color="green", linestyle="--", linewidth=1, label="Threshold (-4)")
+    plt.axhline(y=0, color="gray", linestyle="-", linewidth=1, label="Zero Line")
     
-    # Create legend with proper elements
-    
-    # Set labels and title (ensure 'degree' variable is defined)
+    # Set labels and title
     current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
-    ax0.set_xlabel("Time Frame")
-    ax0.set_ylabel("Score")
-    ax0.set_title(f"Trend Scores by Interval ({current_time})")
+    plt.xlabel("Time Frame")
+    plt.ylabel("Score")
+    plt.title(f"Trend Scores by Interval ({current_time})")
     
     # Format x-axis
-    ax0.set_xticks(x)
-    ax0.set_xticklabels(unique_intervals, rotation=45)
+    plt.xticks(x, unique_intervals, rotation=45)
     
     # Add legend and adjust layout
+    plt.legend()
     plt.tight_layout()
     
-    # Correct show() call
+    # Show plot
     plt.show()
         
 # Streamlit app
@@ -989,11 +983,6 @@ def main():
    ## read bar data scoreT_fil
 
     plot_bar()
-
-    
-
-
-
 
     ################### all control buttons ###########################################################
     ## very important use
