@@ -1239,7 +1239,7 @@ def main():
     plt.figure(figsize=(6, 3))
     plt.xticks(rotation=45)
     plt.plot(x_values, y, color="black", label="Actual Prices")  # Ac
-    plt.title("Stock Closing Price Over Time")
+    plt.title(f"{interval}__{now}")
     plt.xlabel("Time")
     plt.ylabel("Close Price")
     plt.legend()
