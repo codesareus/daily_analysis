@@ -1213,21 +1213,22 @@ def main():
 
 # Convert TimeStamp to datetime (if it's a Unix timestamp)
     # Convert to datetime with proper format
-    finndata["TimeStamp"] = pd.to_datetime(
-        finndata["TimeStamp"],
-        format="%Y-%m-%d %I:%M:%S %p"  # Format matching "YYYY-MM-DD HH:MM:SS AM"
-    )
+    # 1. Add current year and convert to datetime
+    current_year = pd.Timestamp.now().year
+    finndata["TimeStamp"] = finndata["TimeStamp"].apply(lambda x: f"{current_year}-{x}")
+    finndata["TimeStamp"] = pd.to_datetime(finndata["TimeStamp"], format="%Y-%m-%d %I:%M:%S %p")
 
-    # Convert to US Eastern Time
-    finndata["TimeStamp"] = finndata["TimeStamp"].dt.tz_localize(
-        ZoneInfo("America/New_York")
-    )
-    
-    #finndata["TimeStamp"] = pd.to_datetime(finndata["TimeStamp"], unit="s")  # Use unit="s" if it's a Unix timestamp
+# 2. Localize to US Eastern Time (auto-adjusts for DST)
+    finndata["TimeStamp"] = finndata["TimeStamp"].dt.tz_localize(ZoneInfo("America/New_York"))
 
-# Plot the data
-    plt.figure(figsize=(10, 6))
-    plt.plot(finndata["TimeStamp"], finndata["Close"], label="Close Price", color="blue")
+# 3. Plot configuration
+    plt.figure(figsize=(6, 3))
+    plt.plot(finndata["TimeStamp"], finndata["Close"], marker='o', linestyle='-', color='blue')
+
+# Format x-axis labels
+    date_formatter = DateFormatter("%m-%d %I:%M %p\n%Y", tz=ZoneInfo("America/New_York"))
+    plt.gca().xaxis.set_major_formatter(date_formatter)
+    plt.xticks(rotation=45)
 
 # Add labels and title
     plt.title("Stock Closing Price Over Time")
@@ -1235,8 +1236,7 @@ def main():
     plt.ylabel("Close Price")
     plt.legend()
 
-# Rotate x-axis labels for better readability
-    plt.xticks(rotation=45)
+# Rotate x-axis labels for better readabilit
 
 # Show the plot
     plt.tight_layout()
