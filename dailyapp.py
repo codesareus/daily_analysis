@@ -1050,7 +1050,8 @@ def main():
         else:
             pl = 0
         total = total + pl
-            
+        note = st.session_state.setnote
+        
         if type == "B":
             new_data = pd.DataFrame([{
                     "TimeStamp": f"{now}",
@@ -1060,6 +1061,7 @@ def main():
                     "pl": pl,
                     "total": round(total, 2),
                     "temp_price": round(price, 2),
+                    "note": note,
                 }])
 
         elif type == "S":
@@ -1071,6 +1073,7 @@ def main():
                     "pl": round(pl, 2),
                     "total": round(total, 2),
                     "temp_price": 0,
+                    "note": note,
                 }])
 
         elif type == "SS":
@@ -1082,6 +1085,7 @@ def main():
                     "pl": 0,
                     "total": total, ## for now
                     "temp_price": round(price, 2),
+                    "note": note,
                 }])
 
         elif type == "SB": 
@@ -1093,6 +1097,7 @@ def main():
                     "pl": round(pl, 2),
                     "total": round(total, 2),
                     "temp_price": 0,
+                    "note": note,
                 }])
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
@@ -1143,12 +1148,17 @@ def main():
         st.session_state.setpr = 0.0
     if "settype" not in st.session_state:
         st.session_state.settype = "zz"
+    if "setnote" not in st.session_state:
+        st.session_state.setnote = "zz"
+        
 # Create a text input that displays the current session state value
-    col1, col2=st.columns(2)
+    col1, col2, col3=st.columns(3)
     with col1:
         setpr_input = st.text_input("Enter set pr: ", value=str(st.session_state.setpr))
     with col2:
         settype_input = st.text_input("Enter set type (only needed if B or SS): ", value=str(st.session_state.settype))
+    with col3:
+        setnote_input = st.text_input("Enter note): ", value=str(st.session_state.setnote))
     #set them
     col1, col2=st.columns(2)
     with col1:
@@ -1157,6 +1167,7 @@ def main():
     # Attempt to convert the input to a float and update the session state
                 st.session_state.setpr = float(setpr_input)
                 st.session_state.settype = settype_input
+                st.session_state.setnote = setnote_input
                 st.session_state.confirmation_message = f"Success!"
             except ValueError:
     # Handle invalid input (non-numeric values)
@@ -1164,7 +1175,7 @@ def main():
             st.rerun()
 # Display the current value of setpr from the session state
     with col2:
-        st.write(f"setpr: {st.session_state.setpr}__now: {current_price}__settype:{st.session_state.settype}")
+        st.write(f"setpr: {st.session_state.setpr}__now: {current_price}__settype:{st.session_state.settype}__setnote: {st.session_state.setnote}")
     
     col1, col2 = st.columns(2)
     total = updated_data["total"].iloc[-1]
@@ -1210,7 +1221,7 @@ def main():
 
     #display pe_table
     # Read the updated CSV file ---- example
-    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr"])
+    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "note"])
     plnow = 0
     if updated_data["type"].iloc[-1]=="B":
         plnow = current_price - updated_data["temp_pr"].iloc[-1]
@@ -1239,6 +1250,7 @@ def main():
                     "pl": 0,
                     "total": 0, 
                     "temp_pr": 0
+                    "note": "zz"
                 }])
                 # clear CSV file
         new_data.to_csv(pe_file, mode="w", header=False, index=False)
