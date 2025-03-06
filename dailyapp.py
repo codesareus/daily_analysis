@@ -990,7 +990,7 @@ def main():
     #########################################
 
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
-    ax.pyplot(fig)  ## finally plot all 5 figures
+    plt.show(fig)  ## finally plot all 5 figures
 
     ################### all control buttons ###########################################################
     ## very important use
