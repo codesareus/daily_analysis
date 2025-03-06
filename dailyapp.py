@@ -19,28 +19,6 @@ from datetime import datetime, time
 from time import sleep
 from matplotlib.lines import Line2D
 import pandas_market_calendars as mcal
-import requests
-
-# Set your Finnhub API key here
-# Finnhub API key
-FINNHUB_API_KEY = "cgtch1hr01qoiqvovb4gcgtch1hr01qoiqvovb50"  # Replace with your actual Finnhub API key
-
-# Finnhub API endpoint for stock quote
-FINNHUB_URL = "https://finnhub.io/api/v1/quote"
-
-def fetch_stock_price(symbol):
-    """Fetch the current stock price using Finnhub API."""
-    params = {
-        "symbol": symbol,
-        "token": FINNHUB_API_KEY
-    }
-    response = requests.get(FINNHUB_URL, params=params)
-    if response.status_code == 200:
-        data = response.json()
-        return data.get("c")  # Current price
-    else:
-        st.error("Failed to fetch data. Please check the stock symbol or try again later.")
-        return None
 
 #eastern = pytz.timezone("America/New")
 eastern = pytz.timezone("US/Eastern")
@@ -1112,17 +1090,11 @@ def main():
 
     st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
 
-# Input box for setpr
-
-    st.write("Fetch the current price of any stock using Finnhub API.")
-
     setnote_input = st.text_input("Enter note): ", value=str(st.session_state.setnote))
     st.session_state.setpr = current_price
     
     SB = updated_data["type"].iloc[-1]
     plnow = 0
-
-    ################plot finndata
     
 ###$$$$$$$$$$-
     
@@ -1132,17 +1104,12 @@ def main():
         elif SB=="SS":
             plnow=  - round(st.session_state.setpr - st.session_state.temp_price,2)
     
-    if st.session_state.setpr != 0:
-        st.success(f"SPY now: ${st.session_state.setpr:.2f}_________yf: {current_price:.2f}")
-    else:
-        st.warning("error fetching SPY.")
-
     if plnow >= 0:
         color="green"
     else:
         color="red"
 
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">now pl:__{plnow:.2f}</s></p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">SPY now: ${st.session_state.setpr:.2f}__ pl now__{plnow:.2f}</s></p>', unsafe_allow_html=True)
 
     #set them
     col1, col2=st.columns(2)
@@ -1151,7 +1118,7 @@ def main():
             try:
     # Attempt to convert the input to a float and update the session state
                 #st.session_state.setpr = float(setpr_input)
-                st.session_state.setpr = fetch_stock_price("SPY")
+                st.session_state.setpr = current_price
                 #st.session_state.settype = settype_input
                 st.session_state.setnote = setnote_input
                 st.session_state.confirmation_message = f"Success!"
