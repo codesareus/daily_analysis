@@ -1192,11 +1192,11 @@ def main():
     #with col3:
     setnote_input = st.text_input("Enter note): ", value=str(st.session_state.setnote))
     price = fetch_stock_price("SPY")
-        if price:
-            st.session_state.setpr = price
-            st.success(f"The current price of {symbol} is ${price:.2f}")
-        else:
-            st.warning("Please enter a valid stock symbol.")
+    if price:
+        st.session_state.setpr = price
+        st.success(f"The current price of {symbol} is ${price:.2f}")
+    else:
+        st.warning("Please enter a valid stock symbol.")
     #set them
     col1, col2=st.columns(2)
     with col1:
