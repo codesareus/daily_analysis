@@ -1219,10 +1219,10 @@ def main():
 # Convert TimeStamp to datetime
     ##current_year = pd.Timestamp.now().year
     #finndata["TimeStamp"] = finndata["TimeStamp"].apply(lambda x: f"{current_year}-{x}")
-    #finndata["TimeStamp"] = pd.to_datetime(finndata["TimeStamp"], format="%Y-%m-%d %I:%M:%S %p")
+    finndata["TimeStamp"] = pd.to_datetime(finndata["TimeStamp"], format="%I:%M:%S %p")
 
 # Plot configuration
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(6, 3))
     plt.plot(finndata["TimeStamp"], finndata["Close"], marker='o', linestyle='-', color='blue', label='Close Price')
     plt.xticks(rotation=45)
 
