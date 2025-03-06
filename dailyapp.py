@@ -1293,7 +1293,7 @@ def main():
     
     with col1:
         if st.button("B >>>"):
-            if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m" and st.session_state.setpr !=0:
+            if  (SB == "AAA" or SB == "S" or SB== "SB")  and st.session_state.setpr !=0:
                 save_pe("B", st.session_state.setpr, total, st.session_state.setnote)
                 st.session_state.temp_price = st.session_state.setpr
                 #st.session_state.setpr = 0
@@ -1304,7 +1304,7 @@ def main():
             
     with col2:
         if st.button("S >>>"):
-            if SB == "B" and interval == "1m" and st.session_state.setpr !=0:
+            if SB == "B" and st.session_state.setpr !=0:
                 save_pe("S", st.session_state.setpr, total,st.session_state.setnote)
                 st.session_state.temp_price = 0
                 #st.session_state.setpr = 0
@@ -1315,7 +1315,7 @@ def main():
 
     with col3:
         if st.button("SS >>>"):
-            if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m" and st.session_state.setpr !=0:
+            if  (SB == "AAA" or SB == "S" or SB== "SB")  and st.session_state.setpr !=0:
                 save_pe("SS", st.session_state.setpr, total, st.session_state.setnote)
                 st.session_state.temp_price = st.session_state.setpr
                 #st.session_state.setpr = 0
@@ -1326,7 +1326,7 @@ def main():
         
     with col4:
         if st.button("SB >>>"):
-            if SB == "SS"  and interval == "1m" and st.session_state.setpr !=0:
+            if SB == "SS"  and st.session_state.setpr !=0:
                 save_pe("SB", st.session_state.setpr, total, st.session_state.setnote)
                 st.session_state.temp_price = 0
                 #st.session_state.setpr = 0
