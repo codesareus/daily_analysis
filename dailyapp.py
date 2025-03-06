@@ -675,7 +675,7 @@ def main():
 
     # Only plot MACD if the selected timeframe is valid
     #if interval in valid_macd_timeframes:
-    fig, (ax0, ax2, ax3, ax) = plt.subplots(4, 1, figsize=(20, 30), gridspec_kw={'height_ratios': [1.5, 1, 1, 4 ]})
+    fig, (ax0,ax2, ax3, ax) = plt.subplots(4, 1, figsize=(20, 30), gridspec_kw={'height_ratios': [1.5, 1, 1, 4 ]})
     #else:
         #fig, (ax, ax2) = plt.subplots(2, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [3, 1]})
 
@@ -804,68 +804,9 @@ def main():
         
 ######################################  score
 
-    # Ensure index is datetime
-     
-    data_recent.index = pd.to_datetime(data_recent.index)
-
-    # Sort by timestamp to avoid disorder  (1hr timeframe disorganized before this)
-    #data_recent = data_recent.sort_index()
-
-    # Instead of using time in seconds, use a simple range index
-    data_recent["TimeIndex"] = np.arange(len(data_recent))
-    
-    # Create TimeIndex as seconds from the first timestamp
-    #data_recent["TimeIndex"] = (data_recent.index - data_recent.index.min()).total_seconds()
-
-    # Create Timestamp column from index
-    data_recent["Timestamp"] = data_recent.index  # Use index instead of non-existing 'Timestamp' column
-
-    # Extract the Hour and Minute
-    data_recent["Hour"] = data_recent["Timestamp"].dt.strftime("%H:%M")  # Format as HH:MM
-
-    X = data_recent[["TimeIndex"]].values  # Reshape needed for sklearn
-    y = data_recent["score"].fillna(0).values
-
-    # Polynomial Regression
-    poly = PolynomialFeatures(degree=2)
-    X_poly = poly.fit_transform(X)
-    poly_model = LinearRegression()
-    poly_model.fit(X_poly, y)
-    y_pred_poly = poly_model.predict(X_poly)
-    r2_poly = r2_score(y, y_pred_poly)
-
-    # Linear Regression
-    linear_model = LinearRegression()
-    linear_model.fit(X, y)
-    y_pred_linear = linear_model.predict(X)  # Ensure this line is present
-    r2_linear = r2_score(y, y_pred_linear)
-
+    #
     # Plot actual scores and regression lines
-    ax4.plot(x_values, y, color="navy", marker=".", linestyle="--", markersize=15, label="Actual score")# Actual prices as a gray line plot
     
-    ax4.plot(x_values, y_pred_linear, color="gray", linestyle="--", label=f"L.R. (R² = {r2_linear:.2f})")
-    ax4.plot(x_values, y_pred_poly, color="blue", label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
-
-    # Draw horizontal lines 
-    ax4.axhline(y=0, color="gray", linestyle="-", label="", linewidth=3)
-    ax4.axhline(y=4, color="red", linestyle="--", label="")
-    ax4.axhline(y=-4, color="green", linestyle="--", label="")
-    ax4.axhline(y=6, color="red", linestyle="--", label="")
-    ax4.axhline(y=-6, color="green", linestyle="--", label="")
-
-    # add time intervals on bottom of chart
-    ax4.text(0.3, 0.05, f"Time Frame: {interval}", 
-        horizontalalignment='left', verticalalignment='center', 
-        transform=ax.transAxes, fontsize=12, color="blue")
-
-    # Format x-axis to show only hours (or every 3 hours for 30-minute interval)
-    ax4.set_xticks(x_values)  # Set ticks for all time points
-    ax4.set_xticklabels(simplified_time_labels)  # Show only hours or every 3 hours
-    ax4.set_xlabel("Time (HH:MM)")
-    ax4.set_ylabel("total score")
-    ax4.set_title(f"Combined Linear and Polynomial Regression for score ({interval})")
-    ax4.legend()
-
     st.write("---------------------")
     st.write(data_recent.tail(5))
 
