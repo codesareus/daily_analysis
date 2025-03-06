@@ -349,7 +349,7 @@ def plot_bars():
     st.pyplot(plt)
     plt.close()  # Prevent memory leaks
     st.write("plotbars called")
-    st.write("plotbars called")
+    st.write("plotbars second")
         
 # Streamlit app
 def main():
