@@ -285,79 +285,6 @@ def regression_analysis(data_recent, interval):
     # Show plot in Streamlit
     st.pyplot(plt)
 
-def barplot():
-    #################### bar chart?
-   ## read bar data scoreT_file
-    df = pd.read_csv(scoreT_file, names=['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'dev_from_std', "y_pred_p_trend", 'score_trend'])
-    
-    # Define custom order
-    timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
-
-    # Convert 'tFrame' column to categorical with defined order
-    df["tFrame"] = pd.Categorical(df["tFrame"], categories=timeframe_order, ordered=True)
-
-    # Sort DataFrame based on the categorical order
-    df = df.sort_values("tFrame")
-    
-    ## plotting barchart
-    ax0.set_ylim(-10, 10)  # Adjust Y-axis limits if needed
-
-    # Get unique intervals and prepare x-axis locations
-    unique_intervals = df["tFrame"].unique()
-    x = np.arange(len(unique_intervals))  # X locations for groups
-    width = 0.15  # Width of each bar
-
-    # Prepare values for each metric
-    ema_trend = [df[df["tFrame"] == interval]["ema_trend"].mean() for interval in unique_intervals]
-    ema_values = [df[df["tFrame"] == interval]["ema"].mean() for interval in unique_intervals]
-    rsi_values = [df[df["tFrame"] == interval]["rsi"].mean() for interval in unique_intervals]
-    macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
-    total_values = [df[df["tFrame"] == interval]["total"].mean() for interval in unique_intervals]
-
-    ##########
-    # Define offsets for each bar group
-    offsets = [-2 * width, -width, 0, width, 2 * width]
-
-    # Plot bars with proper spacing
-    ax0.bar(x + offsets[0], ema_trend, width, color="cyan", edgecolor="black", label="ema_trend")
-    ax0.bar(x + offsets[1], ema_values, width, color="purple", edgecolor="black", label="EMA")
-    ax0.bar(x + offsets[2], rsi_values, width, color="navy", edgecolor="black", label="RSI")
-    ax0.bar(x + offsets[3], macd_values, width, color="orange", edgecolor="black", label="MACD")
-    ax0.bar(x + offsets[4], total_values, width, color="gray", edgecolor="black", label="total")
-
-    # Add value labels on top of each bar
-    for i, interval in enumerate(unique_intervals):
-        ax0.text(x[i] + offsets[0], ema_trend[i] + 0.2, f"{ema_trend[i]:.1f}", ha='center', fontsize=10, color="black")
-        ax0.text(x[i] + offsets[1], ema_values[i] + 0.2, f"{ema_values[i]:.1f}", ha='center', fontsize=10, color="black")
-        ax0.text(x[i] + offsets[2], rsi_values[i] + 0.2, f"{rsi_values[i]:.1f}", ha='center', fontsize=10, color="black")
-        ax0.text(x[i] + offsets[3], macd_values[i] + 0.2, f"{macd_values[i]:.1f}", ha='center', fontsize=10, color="black")
-        ax0.text(x[i] + offsets[4], total_values[i] + 0.2, f"{total_values[i]:.1f}", ha='center', fontsize=10, color="black")
-    # Add horizontal lines at y = 4 and y = -4
-    ax0.axhline(y=3, color="red", linestyle="--", linewidth=1, label="Threshold (4)")
-    ax0.axhline(y=-3, color="green", linestyle="--", linewidth=1, label="Threshold (-4)")
-    ax0.axhline(y=0, color="gray", linestyle="-", linewidth=3, label="Threshold (-4)")
-
-    # Add labels and title
-
-    legend_handles = [
-        Line2D([0], [0], color='cyan', lw=2, label="ema_trend"),
-        Line2D([0], [0], color='purple', lw=2, label="EMA"),
-        Line2D([0], [0], color='navy', lw=2, label="RSI"),
-        Line2D([0], [0], color='orange', lw=2, label="MACD"),
-        Line2D([0], [0], color='gray', lw=2, label="total"),
-    ]
-    time = datetime.now(eastern).strftime('%D:%H:%M')
-    ax0.set_xlabel("Time Frame")
-    ax0.set_ylabel("Score")
-    #ax0.set_title(f"Trend Scores by Interval({time})")
-    ax0.set_xticks(x)
-    ax0.set_xticklabels(unique_intervals, rotation=45)
-    ax0.legend(handles=legend_handles, loc="lower right")
-    ax0.set_title(f"Trend Scores by Interval({time})__pr.degree: {degree}")
-    
-    #########################################
-
-    plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
         
 # Streamlit app
 def main():
@@ -1443,7 +1370,80 @@ def main():
         st.dataframe(close_df, hide_index=True)
 
     ##############
-    barplot()
+    
+
+    #################### bar chart?
+   ## read bar data scoreT_file
+    df = pd.read_csv(scoreT_file, names=['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'dev_from_std', "y_pred_p_trend", 'score_trend'])
+    
+    # Define custom order
+    timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
+
+    # Convert 'tFrame' column to categorical with defined order
+    df["tFrame"] = pd.Categorical(df["tFrame"], categories=timeframe_order, ordered=True)
+
+    # Sort DataFrame based on the categorical order
+    df = df.sort_values("tFrame")
+    
+    ## plotting barchart
+    ax0.set_ylim(-10, 10)  # Adjust Y-axis limits if needed
+
+    # Get unique intervals and prepare x-axis locations
+    unique_intervals = df["tFrame"].unique()
+    x = np.arange(len(unique_intervals))  # X locations for groups
+    width = 0.15  # Width of each bar
+
+    # Prepare values for each metric
+    ema_trend = [df[df["tFrame"] == interval]["ema_trend"].mean() for interval in unique_intervals]
+    ema_values = [df[df["tFrame"] == interval]["ema"].mean() for interval in unique_intervals]
+    rsi_values = [df[df["tFrame"] == interval]["rsi"].mean() for interval in unique_intervals]
+    macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
+    total_values = [df[df["tFrame"] == interval]["total"].mean() for interval in unique_intervals]
+
+    ##########
+    # Define offsets for each bar group
+    offsets = [-2 * width, -width, 0, width, 2 * width]
+
+    # Plot bars with proper spacing
+    ax0.bar(x + offsets[0], ema_trend, width, color="cyan", edgecolor="black", label="ema_trend")
+    ax0.bar(x + offsets[1], ema_values, width, color="purple", edgecolor="black", label="EMA")
+    ax0.bar(x + offsets[2], rsi_values, width, color="navy", edgecolor="black", label="RSI")
+    ax0.bar(x + offsets[3], macd_values, width, color="orange", edgecolor="black", label="MACD")
+    ax0.bar(x + offsets[4], total_values, width, color="gray", edgecolor="black", label="total")
+
+    # Add value labels on top of each bar
+    for i, interval in enumerate(unique_intervals):
+        ax0.text(x[i] + offsets[0], ema_trend[i] + 0.2, f"{ema_trend[i]:.1f}", ha='center', fontsize=10, color="black")
+        ax0.text(x[i] + offsets[1], ema_values[i] + 0.2, f"{ema_values[i]:.1f}", ha='center', fontsize=10, color="black")
+        ax0.text(x[i] + offsets[2], rsi_values[i] + 0.2, f"{rsi_values[i]:.1f}", ha='center', fontsize=10, color="black")
+        ax0.text(x[i] + offsets[3], macd_values[i] + 0.2, f"{macd_values[i]:.1f}", ha='center', fontsize=10, color="black")
+        ax0.text(x[i] + offsets[4], total_values[i] + 0.2, f"{total_values[i]:.1f}", ha='center', fontsize=10, color="black")
+    # Add horizontal lines at y = 4 and y = -4
+    ax0.axhline(y=3, color="red", linestyle="--", linewidth=1, label="Threshold (4)")
+    ax0.axhline(y=-3, color="green", linestyle="--", linewidth=1, label="Threshold (-4)")
+    ax0.axhline(y=0, color="gray", linestyle="-", linewidth=3, label="Threshold (-4)")
+
+    # Add labels and title
+
+    legend_handles = [
+        Line2D([0], [0], color='cyan', lw=2, label="ema_trend"),
+        Line2D([0], [0], color='purple', lw=2, label="EMA"),
+        Line2D([0], [0], color='navy', lw=2, label="RSI"),
+        Line2D([0], [0], color='orange', lw=2, label="MACD"),
+        Line2D([0], [0], color='gray', lw=2, label="total"),
+    ]
+    time = datetime.now(eastern).strftime('%D:%H:%M')
+    ax0.set_xlabel("Time Frame")
+    ax0.set_ylabel("Score")
+    #ax0.set_title(f"Trend Scores by Interval({time})")
+    ax0.set_xticks(x)
+    ax0.set_xticklabels(unique_intervals, rotation=45)
+    ax0.legend(handles=legend_handles, loc="lower right")
+    ax0.set_title(f"Trend Scores by Interval({time})__pr.degree: {degree}")
+    
+    #########################################
+
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
     st.pyplot(fig)  ## finally plot all 5 figures
 
 ########################################
