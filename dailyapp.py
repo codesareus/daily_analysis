@@ -285,7 +285,7 @@ def regression_analysis(data_recent, interval):
     # Show plot in Streamlit
     st.pyplot(plt)
 
-def plot_bar():
+def plot_bars():
     # Assuming 'eastern' timezone is defined elsewhere
     eastern = 'US/Eastern'  # Example timezone, replace with actual timezone if needed
 
@@ -347,6 +347,7 @@ def plot_bar():
     
     # Show plot
     plt.show()
+    st.write("plotbars called")
         
 # Streamlit app
 def main():
@@ -982,7 +983,7 @@ def main():
     #################### bar chart?
    ## read bar data scoreT_fil
 
-    plot_bar()
+    plot_bars()
 
     ################### all control buttons ###########################################################
     ## very important use
