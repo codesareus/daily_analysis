@@ -1172,30 +1172,35 @@ def main():
     st.write("Fetch the current price of any stock using Finnhub API.")
 
     # Input for stock symbol
-    symbol = st.text_input("Enter Stock Symbol (e.g., AAPL):").upper()
+    #symbol = st.text_input("Enter Stock Symbol (e.g., AAPL):").upper()
 
-    if st.button("Get Price"):
-        if symbol:
-            price = fetch_stock_price(symbol)
-            if price:
-                st.success(f"The current price of {symbol} is ${price:.2f}")
-        else:
-            st.warning("Please enter a valid stock symbol.")
+   # if st.button("Get Price"):
+        #if symbol:
+         #   price = fetch_stock_price(symbol)
+          #  if price:
+              #  st.success(f"The current price of {symbol} is ${price:.2f}")
+       # else:
+           # st.warning("Please enter a valid stock symbol.")
 
         
 # Create a text input that displays the current session state value
-    col1, col3=st.columns(2)
-    with col1:
-        setpr_input = st.text_input("Enter set pr: ", value=str(st.session_state.setpr))
+    #col1, col3=st.columns(2)
+    #with col1:
+        #setpr_input = st.text_input("Enter set pr: ", value=str(st.session_state.setpr))
  #   with col2:
 #        settype_input = st.text_input("Enter set type (only needed if B or SS): ", value=str(st.session_state.settype))
-    with col3:
-        setnote_input = st.text_input("Enter note): ", value=str(st.session_state.setnote))
-    
+    #with col3:
+    setnote_input = st.text_input("Enter note): ", value=str(st.session_state.setnote))
+    price = fetch_stock_price("SPY")
+        if price:
+            st.session_state.setpr = price
+            st.success(f"The current price of {symbol} is ${price:.2f}")
+        else:
+            st.warning("Please enter a valid stock symbol.")
     #set them
     col1, col2=st.columns(2)
     with col1:
-        if st.button("set"):
+        if st.button("set note"):
             try:
     # Attempt to convert the input to a float and update the session state
                 #st.session_state.setpr = float(setpr_input)
@@ -1205,7 +1210,7 @@ def main():
                 st.session_state.confirmation_message = f"Success!"
             except ValueError:
     # Handle invalid input (non-numeric values)
-                st.error("Please enter a valid number or type")
+                st.error("Please enter a valid note ")
             st.rerun()
 # Display the current value of setpr from the session state
     with col2:
