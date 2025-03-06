@@ -19,7 +19,6 @@ from datetime import datetime, time
 from time import sleep
 from matplotlib.lines import Line2D
 import pandas_market_calendars as mcal
-import td
 
 #eastern = pytz.timezone("America/New")
 eastern = pytz.timezone("US/Eastern")
@@ -319,9 +318,7 @@ def main():
 
     # Initialize sbOK state
     #if "sbOK" not in st.session_state:
-        #st.session_state.sbOK = 
-    td
-
+        #st.session_state.sbOK 
 
     # Define file names
     
