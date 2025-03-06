@@ -1219,14 +1219,17 @@ def main():
     finndata["TimeStamp"] = pd.to_datetime(finndata["TimeStamp"], format="%Y-%m-%d %I:%M:%S %p")
 
 # 2. Localize to US Eastern Time (auto-adjusts for DST)
-    finndata["TimeStamp"] = finndata["TimeStamp"].dt.tz_localize(ZoneInfo("America/New_York"))
+    #finndata["TimeStamp"] = finndata["TimeStamp"].dt.tz_localize(ZoneInfo("America/New_York"))
 
 # 3. Plot configuration
     plt.figure(figsize=(6, 3))
     plt.plot(finndata["TimeStamp"], finndata["Close"], marker='o', linestyle='-', color='blue')
 
 # Format x-axis labels
-    date_formatter = DateFormatter("%m-%d %I:%M %p\n%Y", tz=ZoneInfo("America/New_York"))
+    eastern_tz = pytz.timezone('America/New_York')
+    finndata["TimeStamp"] = finndata["TimeStamp"].dt.tz_localize(eastern_tz)
+
+    #date_formatter = DateFormatter("%m-%d %I:%M %p\n%Y", tz=ZoneInfo("America/New_York"))
     plt.gca().xaxis.set_major_formatter(date_formatter)
     plt.xticks(rotation=45)
 
