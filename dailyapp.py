@@ -1197,9 +1197,9 @@ def main():
     plnow = 0
     
     if st.session_state.temp_price !=0:
-        if SB="B":
+        if SB=="B":
             plnow=  round(st.session_state.setpr - st.session_state.temp_price,2)
-        elif SB="SS":
+        elif SB=="SS":
             plnow=  - round(st.session_state.setpr - st.session_state.temp_price,2)
     
     if st.session_state.setpr != 0:
