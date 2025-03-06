@@ -1057,7 +1057,7 @@ def main():
 
     #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
-    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "note"])
+    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "scoreTrendRest","note"])
 
 ###########################
 
@@ -1068,7 +1068,7 @@ def main():
 
     ########## B and S actions
     def save_pe(type="AAA", price=None, total =0, note="zz"): 
-        updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "note"])
+        updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "scoreTrendRest", "note"])
         pl=0
         if type == "S":
             pl = price - updated_data["temp_pr"].iloc[-1]
@@ -1087,6 +1087,7 @@ def main():
                     "pl": pl,
                     "total": round(total, 2),
                     "temp_price": round(price, 2),
+                    "scoreTrendRest":sum_score_trend_rest,
                     "note": note,
                 }])
 
@@ -1099,6 +1100,7 @@ def main():
                     "pl": round(pl, 2),
                     "total": round(total, 2),
                     "temp_price": 0,
+                    "scoreTrendRest":sum_score_trend_rest,
                     "note": note,
                 }])
 
@@ -1111,6 +1113,7 @@ def main():
                     "pl": 0,
                     "total": total, ## for now
                     "temp_price": round(price, 2),
+                    "scoreTrendRest":sum_score_trend_rest,
                     "note": note,
                 }])
 
@@ -1122,6 +1125,7 @@ def main():
                     "S_pr": 0,
                     "pl": round(pl, 2),
                     "total": round(total, 2),
+                    "scoreTrendRest":sum_score_trend_rest,
                     "temp_price": 0,
                     "note": note,
                 }])
