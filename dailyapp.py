@@ -1208,6 +1208,7 @@ def main():
     finndata = pd.read_csv(finnpath, names=["TimeStamp", "Close"])
     
     st.write(f"finndata: {finndata['Close'].iloc[-1]}")
+    st.write(f"{now}")
     st.write(finndata.tail())
 
 # Convert TimeStamp to datetime (if it's a Unix timestamp)
