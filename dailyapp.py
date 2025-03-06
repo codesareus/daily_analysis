@@ -1259,7 +1259,7 @@ def main():
                     "pl": 0,
                     "total": 0, 
                     "temp_pr": 0,
-                    "note": "zzz"
+                    "note": "1min & 5min ema9 must cross poly-reg"
                 }])
                 # clear CSV file
         new_data.to_csv(pe_file, mode="w", header=False, index=False)
