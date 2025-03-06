@@ -1,4 +1,4 @@
-### daily analysis 03-03-25
+### daily analysis 03-06-25
 
 import streamlit as st
 import yfinance as yf
@@ -1201,54 +1201,7 @@ def main():
     plnow = 0
 
     ################plot finndata
-    finnpath = f"finndata.csv"
     
-    new_data = pd.DataFrame([{
-        "TimeStamp": f"{now}",
-        "Close": round(st.session_state.setpr, 2),
-    }])
-    #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
-    new_data.to_csv(finnpath, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
-    
-    
-# Read the data
-    finndata = pd.read_csv(finnpath, names=["TimeStamp", "Close"])
-
-# Display the latest closing price and the current time
-    
-    st.write(f"finndata: {finndata['Close'].iloc[-1]}")
-    st.write(f"{now}")
-    st.write(finndata.tail())
-
-# Convert TimeStamp to datetime
-    ##current_year = pd.Timestamp.now().year
-    #finndata["TimeStamp"] = finndata["TimeStamp"].apply(lambda x: f"{current_year}-{x}")
-    #finndata["TimeStamp"] = pd.to_datetime(finndata["TimeStamp"], format="%I:%M:%S %p")
-
-# Plot configuration
-    plt.figure(figsize=(6, 3))
-    plt.plot(finndata["TimeStamp"], finndata["Close"], marker='o', linestyle='-', color='blue', label='Close Price')
-    plt.xticks(rotation=45)
-
-# Add labels and title
-    plt.title("Stock Closing Price Over Time")
-    plt.xlabel("Time")
-    plt.ylabel("Close Price")
-    plt.legend()
-
-# Display the plot in Streamlit
-    st.pyplot(plt)
-    #plt.show()
-
-    plt.figure(figsize=(6, 3))
-    plt.xticks(rotation=45)
-    plt.plot(x_values, y, color="black", label=f"now pr:_{current_price}")  # Ac
-    plt.title(f"{interval}__{now}")
-    plt.xlabel("Time")
-    plt.ylabel("Close Price")
-    plt.legend()
-    st.pyplot(plt)
-
 ###$$$$$$$$$$-
     
     if st.session_state.temp_price !=0:
