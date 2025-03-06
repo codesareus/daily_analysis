@@ -1199,7 +1199,7 @@ def main():
             try:
     # Attempt to convert the input to a float and update the session state
                 #st.session_state.setpr = float(setpr_input)
-                st.session_state.setpr =  = fetch_stock_price("SPY")
+                st.session_state.setpr = fetch_stock_price("SPY")
                 #st.session_state.settype = settype_input
                 st.session_state.setnote = setnote_input
                 st.session_state.confirmation_message = f"Success!"
