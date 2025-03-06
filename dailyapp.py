@@ -1222,7 +1222,7 @@ def main():
     #finndata["TimeStamp"] = finndata["TimeStamp"].dt.tz_localize(ZoneInfo("America/New_York"))
 
 # 3. Plot configuration
-    plt.figure(figsize=(6, 3))
+    plt.figure(figsize=(12, 6))
     plt.plot(finndata["TimeStamp"], finndata["Close"], marker='o', linestyle='-', color='blue')
 
 # Format x-axis labels
