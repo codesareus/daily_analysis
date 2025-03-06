@@ -1224,7 +1224,7 @@ def main():
             if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m" and st.session_state.setpr !=0:
                 save_pe("B", st.session_state.setpr, total, st.session_state.setnote)
                 st.session_state.temp_price = st.session_state.setpr
-                st.session_state.setpr = 0
+                #st.session_state.setpr = 0
                 st.write(f"B: Yes ||SB_status: {SB}")
             else:
                 st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}__setpr: { st.session_state.setpr}")  
@@ -1235,7 +1235,7 @@ def main():
             if SB == "B" and interval == "1m" and st.session_state.setpr !=0:
                 save_pe("S", st.session_state.setpr, total,st.session_state.setnote)
                 st.session_state.temp_price = 0
-                st.session_state.setpr = 0
+                #st.session_state.setpr = 0
                 st.write(f"S: Yes ||SB_status: {SB}")
             else:
                 st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}__setpr: { st.session_state.setpr}")  
@@ -1246,7 +1246,7 @@ def main():
             if  (SB == "AAA" or SB == "S" or SB== "SB") and interval == "1m" and st.session_state.setpr !=0:
                 save_pe("SS", st.session_state.setpr, total, st.session_state.setnote)
                 st.session_state.temp_price = st.session_state.setpr
-                st.session_state.setpr = 0
+                #st.session_state.setpr = 0
                 st.write(f"SS: Yes ||SB_status: {SB}")
             else:
                 st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}__setpr: { st.session_state.setpr}")  
@@ -1257,7 +1257,7 @@ def main():
             if SB == "SS"  and interval == "1m" and st.session_state.setpr !=0:
                 save_pe("SB", st.session_state.setpr, total, st.session_state.setnote)
                 st.session_state.temp_price = 0
-                st.session_state.setpr = 0
+                #st.session_state.setpr = 0
                 st.write(f"SB: Yes ||SB_status: {SB}")
             else:
                 st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}__setpr: { st.session_state.setpr}")       
