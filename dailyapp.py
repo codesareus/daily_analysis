@@ -1236,7 +1236,7 @@ def main():
     #st.pyplot(plt)
     plt.show()
 
-    plt.figure(figsize=(6, 3)
+    plt.figure(figsize=(6, 3))
     plt.xticks(rotation=45)
     plt.plot(x_values, y, color="black", label="Actual Prices")  # Ac
     plt.title("Stock Closing Price Over Time")
