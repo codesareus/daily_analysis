@@ -1114,6 +1114,7 @@ def main():
                 st.session_state.setpr = current_price
                 #st.session_state.settype = settype_input
                 st.session_state.setnote = setnote_input
+                setnote_input = "zz"
                 st.session_state.confirmation_message = f"Success!"
             except ValueError:
     # Handle invalid input (non-numeric values)
