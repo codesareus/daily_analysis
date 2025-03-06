@@ -1193,7 +1193,9 @@ def main():
     setnote_input = st.text_input("Enter note): ", value=str(st.session_state.setnote))
     st.session_state.setpr = fetch_stock_price("SPY")
 
-    plnow=  round(st.session_state.setpr - st.session_state.temp_price,2)
+    plnow = 0
+    if st.session_state.temp_price !=0:
+        plnow=  round(st.session_state.setpr - st.session_state.temp_price,2)
     
     if st.session_state.setpr != 0:
         st.success(f"SPY now: ${st.session_state.setpr:.2f}__plNow: {plnow}")
