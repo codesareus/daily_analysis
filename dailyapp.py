@@ -1194,7 +1194,7 @@ def main():
     price = fetch_stock_price("SPY")
     if price:
         st.session_state.setpr = price
-        st.success(f"The current price of {symbol} is ${price:.2f}")
+        st.success(f"The current price of SPY is ${price:.2f}")
     else:
         st.warning("Please enter a valid stock symbol.")
     #set them
