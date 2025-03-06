@@ -1195,6 +1195,22 @@ def main():
     
     SB = updated_data["type"].iloc[-1]
     plnow = 0
+
+    ################plot finndata
+    finnpath = finndata.csv
+    
+    new_data = pd.DataFrame([{
+        "TimeStamp": f"{now}",
+        "Close": round(st.session_state.setpr, 2),
+    }])
+    #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
+    new_data.to_csv(finnpath, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
+    finndata = pd.read_csv(finnpath, names=["TimeStamp", "Close"])
+    st.write(findata["Close"].iloc[-1])
+
+
+
+
     
     if st.session_state.temp_price !=0:
         if SB=="B":
