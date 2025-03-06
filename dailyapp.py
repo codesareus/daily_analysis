@@ -1045,7 +1045,7 @@ def main():
     s_condition = short_s or ((current_price - st.session_state.temp_price) >=1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) <= -0.5 and st.session_state.temp_price != 0)
 
     ########## B and S actions
-    def save_pe(type="AAA", price=None, total =0): 
+    def save_pe(type="AAA", price=None, total =0, note="zz"): 
         updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr"])
         pl=0
         if type == "S":
@@ -1055,7 +1055,6 @@ def main():
         else:
             pl = 0
         total = total + pl
-        note = st.session_state.setnote
         
         if type == "B":
             new_data = pd.DataFrame([{
