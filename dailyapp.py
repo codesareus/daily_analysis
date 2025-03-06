@@ -1210,9 +1210,27 @@ def main():
     st.write(f"finndata: {finndata['Close'].iloc[-1]}")
     st.write(finndata.tail())
 
+# Convert TimeStamp to datetime (if it's a Unix timestamp)
+    finndata["TimeStamp"] = pd.to_datetime(finndata["TimeStamp"], unit="s")  # Use unit="s" if it's a Unix timestamp
 
+# Plot the data
+    plt.figure(figsize=(10, 6))
+    plt.plot(finndata["TimeStamp"], finndata["Close"], label="Close Price", color="blue")
 
+# Add labels and title
+    plt.title("Stock Closing Price Over Time")
+    plt.xlabel("Time")
+    plt.ylabel("Close Price")
+    plt.legend()
 
+# Rotate x-axis labels for better readability
+    plt.xticks(rotation=45)
+
+# Show the plot
+    plt.tight_layout()
+    plt.show()
+
+###$$$$$$$$$$-
     
     if st.session_state.temp_price !=0:
         if SB=="B":
