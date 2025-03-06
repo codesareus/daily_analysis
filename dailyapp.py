@@ -918,7 +918,9 @@ def main():
 ################,#,######## bar
     #################### bar chart?
    ## read bar data scoreT_fil
-    fig, (ax0) = plt.subplots(1, 1, figsize=(12, 6))
+    
+
+    fig, ax0 = plt.subplots(1, 1, figsize=(12, 6))
     
     df = pd.read_csv(scoreT_file, names=['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'dev_from_std', "y_pred_p_trend", 'score_trend'])
     
@@ -990,7 +992,7 @@ def main():
     #########################################
 
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
-    plt.show(fig)  ## finally plot all 5 figures
+    plt.show()  ## finally plot all 5 figures
 
     ################### all control buttons ###########################################################
     ## very important use
