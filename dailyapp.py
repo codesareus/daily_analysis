@@ -1206,7 +1206,7 @@ def main():
     #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
     new_data.to_csv(finnpath, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
     finndata = pd.read_csv(finnpath, names=["TimeStamp", "Close"])
-    st.write(findata["Close"].iloc[-1])
+    st.write(f"finndata: {findata['Close'].iloc[-1]}")
 
 
 
