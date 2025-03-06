@@ -994,7 +994,7 @@ def main():
 ################,#,######## bar
     # Example usage in your app
     fig, ax0 = plt.subplots()
-    plot_bar_chart("path_to_scoreT_file.csv", ax0, fig, degree=5, eastern=timezone('US/Eastern'))
+    plot_bar_chart("scoreT_file", ax0, fig, degree=5, eastern=timezone('US/Eastern'))
 
     ################### all control buttons ###########################################################
     ## very important use
