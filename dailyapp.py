@@ -1226,11 +1226,11 @@ def main():
     plt.plot(finndata["TimeStamp"], finndata["Close"], marker='o', linestyle='-', color='blue')
 
 # Format x-axis labels
-    eastern_tz = pytz.timezone('America/New_York')
-    finndata["TimeStamp"] = finndata["TimeStamp"].dt.tz_localize(eastern_tz)
+    #eastern_tz = pytz.timezone('America/New_York')
+    #finndata["TimeStamp"] = finndata["TimeStamp"].dt.tz_localize(eastern_tz)
 
     #date_formatter = DateFormatter("%m-%d %I:%M %p\n%Y", tz=ZoneInfo("America/New_York"))
-    plt.gca().xaxis.set_major_formatter(date_formatter)
+    #plt.gca().xaxis.set_major_formatter(date_formatter)
     plt.xticks(rotation=45)
 
 # Add labels and title
