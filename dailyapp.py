@@ -1205,32 +1205,25 @@ def main():
     }])
     #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
     new_data.to_csv(finnpath, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
-    finndata = pd.read_csv(finnpath, names=["TimeStamp", "Close"])
     
+    
+# Read the data
+    finndata = pd.read_csv(finnpath, names=["TimeStamp", "Close"])
+
+# Display the latest closing price and the current time
+    now = datetime.now()
     st.write(f"finndata: {finndata['Close'].iloc[-1]}")
     st.write(f"{now}")
     st.write(finndata.tail())
 
-# Convert TimeStamp to datetime (if it's a Unix timestamp)
-    # Convert to datetime with proper format
-    # 1. Add current year and convert to datetime
+# Convert TimeStamp to datetime
     current_year = pd.Timestamp.now().year
     finndata["TimeStamp"] = finndata["TimeStamp"].apply(lambda x: f"{current_year}-{x}")
     finndata["TimeStamp"] = pd.to_datetime(finndata["TimeStamp"], format="%Y-%m-%d %I:%M:%S %p")
 
-# 2. Localize to US Eastern Time (auto-adjusts for DST)
-    #finndata["TimeStamp"] = finndata["TimeStamp"].dt.tz_localize(ZoneInfo("America/New_York"))
-
-# 3. Plot configuration
+# Plot configuration
     plt.figure(figsize=(12, 6))
-    plt.plot(finndata["TimeStamp"], finndata["Close"], marker='o', linestyle='-', color='blue')
-
-# Format x-axis labels
-    #eastern_tz = pytz.timezone('America/New_York')
-    #finndata["TimeStamp"] = finndata["TimeStamp"].dt.tz_localize(eastern_tz)
-
-    #date_formatter = DateFormatter("%m-%d %I:%M %p\n%Y", tz=ZoneInfo("America/New_York"))
-    #plt.gca().xaxis.set_major_formatter(date_formatter)
+    plt.plot(finndata["TimeStamp"], finndata["Close"], marker='o', linestyle='-', color='blue', label='Close Price')
     plt.xticks(rotation=45)
 
 # Add labels and title
@@ -1239,11 +1232,8 @@ def main():
     plt.ylabel("Close Price")
     plt.legend()
 
-# Rotate x-axis labels for better readabilit
-
-# Show the plot
-    plt.tight_layout()
-    plt.show()
+# Display the plot in Streamlit
+    st.pyplot(plt)
 
 ###$$$$$$$$$$-
     
