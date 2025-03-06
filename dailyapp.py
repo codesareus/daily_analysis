@@ -1233,8 +1233,8 @@ def main():
     plt.legend()
 
 # Display the plot in Streamlit
-    #st.pyplot(plt)
-    plt.show()
+    st.pyplot(plt)
+    #plt.show()
 
     plt.figure(figsize=(6, 3))
     plt.xticks(rotation=45)
@@ -1243,7 +1243,7 @@ def main():
     plt.xlabel("Time")
     plt.ylabel("Close Price")
     plt.legend()
-    plt.show()
+    st.pyplot(plt)
 
 ###$$$$$$$$$$-
     
