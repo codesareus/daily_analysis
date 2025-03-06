@@ -857,17 +857,9 @@ def main():
         st.success(f"✅ File created successfully as `{file_path}`")
 
     ################### evaluate score trend and save it to scoreT.csv
-    #score_prior = data_recent['score'].iloc[-2]
-    #score_prior2 = data_recent['score'].iloc[-3]
 
-    #if (score_prior > score_prior2) and score_prior >= 1 and data_recent['ema_trend'].iloc[-2] >= 1:
-        #score_trend_1 = 1
-    #elif (score_prior < score_prior2) and score_prior <= -1 and data_recent['ema_trend'].iloc[-2] <= -1:
-       # score_trend_1 = -1
-    #else:
-       # score_trend_1 = 0
-      
     #ema_score, ema_trend, rsi_score, macd_score, score
+
     y_pred_p_trend = 0
     if y_pred_poly >= y_pred_poly1:
         y_pred_p_trend = 1
