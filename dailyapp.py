@@ -1192,8 +1192,11 @@ def main():
     #with col3:
     setnote_input = st.text_input("Enter note): ", value=str(st.session_state.setnote))
     st.session_state.setpr = fetch_stock_price("SPY")
+
+    plnow=  round(st.session_state.setpr - st.session_state.temp_price,2)
+    
     if st.session_state.setpr != 0:
-        st.success(f"The current price of SPY is ${st.session_state.setpr:.2f}")
+        st.success(f"SPY now: ${st.session_state.setpr:.2f}__plNow: {plnow}")
     else:
         st.warning("error fetching SPY.")
     #set them
@@ -1631,19 +1634,22 @@ def main():
            # st.write(f"B: Yes ||SB_status: {SB}")
                   
        # elif (s_condition or current_price >= st.session_state.setpr) and SB == "B" and intervals[st.session_state.index] == "1m":
-          #  save_pe("S", current_price, total)
-          #  st.session_state.temp_price = 0
-           # st.write(f"S: Yes ||SB_status: {SB}")
+        if  (plnow >= 0.6 or plnow<=-0.3) and SB == "B" :
+            save_pe("S", st.session_state.setpr, total)
+            st.session_state.temp_price = 0
+            st.write(f"S: Yes ||SB_status: {SB}")
     
         #elif (short_s or (current_price >= st.session_state.setpr and st.session_state.settype =="SS")) and (SB == "AAA" or SB == "S" or SB== "SB") and intervals[st.session_state.index] == "1m":
         #    save_pe("SS", current_price, total)
          #   st.session_state.temp_price = current_price
           #  st.write(f"SS: Yes ||SB_status: {SB}")
     
-        #elif (short_b or current_price <= st.session_state.setpr) and SB == "SS" and intervals[st.session_state.index] == "1m":
-            #save_pe("SB", current_price, total)
-            #st.session_state.temp_price = 0
-            #st.write(f"SB: Yes ||SB_status: {SB}")
+        #if (short_b or current_price <= st.session_state.setpr) and SB == "SS" and intervals[st.session_state.index] == "1m":
+        
+        if  (plnow <= -0.6 or plnow >= 0.3) and SB == "SS" :
+            save_pe("SB", st.session_state.setpr, total)
+            st.session_state.temp_price = 0
+            st.write(f"SB: Yes ||SB_status: {SB}")
 
         #st.write(f"B: {b_condition}__SS: {short_s}__S: {s_condition}__SB:{short_b}__Status_0: {SB == "AAA" or SB == "S" or SB == "SB"}__interval: {intervals[st.session_state.index]}")
        # st.empty()
