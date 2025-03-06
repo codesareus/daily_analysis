@@ -333,10 +333,10 @@ def plot_bar():
     plt.axhline(y=0, color="gray", linestyle="-", linewidth=1, label="Zero Line")
     
     # Set labels and title
-    current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
+    #current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
     plt.xlabel("Time Frame")
     plt.ylabel("Score")
-    plt.title(f"Trend Scores by Interval ({current_time})")
+    plt.title(f"Trend Scores by Interval ()")
     
     # Format x-axis
     plt.xticks(x, unique_intervals, rotation=45)
