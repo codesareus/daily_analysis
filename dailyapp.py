@@ -342,7 +342,7 @@ def plot_bar():
     current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
     ax0.set_xlabel("Time Frame")
     ax0.set_ylabel("Score")
-    ax0.set_title(f"Trend Scores by Interval ({current_time})__pr.degree: {degree}")
+    ax0.set_title(f"Trend Scores by Interval ({current_time})")
     
     # Format x-axis
     ax0.set_xticks(x)
