@@ -355,7 +355,7 @@ def plot_bar_chart(scoreT_file, ax0, fig, degree, eastern):
     #########################################
 
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
-    st.pyplot(fig)  ## finally plot all 5 figures
+    #st.pyplot(fig)  ## finally plot all 5 figures
 
 # Example usage in your app
 # fig, ax0 = plt.subplots()
