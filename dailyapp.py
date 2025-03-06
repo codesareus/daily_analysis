@@ -1198,7 +1198,7 @@ def main():
         plnow=  round(st.session_state.setpr - st.session_state.temp_price,2)
     
     if st.session_state.setpr != 0:
-        st.success(f"SPY now: ${st.session_state.setpr:.2f}__plNow: {plnow}")
+        st.success(f"SPY now: ${st.session_state.setpr:.2f}_____plNow: {plnow}_____yf: {current_price:.2f}")
     else:
         st.warning("error fetching SPY.")
     #set them
