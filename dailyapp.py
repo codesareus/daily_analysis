@@ -346,7 +346,9 @@ def plot_bars():
     plt.tight_layout()
     
     # Show plot
-    plt.show()
+    st.pyplot(plt)
+    plt.close()  # Prevent memory leaks
+    st.write("plotbars called")
     st.write("plotbars called")
         
 # Streamlit app
