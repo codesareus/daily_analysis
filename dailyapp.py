@@ -1217,6 +1217,11 @@ def main():
         finndata["TimeStamp"],
         format="%Y-%m-%d %I:%M:%S %p"  # Format matching "YYYY-MM-DD HH:MM:SS AM"
     )
+
+    # Convert to US Eastern Time
+    finndata["TimeStamp"] = finndata["TimeStamp"].dt.tz_localize(
+        ZoneInfo("America/New_York")
+    )
     
     #finndata["TimeStamp"] = pd.to_datetime(finndata["TimeStamp"], unit="s")  # Use unit="s" if it's a Unix timestamp
 
