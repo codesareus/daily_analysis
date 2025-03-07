@@ -315,7 +315,8 @@ def plot_bars(price=0):
     offsets = [-2 * width, -width, 0, width, 2 * width]
     
     # Plot bars
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(12, 4))
+    
     plt.bar(x + offsets[0], ema_trend, width, color="cyan", edgecolor="black", label="ema_trend")
     plt.bar(x + offsets[1], ema_values, width, color="purple", edgecolor="black", label="EMA")
     plt.bar(x + offsets[2], rsi_values, width, color="navy", edgecolor="black", label="RSI")
@@ -336,7 +337,7 @@ def plot_bars(price=0):
     #current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
     plt.xlabel("Time Frame")
     plt.ylabel("Score")
-    plt.title(f"Trend Scores by Interval (pr now: {price})")
+    plt.title(f"Trend Scores by Interval (pr now: {price:.2f})")
     
     # Format x-axis
     plt.xticks(x, unique_intervals, rotation=45)
@@ -348,8 +349,6 @@ def plot_bars(price=0):
     # Show plot
     st.pyplot(plt)
     plt.close()  # Prevent memory leaks
-    st.write("plotbars called")
-    st.write("plotbars second")
         
 # Streamlit app
 def main():
