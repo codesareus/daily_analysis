@@ -1129,10 +1129,12 @@ def main():
                 st.session_state.setnote = "zz"
                 st.session_state.confirmation_message = f"Success!"
                 setnote_input ="zz"
-                st.button("ClearInput", on_click=clear_text)
+                
             else:
                 st.write("no note")
             st.rerun()
+            st.button("ClearInput", on_click=clear_text)
+            
 # Display the current value of setpr from the session state
     with col2:
         st.write(f"setpr: {st.session_state.setpr}__temp_price: {st.session_state.temp_price}__setnote: {st.session_state.setnote}")
