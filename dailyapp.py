@@ -385,7 +385,7 @@ def main():
         st.session_state.setnote = "zz"
 
     if "poly_degree" not in st.session_state:
-        st.session_state.poly_degree = 3
+        st.session_state.poly_degree = 5
     
     scoreT_file = f"scoreT.csv"
     pe_file = f"pe.csv"
@@ -496,23 +496,23 @@ def main():
     col1, col2,col3,col4 = st.columns(4)
     
     with col1:
-        if st.button("degree 2"):
-            st.session_state.poly_degree = 2
+        if st.button("degree 6"):
+            st.session_state.poly_degree = 6
             st.rerun()
 
     with col2:
-        if st.button("degree 4"):
-            st.session_state.poly_degree = 4
+        if st.button("degree 7"):
+            st.session_state.poly_degree = 7
             st.rerun()
 
     with col3:
-        if st.button("degree 5"):
-            st.session_state.poly_degree = 5
+        if st.button("degree 8"):
+            st.session_state.poly_degree = 8
             st.rerun()
 
     with col4:
-        if st.button("degree 6"):
-            st.session_state.poly_degree = 6
+        if st.button("degree 9"):
+            st.session_state.poly_degree = 9
             st.rerun()
 
     st.write(f"selected PR degree: {degree}")
