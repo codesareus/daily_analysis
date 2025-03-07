@@ -667,7 +667,7 @@ def main():
         transform=ax.transAxes, fontsize=16, color="blue")
     
     # Draw gray line for d2 close
-    d2_close = fetch_d2_close(ticker)
+    d2_close = fetch_d2_close("SPY")
     ax.axhline(y=d2_close, color="navy", linestyle="--", label="")
 
     # Add price label for the d2_close
