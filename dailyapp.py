@@ -607,35 +607,28 @@ def main():
 
         ema_trend = 0
 
-        if (price > ema9) and (ema9 > ema20):
-            ema_trend = 2
-        elif (price < ema9) and (ema9 < ema20):
-            ema_trend = -2
-        elif (price > ema9) or (ema9 > ema20):
+        if (ema9 >= ema20):
             ema_trend = 1
-        elif (price < ema9) or (ema9 < ema20):
-            ema_trend = -1
         else:
-            ema_trend = 0
+            ema_trend = -1
         
-        ema_score = ((price > ema9).astype(int) + 
-             (ema9 > ema20).astype(int) + 
-             (ema100 > ema200).astype(int) - 
-             (price < ema9).astype(int) - 
-             (ema9 < ema20).astype(int) - 
-             (ema100 < ema200).astype(int))
+        ema_score = 0
 
+        if (ema100>= ema200):
+            ema_trend = 1
+        else:
+            ema_trend = -1
             
         rsi_score = 0
         
-        if (rsi > rsi2) and (rsi > 50):
-            rsi_score = ((rsi - 50)/50) * 2
-        elif (rsi < rsi2) and (rsi > 50):
-            rsi_score = (rsi - 50)/50
+        if (rsi >= rsi2) and (rsi >= 50):
+            rsi_score = 2
+        elif (rsi < rsi2) and (rsi >= 50):
+            rsi_score = 1
         elif (rsi < rsi2) and (rsi < 50):
-            rsi_score = ((rsi - 50)/50) * 2
-        elif (rsi > rsi2) and (rsi < 50):
-            rsi_score = ((rsi - 50)/50) 
+            rsi_score = -2
+        elif (rsi >= rsi2) and (rsi < 50):
+            rsi_score = -1
         else:
             rsi_score = 0
             
