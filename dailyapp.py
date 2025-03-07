@@ -699,7 +699,7 @@ def main():
     ax.set_xticklabels(simplified_time_labels)  # Show only hours or every 3 hours
     ax.set_xlabel("Time (HH:MM)")
     ax.set_ylabel(f"{"SPY"} Price")
-    ax.set_title(f"Combined Linear and Polynomial Regression for {ticker} (tFrame: {interval})")
+    ax.set_title(f"Combined Linear and Polynomial Regression for {"SPY"} (tFrame: {interval})")
     ax.legend()
 
     # --- RSI Plot ---
