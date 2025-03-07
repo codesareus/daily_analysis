@@ -816,8 +816,8 @@ def main():
         std_dev = data_recent["std_dev"].iloc[-1]
         y_pred_poly = data_recent["y_pred_poly"].iloc[-1]
         delta = current_price - y_pred_poly
-        dev_from_std = delta/std_dev
-        
+        dev_from_std = round(delta/std_dev,0)
+
         return ema_score, ema_trend, rsi_score, macd_score, score, dev_from_std
 
     def get_scores_more():
@@ -877,9 +877,9 @@ def main():
        # y_pred_p_trend = "↓"
         y_pred_p_trend = -1
         
-    if ema_score >=0.67and rsi_score > 0 and macd_score > 0 and score > 1:
+    if ema_score >= 0 and rsi_score >= 0 and macd_score >= 0 and ema_trend >= 0:
         score_trend = 1
-    elif ema_score <=-0.67 and rsi_score < 0  and macd_score < 0 and score < -1 :
+    elif ema_score <0 and rsi_score < 0  and macd_score < 0 and ema_trend < -1 :
         score_trend = -1
     else:
         score_trend = 0
@@ -887,8 +887,8 @@ def main():
     # total == score (above) 
     new_data = pd.DataFrame([{
         "tFrame": f"{interval}",
-        "ema_trend": round(ema_trend, 2),
-        "ema": round(ema_score, 2),
+        "ema9/20": round(ema_trend, 2),
+        "ema100/200": round(ema_score, 2),
         "rsi": round(rsi_score, 2),
         "macd": round(macd_score, 2),
         "score": round(score, 2),
@@ -912,7 +912,7 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'score', 'dev_from_std', "y_pred_p_trend", 'score_trend']
+    df.columns = ['tFrame', 'ema9/20', 'ema100/200', 'rsi', 'macd', 'score', 'dev_from_std', "y_pred_p_trend", 'score_trend']
         
     #display table
     st.dataframe(df, hide_index=True) #original table looks neater
