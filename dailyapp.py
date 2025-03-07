@@ -1178,7 +1178,7 @@ def main():
     col1, col2=st.columns(2)
     with col1:
         if st.button("set note"): #save note
-            try:
+            if setnote_input != "zz":
     # Attempt to convert the input to a float and update the session state
                 total = updated_data["total"].iloc[-1]
                 note = setnote_input
@@ -1200,9 +1200,6 @@ def main():
                 #st.session_state.settype = settype_input
                 st.session_state.setnote = "zz"
                 st.session_state.confirmation_message = f"Success!"
-            except ValueError:
-    # Handle invalid input (non-numeric values)
-                st.error("Please enter a valid note ")
             st.rerun()
 # Display the current value of setpr from the session state
     with col2:
