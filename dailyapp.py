@@ -753,7 +753,7 @@ def main():
     ax.text(0, d2_close, f'{d2_close:.2f}__c2', color='navy', verticalalignment='top')
 
     # Draw exponential moving averages with dashed lines
-    ax.plot(x_values, data_recent['EMA_9'], color="orange", linestyle="--", label="EMA 9/20_blue")
+    ax.plot(x_values, data_recent['EMA_9'], color="red", linestyle="--", label="EMA 9/20_blue")
     ax.plot(x_values, data_recent['EMA_20'], color="blue", linestyle="--", label="")
     ax.plot(x_values, data_recent['EMA_50'], color="gold", linestyle="--", label="EMA 50")
     ax.plot(x_values, data_recent['EMA_100'], color="gray", linestyle="--", label="EMA 100")
