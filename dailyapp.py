@@ -454,7 +454,7 @@ def main():
     #############
 
 # Add a slider for backtracking
-    backtrack_options = [0, 2, 5, 7, 10, 20, 30, 45, 60, 90, 100, 120]
+    backtrack_options = [0, 2, 5, 7, 10, 20, 30, 45, 60, 90, 100, 200]
     selected_backtrack = st.slider(
         "Select number of points to backtrack:",
         min_value=min(backtrack_options),
@@ -504,7 +504,7 @@ def main():
 
     ##############################
     if "poly_degree" not in st.session_state:
-        st.session_state.poly_degree = 4
+        st.session_state.poly_degree = 2
     degree = st.session_state.poly_degree
     
     col1, col2,col3,col4 = st.columns(4)
@@ -515,18 +515,18 @@ def main():
             st.rerun()
 
     with col2:
+        if st.button("degree 4"):
+            st.session_state.poly_degree = 4
+            st.rerun()
+
+    with col3:
         if st.button("degree 5"):
             st.session_state.poly_degree = 5
             st.rerun()
 
-    with col3:
+    with col4:
         if st.button("degree 6"):
             st.session_state.poly_degree = 6
-            st.rerun()
-
-    with col4:
-        if st.button("degree 7"):
-            st.session_state.poly_degree = 7
             st.rerun()
 
     st.write(f"selected PR degree: {degree}")
