@@ -469,7 +469,7 @@ def main():
     data_recent = data.tail(100 + selected_backtrack)  # Get the most recent 300 + selected_backtrack data points
     #data_recent = data_recent.head(300)  # Use only the first 300 points after backtracking
     data_recent = data_recent.head(100)  # Use only the first 300 points after backtracking
-    columns_to_drop = ['Stock Splits', 'Capital Gains']'
+    columns_to_drop = ['Stock Splits', 'Capital Gains']
     data_recent = data_recent.drop(columns=columns_to_drop)
 
     # Calculate EMAs
