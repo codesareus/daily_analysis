@@ -329,9 +329,9 @@ def plot_bars(price=0):
             plt.text(x[i] + offset, values[i] + 0.2, f"{values[i]:.1f}", ha='center', fontsize=10)
     
     # Add threshold lines
-    plt.axhline(y=4, color="red", linestyle="--", linewidth=1, label="Threshold (4)")
-    plt.axhline(y=-4, color="green", linestyle="--", linewidth=1, label="Threshold (-4)")
-    plt.axhline(y=0, color="gray", linestyle="-", linewidth=1, label="Zero Line")
+    plt.axhline(y=4, color="red", linestyle="--", linewidth=1)
+    plt.axhline(y=-4, color="green", linestyle="--", linewidth=1)
+    plt.axhline(y=0, color="gray", linestyle="-", linewidth=1)
     
     # Set labels and title
     #current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
