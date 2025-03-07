@@ -465,10 +465,10 @@ def main():
     )
 
     # Adjust the data based on the selected backtrack
-    #data_recent = data.tail(300 + selected_backtrack)  # Get the most recent 300 + selected_backtrack data points
-    data_recent = data.tail(100 + selected_backtrack)  # Get the most recent 300 + selected_backtrack data points
-    #data_recent = data_recent.head(300)  # Use only the first 300 points after backtracking
-    data_recent = data_recent.head(100)  # Use only the first 300 points after backtracking
+    data_recent = data.tail(300 + selected_backtrack)  # Get the most recent 300 + selected_backtrack data points
+    #data_recent = data.tail(100 + selected_backtrack)  # Get the most recent 300 + selected_backtrack data points
+    data_recent = data_recent.head(300)  # Use only the first 300 points after backtracking
+    #data_recent = data_recent.head(100)  # Use only the first 300 points after backtracking
     columns_to_drop = ['Stock Splits', 'Capital Gains']
     data_recent = data_recent.drop(columns=columns_to_drop)
 
@@ -506,14 +506,14 @@ def main():
 
     ##############################
     if "poly_degree" not in st.session_state:
-        st.session_state.poly_degree = 2
+        st.session_state.poly_degree = 3
     degree = st.session_state.poly_degree
     
     col1, col2,col3,col4 = st.columns(4)
     
     with col1:
-        if st.button("degree 3"):
-            st.session_state.poly_degree = 3
+        if st.button("degree 2"):
+            st.session_state.poly_degree = 2
             st.rerun()
 
     with col2:
