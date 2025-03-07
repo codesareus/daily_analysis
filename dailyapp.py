@@ -698,7 +698,7 @@ def main():
     ax.set_xticks(x_values)  # Set ticks for all time points
     ax.set_xticklabels(simplified_time_labels)  # Show only hours or every 3 hours
     ax.set_xlabel("Time (HH:MM)")
-    ax.set_ylabel(f"{ticker} Price")
+    ax.set_ylabel(f"{"SPY"} Price")
     ax.set_title(f"Combined Linear and Polynomial Regression for {ticker} (tFrame: {interval})")
     ax.legend()
 
