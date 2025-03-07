@@ -315,7 +315,7 @@ def plot_bars(price=0):
     offsets = [-2 * width, -width, 0, width, 2 * width]
     
     # Plot bars
-    plt.figure(figsize=(12, 4),facecolor='#4c4c4c')
+    plt.figure(figsize=(12, 4),facecolor='#a9a9a9')
     
     plt.bar(x + offsets[0], ema_trend, width, color="cyan", edgecolor="black", label="ema_trend")
     plt.bar(x + offsets[1], ema_values, width, color="purple", edgecolor="black", label="EMA")
