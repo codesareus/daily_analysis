@@ -59,22 +59,22 @@ def calculate_macd(data):
     return data
 
 # Function to fetch stock data with a specified interval
-def fetch_stock_data(ticker, interval="5m"):
+def fetch_stock_data("SPY", interval="5m"):
     # Fetch data for the specified stock with the given interval (including premarket)
-    stock = yf.Ticker(ticker)
+    stock = yf.Ticker("SPY")
     data = stock.history(period="5d", interval=interval, prepost=True)  # Include premarket data
     return data
 
 # Function to fetch stock data with a specified 1h interval
-def fetch_stock_data1mo(ticker, interval="1h"):
+def fetch_stock_data1mo("SPY", interval="1h"):
     # Fetch data for the specified stock with the given interval (including premarket)
-    stock = yf.Ticker(ticker)
+    stock = yf.Ticker("SPY")
     data = stock.history(period="1mo", interval="1h", prepost=True)  # no doest not Include premarket data
     return data
 
 # Function to fetch the previous 5 day's close price
-def fetch_daily5(ticker):
-    stock = yf.Ticker(ticker)
+def fetch_daily5("SPY",):
+    stock = yf.Ticker("SPY")
     daily5 = stock.history(period="3mo")  # Fetch 30 days of data
     if len(daily5) >= 2:
         return daily5['Close'][-5:]  ## return only last 5 days 
@@ -82,8 +82,8 @@ def fetch_daily5(ticker):
         return None  # Handle cases where there isn't enough data
 
 # Function to fetch 3mo close price
-def fetch_3mo(ticker):
-    stock = yf.Ticker(ticker)
+def fetch_3mo("SPY"):
+    stock = yf.Ticker("SPY")
     daily3mo = stock.history(period="3mo")
     if len(daily3mo) >= 2:
         return daily3mo    
@@ -91,8 +91,8 @@ def fetch_3mo(ticker):
         return None  # Handle cases where there isn't enough data
     
 # Function to fetch 6mo close price
-def fetch_6mo(ticker):
-    stock = yf.Ticker(ticker)
+def fetch_6mo("SPY"):
+    stock = yf.Ticker("SPY")
     daily6mo = stock.history(period="6mo")
     if len(daily6mo) >= 2:
         return daily6mo
@@ -100,8 +100,8 @@ def fetch_6mo(ticker):
         return None  # Handle cases where there isn't enough data
 
 # Function to fetch the previous day's close price
-def fetch_previous_close(ticker):
-    close_prices = fetch_daily5(ticker)
+def fetch_previous_close("SPY"):
+    close_prices = fetch_daily5("SPY")
     if close_prices is None:
         return None  # Handle cases where there isn't enough data
     
@@ -121,8 +121,8 @@ def fetch_previous_close(ticker):
     return previous_close
 
 # Function to fetch the day before yesterday's close price
-def fetch_d2_close(ticker):
-    close_prices = fetch_daily5(ticker)
+def fetch_d2_close("SPY"):
+    close_prices = fetch_daily5("SPY")
     if close_prices is None:
         return None  # Handle cases where there isn't enough data
     
@@ -398,7 +398,7 @@ def main():
         data = fetch_stock_data("SPY", interval=interval)
 
     if data.empty:
-        st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
+        st.error(f"Failed to fetch data for {"SPY"}. Please check the ticker and try again.")
         return
 
     data_recent = data.tail(300)  # Use only the first 300 points after backtracking
@@ -495,12 +495,12 @@ def main():
 
     #3mo and 6mo data has only day information not hours and minute
     elif interval == "3mo":
-        data3mo = fetch_3mo(ticker)
+        data3mo = fetch_3mo("SPY")
         time_labels = data3mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
         simplified_time_labels = [label if idx % 9 == 0 else '' for idx, label in enumerate(time_labels)]
 
     elif interval == "6mo":
-        data6mo = fetch_6mo(ticker)
+        data6mo = fetch_6mo("SPY")
         time_labels = data6mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
         simplified_time_labels = [label if idx % 9 == 0 else '' for idx, label in enumerate(time_labels)]    
 
