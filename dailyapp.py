@@ -413,7 +413,7 @@ def main():
     current_price = data_recent['Close'].iloc[-1]
 
     # Fetch the previous day's close price
-    previous_close = fetch_previous_close(ticker)
+    previous_close = fetch_previous_close("SPY")
     if previous_close is None:
         st.error("Failed to fetch the previous day's close price. Please try again.")
         return
