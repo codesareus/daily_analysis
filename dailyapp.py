@@ -343,6 +343,14 @@ def plot_bars(price=0):
 # Display the plot
     st.pyplot(plt)
     plt.close()  # Prevent memory leaks
+
+if st.session_state.get("show_confirmation", False):
+        st.success("Text saved successfully!")
+        st.button("ClearInput", on_click=clear_text)
+        st.session_state.show_confirmation = False
+
+def clear_text():
+    st.session_state["text_area"] = "zz"
         
 # Streamlit app
 def main():
@@ -1121,6 +1129,7 @@ def main():
                 st.session_state.setnote = "zz"
                 st.session_state.confirmation_message = f"Success!"
                 setnote_input ="zz"
+                st.button("ClearInput", on_click=clear_text)
             else:
                 st.write("no note")
             st.rerun()
