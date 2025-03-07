@@ -350,7 +350,7 @@ if st.session_state.get("show_confirmation", False):
         st.session_state.show_confirmation = False
 
 def clear_text():
-    st.session_state["text_area"] = "zz"
+    st.session_state["text_input"] = "zz"
         
 # Streamlit app
 def main():
