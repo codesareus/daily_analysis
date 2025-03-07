@@ -345,9 +345,6 @@ def plot_bars(price=0):
     # Add legend and adjust layout
     plt.legend()
     plt.tight_layout()
-    
-    # Show plot
-    plt.figure.set_facecolor('lightgray')  # Use any valid color name or hex code
 
 # Display the plot
 
