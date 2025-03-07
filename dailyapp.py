@@ -319,9 +319,6 @@ def clear_text():
 def main():
     st.title("Score Regression Analysis")
 
-    # Input box for user to enter stock ticker
-    ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
-
     # Initialize session states
     if 'index' not in st.session_state:
         st.session_state.index = 0
@@ -431,14 +428,6 @@ def main():
     #current_time = datetime.now(eastern).strftime("%H:%M:%S")
     current_time = datetime.now(eastern).strftime("%I:%M:%S %p")
 
-    # Display the percentage change message with current local time
-    #st.write("### Current Price vs Previous Close___" f"{ticker}")
-    if percentage_change >= 0:
-        st.success(f"🟢 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, previous_close **{previous_close:.2f}**)  |  **___** {current_time} **___**")
-    else:
-        st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **......** {current_time}")
-
-    ##############################
     
     degree = st.session_state.poly_degree
     
