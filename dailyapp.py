@@ -1177,14 +1177,28 @@ def main():
     #set them
     col1, col2=st.columns(2)
     with col1:
-        if st.button("set note"):
+        if st.button("set note"): #save note
             try:
     # Attempt to convert the input to a float and update the session state
+                total = updated_data["total"].iloc[-1]
+                note = setnote_input
+                new_data = pd.DataFrame([{
+                    "TimeStamp": f"{now}",
+                    "type": "aaa",
+                    "B_pr": 0,
+                    "S_pr": 0,
+                    "pl": 0,
+                    "total": round(total, 2),
+                    "scoreTrendRest":0,
+                    "temp_price": 0,
+                    "note": note,
+                }])
+        # Append to CSV file
+                new_data.to_csv(pe_file, mode="a", header=False, index=False)
+                
                 #st.session_state.setpr = float(setpr_input)
-                st.session_state.setpr = current_price
                 #st.session_state.settype = settype_input
-                st.session_state.setnote = setnote_input
-                setnote_input = "zz"
+                st.session_state.setnote = "zz"
                 st.session_state.confirmation_message = f"Success!"
             except ValueError:
     # Handle invalid input (non-numeric values)
