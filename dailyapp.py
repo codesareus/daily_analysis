@@ -879,7 +879,7 @@ def main():
         
     if ema_score >= 0 and rsi_score >= 0 and macd_score >= 0 and ema_trend >= 0:
         score_trend = 1
-    elif ema_score <0 and rsi_score < 0  and macd_score < 0 and ema_trend < -1 :
+    elif ema_score <0 and rsi_score < 0  and macd_score < 0 and ema_trend < 0:
         score_trend = -1
     else:
         score_trend = 0
