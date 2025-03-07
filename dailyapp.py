@@ -351,34 +351,33 @@ def main():
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
-    # Initialize session state for index
+    # Initialize session states
     if 'index' not in st.session_state:
         st.session_state.index = 0
+        
     if 'rerun_count' not in st.session_state:
         st.session_state.rerun_count = 0
         
-    # Initialize rerun state
     if "stop_sleep" not in st.session_state:
         st.session_state.stop_sleep = 0
 
-    # Initialize temp_price state
     if "temp_price" not in st.session_state:
         st.session_state.temp_price = 0
 
-    # Initialize sb_status state
     if "sb_status" not in st.session_state:
         st.session_state.sb_status = 0
 
     if "sleepGap" not in st.session_state:
         st.session_state.sleepGap = 5
 
-    # Initialize the session state variable if it doesn't exist
     if "setpr" not in st.session_state:
         st.session_state.setpr = 0
-  #  if "settype" not in st.session_state:
-   #     st.session_state.settype = "zz"
+ 
     if "setnote" not in st.session_state:
         st.session_state.setnote = "zz"
+
+    if "poly_degree" not in st.session_state:
+        st.session_state.poly_degree = 3
     
     scoreT_file = f"scoreT.csv"
     pe_file = f"pe.csv"
@@ -483,8 +482,7 @@ def main():
         st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **......** {current_time}")
 
     ##############################
-    if "poly_degree" not in st.session_state:
-        st.session_state.poly_degree = 3
+    
     degree = st.session_state.poly_degree
     
     col1, col2,col3,col4 = st.columns(4)
