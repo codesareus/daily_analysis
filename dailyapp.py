@@ -615,9 +615,9 @@ def main():
         ema_score = 0
 
         if (ema100>= ema200):
-            ema_trend = 1
+            ema_score = 1
         else:
-            ema_trend = -1
+            ema_score = -1
             
         rsi_score = 0
         
@@ -664,7 +664,7 @@ def main():
         
         std_score = - deviation_in_std
 
-        score = ema_score + rsi_score + macd_score 
+        score = ema_trend + ema_score + rsi_score + macd_score 
 
         return pd.Series([ema_trend, ema_score, rsi_score, macd_score, score], 
                          index=["ema_trend", "ema_score", "rsi_score", "macd_score", "score"])
