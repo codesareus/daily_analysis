@@ -1514,7 +1514,7 @@ def main():
     ax0.set_title(f"Trend Scores by Interval({time})__pr.degree: {degree}")
     
     #########################################
-
+    fig.set_facecolor('lightgray')  # Use any valid color name or hex code
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
     st.pyplot(fig)  ## finally plot all 5 figures
 
