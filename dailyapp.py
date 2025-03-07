@@ -1043,8 +1043,8 @@ def main():
                     "S_pr": 0,
                     "pl": round(pl, 2),
                     "total": round(total, 2),
-                    "scoreTrendRest":sum_score_trend_rest,
                     "temp_price": 0,
+                    "scoreTrendRest":sum_score_trend_rest,
                     "note": note,
                 }])
         # Append to CSV file
