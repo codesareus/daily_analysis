@@ -285,7 +285,7 @@ def regression_analysis(data_recent, interval):
     # Show plot in Streamlit
     st.pyplot(plt)
 
-def plot_bars():
+def plot_bars(price=0):
     # Assuming 'eastern' timezone is defined elsewhere
     eastern = 'US/Eastern'  # Example timezone, replace with actual timezone if needed
 
@@ -336,7 +336,7 @@ def plot_bars():
     #current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
     plt.xlabel("Time Frame")
     plt.ylabel("Score")
-    plt.title(f"Trend Scores by Interval ()")
+    plt.title(f"Trend Scores by Interval (pr now: {price})")
     
     # Format x-axis
     plt.xticks(x, unique_intervals, rotation=45)
@@ -985,7 +985,7 @@ def main():
     #################### bar chart?
    ## read bar data scoreT_fil
 
-    plot_bars()
+    plot_bars(current_price)
 
     ################### all control buttons ###########################################################
     ## very important use
