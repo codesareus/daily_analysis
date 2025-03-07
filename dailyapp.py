@@ -315,19 +315,7 @@ def plot_bars(price=0):
     offsets = [-2 * width, -width, 0, width, 2 * width]
     
     # Plot bars
-    plt.figure(figsize=(12, 4),facecolor='#a9a9a9')
-
-    
-
-# Create a figure and an axes
-    fig, ax = plt.subplots()
-
-# Plot some data
-
-
-# Set the background color of the figure
-
-
+    plt.figure(figsize=(12, 4),facecolor='lightgray')
     
     plt.bar(x + offsets[0], ema_trend, width, color="cyan", edgecolor="black", label="ema_trend")
     plt.bar(x + offsets[1], ema_values, width, color="purple", edgecolor="black", label="EMA")
@@ -359,10 +347,9 @@ def plot_bars(price=0):
     plt.tight_layout()
     
     # Show plot
-    fig.set_facecolor('lightgray')  # Use any valid color name or hex code
+    plt.figure.set_facecolor('lightgray')  # Use any valid color name or hex code
 
 # Display the plot
-    plt.show()
 
     st.pyplot(plt)
     plt.close()  # Prevent memory leaks
