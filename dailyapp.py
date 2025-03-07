@@ -350,7 +350,7 @@ if st.session_state.get("show_confirmation", False):
         st.session_state.show_confirmation = False
 
 def clear_text():
-    st.session_state["text_input"] = "zz"
+    st.session_state["text_area"] = "zz"
         
 # Streamlit app
 def main():
@@ -1086,7 +1086,7 @@ def main():
 
     st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
 
-    setnote_input = st.text_input("Enter note): ", value=str(st.session_state.setnote))
+    setnote_input = st.text_area("Enter note): ", value=str(st.session_state.setnote))
     st.session_state.setpr = current_price
     
     SB = updated_data["type"].iloc[-1]
