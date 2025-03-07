@@ -1120,6 +1120,7 @@ def main():
                 new_data.to_csv(pe_file, mode="a", header=False, index=False)
                 st.session_state.setnote = "zz"
                 st.session_state.confirmation_message = f"Success!"
+                setnote_input ="zz"
             else:
                 st.write("no note")
             st.rerun()
