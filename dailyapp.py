@@ -826,7 +826,7 @@ def main():
     ax2.axhline(y=70, color="red", linestyle="--")
     ax2.axhline(y=30, color="green", linestyle="--")
     ax2.axhline(y=50, color="gray", linestyle="--")
-    ax2.set_title(f"RSI ({interval})")
+    ax2.set_title(f"RSI ({interval})..PR degree: {degree}")
     ax2.legend()
 
     # === MACD Plot (Only If Timeframe Is Valid) ===
@@ -844,7 +844,10 @@ def main():
 
         ax3.set_title(f"MACD ({interval})")
         ax3.legend()
-        
+
+    fig.set_facecolor('lightgray')  # Use any valid color name or hex code
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
+    st.pyplot(fig)  ## finally plot all 3 figures
 ######################################  score
 
     #
@@ -1461,9 +1464,7 @@ def main():
 
     #########################################
     
-    fig.set_facecolor('lightgray')  # Use any valid color name or hex code
-    plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
-    st.pyplot(fig)  ## finally plot all 5 figures
+    
 
 ########################################
     if st.session_state.stop_sleep == 0:
