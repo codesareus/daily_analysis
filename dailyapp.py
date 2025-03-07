@@ -317,11 +317,11 @@ def plot_bars(price=0):
     # Plot bars
     plt.figure(figsize=(12, 4),facecolor='lightgray')
     
-    plt.bar(x + offsets[0], ema_trend, width, color="cyan", edgecolor="black", label="ema_trend")
-    plt.bar(x + offsets[1], ema_values, width, color="purple", edgecolor="black", label="EMA")
-    plt.bar(x + offsets[2], rsi_values, width, color="navy", edgecolor="black", label="RSI")
+    plt.bar(x + offsets[0], ema_trend, width, color="cyan", edgecolor="black")
+    plt.bar(x + offsets[1], ema_values, width, color="purple", edgecolor="black")
+    plt.bar(x + offsets[2], rsi_values, width, color="navy", edgecolor="black")
     plt.bar(x + offsets[3], macd_values, width, color="orange", edgecolor="black", label="MACD")
-    plt.bar(x + offsets[4], total_values, width, color="gray", edgecolor="black", label="total")
+    plt.bar(x + offsets[4], total_values, width, color="gray", edgecolor="black")
     
     # Add value labels
     for i, interval in enumerate(unique_intervals):
