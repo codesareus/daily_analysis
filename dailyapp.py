@@ -389,13 +389,13 @@ def main():
 
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
-        data = fetch_stock_data1mo(ticker, interval="1h")
+        data = fetch_stock_data1mo("SPY", interval="1h")
     elif interval == "3mo":
-        data = fetch_3mo(ticker)
+        data = fetch_3mo("SPY")
     elif interval == "6mo":
-        data = fetch_6mo(ticker)
+        data = fetch_6mo("SPY")
     else:
-        data = fetch_stock_data(ticker, interval=interval)
+        data = fetch_stock_data("SPY", interval=interval)
 
     if data.empty:
         st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
