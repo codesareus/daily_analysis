@@ -1132,9 +1132,9 @@ def main():
                 
             else:
                 st.write("no note")
-            st.rerun()
-            st.button("ClearInput", on_click=clear_text)
             
+            st.button("ClearInput", on_click=clear_text)
+            st.rerun()
 # Display the current value of setpr from the session state
     with col2:
         st.write(f"setpr: {st.session_state.setpr}__temp_price: {st.session_state.temp_price}__setnote: {st.session_state.setnote}")
@@ -1206,19 +1206,13 @@ def main():
     #st.write(f"Pre_Post_status: {st.session_state.prepo}")
     if st.button("Clear data"):
         #st.session_state.stop_sleep = 1
-        new_data = pd.DataFrame([{
-                    "TimeStamp": f"{now}",
-                    "type": "AAA",
-                    "B_pr": 0,
-                    "S_pr": 0,
-                    "pl": 0,
-                    "total": 0, 
-                    "temp_pr": 0,
-                    "scoreTrendRest": 0,
-                    "note": "1min & 5min ema9 must cross poly-reg"
-                }])
-                # clear CSV file
-        new_data.to_csv(pe_file, mode="w", header=False, index=False)
+        data = pd.read_csv(pe_file)
+
+# Remove the last row
+        new_data = data.iloc[:-1]
+
+# Save the modified data back to the file
+        new_data.to_csv(pe_file, mode="w", header=True, index=False)
         st.write("data cleared")
         st.rerun()
             
