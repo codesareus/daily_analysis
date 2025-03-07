@@ -1200,6 +1200,8 @@ def main():
                 #st.session_state.settype = settype_input
                 st.session_state.setnote = "zz"
                 st.session_state.confirmation_message = f"Success!"
+            else:
+                st.write("no note")
             st.rerun()
 # Display the current value of setpr from the session state
     with col2:
