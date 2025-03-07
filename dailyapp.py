@@ -157,7 +157,6 @@ def fetch_previous_close(ticker):
 
     return previous_close
 
-
 # Function to fetch the day before yesterday's close price
 def fetch_d2_close(ticker):
     close_prices = fetch_daily5(ticker)
@@ -210,8 +209,7 @@ def calculate_emas(data):
     data['EMA_100'] = data['Close'].ewm(span=100, adjust=False).mean()
     data['EMA_200'] = data['Close'].ewm(span=200, adjust=False).mean()
     return data
-
-
+    
 # Function to perform regression analysis and plot
 def regression_analysis(data_recent, interval):
 
@@ -220,9 +218,6 @@ def regression_analysis(data_recent, interval):
     data_recent.index = pd.to_datetime(data_recent.index)
     # Instead of using time in seconds, use a simple range index
     data_recent["TimeIndex"] = np.arange(len(data_recent))
-    
-    # Create TimeIndex as seconds from the first timestamp
-    #data_recent["TimeIndex"] = (data_recent.index - data_recent.index.min()).total_seconds()
 
     # Create Timestamp column from index
     data_recent["Timestamp"] = data_recent.index  # Use index instead of non-existing 'Timestamp' column
@@ -333,7 +328,6 @@ def plot_bars(price=0):
     plt.axhline(y=-4, color="green", linestyle="--", linewidth=1)
     plt.axhline(y=0, color="gray", linestyle="-", linewidth=1)
     
-    # Set labels and title
     #current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
     plt.xlabel("Time Frame")
     plt.ylabel("Score")
@@ -347,7 +341,6 @@ def plot_bars(price=0):
     plt.tight_layout()
 
 # Display the plot
-
     st.pyplot(plt)
     plt.close()  # Prevent memory leaks
         
@@ -355,8 +348,6 @@ def plot_bars(price=0):
 def main():
     st.title("Score Regression Analysis")
 
-    #######################
-        
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
@@ -388,12 +379,6 @@ def main():
    #     st.session_state.settype = "zz"
     if "setnote" not in st.session_state:
         st.session_state.setnote = "zz"
-
-    # Initialize sbOK state
-    #if "sbOK" not in st.session_state:
-        #st.session_state.sbOK 
-
-    # Define file names
     
     scoreT_file = f"scoreT.csv"
     pe_file = f"pe.csv"
@@ -434,9 +419,6 @@ def main():
     with col7:
         if st.button("6mo", key="6mo"):
             interval = "6mo"
-            
-    
-############################
 
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
@@ -451,7 +433,6 @@ def main():
     if data.empty:
         st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
         return
-    #############
 
 # Add a slider for backtracking
     backtrack_options = [0, 2, 5, 7, 10, 20, 30, 45, 60, 90, 100, 200]
@@ -474,10 +455,7 @@ def main():
 
     # Calculate EMAs
     data_recent = calculate_emas(data_recent)
-
-
-    #######################
-
+    
     # Get the current price (last available price in the data)
     current_price = data_recent['Close'].iloc[-1]
 
@@ -533,27 +511,18 @@ def main():
 
     st.write(f"selected PR degree: {degree}")
     
-    ############$$##################
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
     # Perform polynomial regression with the selected degree
     X, y, y_pred_poly, r2_poly, _ = perform_regression(data_recent, degree=degree)
 
-    # Calculate residuals and standard deviation for the polynomial model
-    #residuals = y - y_pred_poly
-    #dev_from_std = np.std(residuals)
-
-############ add std_dev and diviation from std_dev
-    
     # Calculate residuals for each row
     data_recent["residuals"] = y - y_pred_poly
     # Option 1: Rolling standard deviation (e.g., over 50 time points)
     data_recent["std_dev"] = data_recent["residuals"].rolling(window=30).std()## first 50 time points no data
 
     std_dev = data_recent["std_dev"].iloc[-1]
-
-####################
 
     # Determine the trend message
     if current_price > data_recent['EMA_9'].iloc[-1] and data_recent['EMA_9'].iloc[-1] > data_recent['EMA_20'].iloc[-1]:
@@ -599,10 +568,6 @@ def main():
     current_price_deviation = current_price - y_pred_poly[-1]  # Deviation from the polynomial model
     deviation_in_std = current_price_deviation / std_dev  # Deviation in terms of standard deviations
 
-################## add price deviation score to df
-
-###################
-
     # Add a message above the plot showing the price deviation
     if deviation_in_std >= 1:
         deviation_message = f"{ticker}_Deviation from PR: +{deviation_in_std:.2f} std_dev"
@@ -623,8 +588,6 @@ def main():
     # Calculate RSI before plotting
     data_recent = calculate_rsi(data_recent)
     data_recent = calculate_macd(data_recent)
-
-#####################
 
     ## add p.r. model y value
     data_recent['y_pred_poly'] = y_pred_poly
@@ -713,17 +676,12 @@ def main():
     # Apply function to DataFrame
     data_recent[["ema_trend", "ema_score", "rsi_score", "macd_score", "score"]] = data_recent.apply(calculate_scores, axis=1)
 
-######################
-    # Plot both linear and polynomial regression results on the same graph
     # Define a list of timeframes that support MACD
     valid_macd_timeframes = ["1m","5m","15m","30m","1h", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "max"]
 
-    # Only plot MACD if the selected timeframe is valid
     #if interval in valid_macd_timeframes:
     fig, (ax2, ax3, ax) = plt.subplots(3, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [ 1, 1, 4 ]})
-    #else:
-        #fig, (ax, ax2) = plt.subplots(2, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [3, 1]})
-
+   
     # Use numeric x-axis for plotting to avoid duplicate time issues
     x_values = np.arange(len(data_recent))  # Numeric x-axis
 
@@ -737,9 +695,6 @@ def main():
     ax.fill_between(x_values, y_pred_poly - 2*std_dev, y_pred_poly + 2*std_dev, color="green", alpha=0.2, label="")
     ax.fill_between(x_values, y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="red", alpha=0.1, label="")
 
-################# Fit linear regression model
-    
-# Calculate the maximum distance between the regression line and actual prices
     #channel_length = 100
     dist = np.max(np.abs(y_pred_linear - y))
     
@@ -750,8 +705,8 @@ def main():
 # Plot actual prices and regression lines
     ax.plot(x_values, upper_lr, color="blue", linestyle="--", label="Upper Channel")
     ax.plot(x_values, lower_lr, color="blue", linestyle="--", label="Lower Channel")
-############### Draw horizontal lines from the lowest and highest points
-    
+
+    ############### Draw horizontal lines from the lowest and highest points    
     min_price = np.min(y)
     max_price = np.max(y)
     ax.axhline(y=min_price, color="green", linestyle="--", label="")
@@ -850,11 +805,7 @@ def main():
     fig.set_facecolor('lightgray')  # Use any valid color name or hex code
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
     st.pyplot(fig)  ## finally plot all 3 figures
-######################################  score
-
-    #
-    # Plot actual scores and regression lines
-    
+   
     st.write("---------------------")
     st.write(data_recent.tail(5))
 
@@ -894,11 +845,6 @@ def main():
     ema_score, ema_trend, rsi_score, macd_score, score, dev_from_std = get_scores()
     price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal, y_pred_poly, y_pred_poly1 = get_scores_more()
 
-    ##################### e_trend scoreT.csv for bar charts
-
-    # Load existing data if there is, examine if {interval} is already there.
-    #if it is, then remove it and replace with new data
-    
     # File path
     file_path = 'scoreT.csv'
 
@@ -926,10 +872,7 @@ def main():
         df.to_csv(file_path, index=False, header=False)
         st.success(f"✅ File created successfully as `{file_path}`")
 
-    ################### evaluate score trend and save it to scoreT.csv
-
     #ema_score, ema_trend, rsi_score, macd_score, score
-
     y_pred_p_trend = 0
     if y_pred_poly >= y_pred_poly1:
         y_pred_p_trend = 1
@@ -945,14 +888,6 @@ def main():
     else:
         score_trend = 0
         
-    #if (score > score_prior) and score >= 1 and data_recent['ema_trend'].iloc[-1] >= 1:
-        #score_trend = 1
-    #elif (score < score_prior) and score <= -1 and data_recent['ema_trend'].iloc[-1] <= -1:
-        #score_trend = -1
-    #else:
-        #score_trend = 0
-
-    #score4 = (ema_score>0) + (rsi_score>0) + (macd_score>0) + (score>0) + (ema_score<0) + (rsi_score<0) + (macd_score<0) + (score<0)
     # total == score (above) 
     new_data = pd.DataFrame([{
         "tFrame": f"{interval}",
@@ -986,14 +921,9 @@ def main():
     #display table
     st.dataframe(df, hide_index=True) #original table looks neater
 
-################,#,######## bar
-    #################### bar chart?
-   ## read bar data scoreT_fil
-
     plot_bars(current_price)
 
     ################### all control buttons ###########################################################
-    ## very important use
     current_price = round(data_recent['Close'].iloc[-1], 2)
     now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  # Correct format
   #  ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
@@ -1002,7 +932,6 @@ def main():
     pr5=df[df["tFrame"] == "5m"]["y_pred_p_trend"].values[0]
     dev1=df[df["tFrame"] == "1m"]["dev_from_std"].values[0]
     dev5=df[df["tFrame"] == "5m"]["dev_from_std"].values[0]
-    ############ investigate score_trends
     
     st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
     # Extract "score_trend" for "1m"  ## 
@@ -1045,8 +974,6 @@ def main():
     #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
     updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "scoreTrendRest","note"])
-
-###########################
 
     b_condition =  sum_score_trend_rest >= 4 and pr1 ==1 and pr5==1 and dev1<=-1 and dev5<=-1
     short_b = b_condition or ((current_price - st.session_state.temp_price) <= -1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) >= 0.5 and st.session_state.temp_price != 0)              
@@ -1118,10 +1045,7 @@ def main():
                 }])
         # Append to CSV file
         new_data.to_csv(pe_file, mode="a", header=False, index=False)
-            
-    #####################################
-    #st.write(f"### Controls:  ||______ current_price = {current_price:.2f}______")
-        
+                    
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         # delete data button
@@ -1164,8 +1088,6 @@ def main():
     SB = updated_data["type"].iloc[-1]
     plnow = 0
     
-###$$$$$$$$$$-
-    
     if st.session_state.temp_price !=0:
         if SB=="B":
             plnow=  round(st.session_state.setpr - st.session_state.temp_price,2)
@@ -1200,9 +1122,6 @@ def main():
                 }])
         # Append to CSV file
                 new_data.to_csv(pe_file, mode="a", header=False, index=False)
-                
-                #st.session_state.setpr = float(setpr_input)
-                #st.session_state.settype = settype_input
                 st.session_state.setnote = "zz"
                 st.session_state.confirmation_message = f"Success!"
             else:
@@ -1264,22 +1183,14 @@ def main():
     timeframes = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
     message_here = timeframes[:st.session_state.rerun_count]
 
-    #display pe_table
-    # Read the updated CSV file ---- example
+     # Read the updated CSV file ---- example
     updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "scoreTrendRest","note"])
+   
     ###plnow = 0
-   # if updated_data["type"].iloc[-1]=="B":
-        #plnow = current_price - updated_data["temp_pr"].iloc[-1]
-    #elif updated_data["type"].iloc[-1]=="SS":
-        #plnow = - current_price + updated_data["temp_pr"].iloc[-1]
     st.markdown(f'<p style="color:orange; font-weight:bold;">pe_table: ___now interval__{interval}___now pl:__{plnow:.2f}</s></p>', unsafe_allow_html=True)
-    #st.write(f"pe_table: _______now interval: {interval}")
-    #with col1:
     st.dataframe(updated_data.tail(5), hide_index=False)
     st.write(f"{len(updated_data["total"])} rows")
-    #with col2:
-
-       # st.write(":::::::::::::::::::::::::::::::::::::::::::::::::::")
+    
     st.write(f"now: _<{now}>_{get_time_now()}")
     message1 = 1 if {b_condition} == True else 0
     message2 = 1 if {s_condition} == True else 0
@@ -1304,17 +1215,7 @@ def main():
         st.rerun()
             
     st.write("---------------------")
-################### do bar graph using scoreT_file
-    
-    # Load data from the CSV file
-    #try:
-       # df = pd.read_csv(scoreT_file, names=["tFrame", "ema_trend", "ema", "rsi", "macd", "total", "score_trend"])
-    #except Exception as e:
-        #st.error(f"Error loading file: {e}")
-       # return
 
-############################# status 3
-   
     # Get the latest EMA values and current price
     ema_values = {
         "Current Price": data_recent['Close'].iloc[-1],
@@ -1458,15 +1359,6 @@ def main():
         # Display the table
         st.markdown(f"### <span style='color:{color3};'>price: {message}</span>", unsafe_allow_html=True)
         st.dataframe(close_df, hide_index=True)
-
-    ##############
-    
-
-    #################### bar chart?
-
-    #########################################
-    
-    
 
 ########################################
     if st.session_state.stop_sleep == 0:
