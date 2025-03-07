@@ -350,7 +350,7 @@ if st.session_state.get("show_confirmation", False):
         st.session_state.show_confirmation = False
 
 def clear_text():
-    st.session_state["text_area"] = "zz"
+    st.session_state["text_input"] = "zz"
         
 # Streamlit app
 def main():
@@ -1086,7 +1086,7 @@ def main():
 
     st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
 
-    setnote_input = st.text_area("Enter note): ", value=str(st.session_state.setnote))
+    setnote_input = st.text_input("Enter note): ", value=str(st.session_state.setnote))
     st.session_state.setpr = current_price
     
     SB = updated_data["type"].iloc[-1]
@@ -1129,11 +1129,9 @@ def main():
                 st.session_state.setnote = "zz"
                 st.session_state.confirmation_message = f"Success!"
                 setnote_input ="zz"
-                
+                clear_text()
             else:
                 st.write("no note")
-            
-            st.button("ClearInput", on_click=clear_text)
             st.rerun()
 # Display the current value of setpr from the session state
     with col2:
