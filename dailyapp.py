@@ -454,8 +454,18 @@ def main():
         st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **......** {current_time}")
 
     ##############################
+    degree_options = [2, 15]
+        degree = st.slider(
+            "Select number of points to plot:",
+            min_value=min(degree_options),
+            max_value=max(degree_options),
+            value=5,  # Default value 5 min for 16 h  per day
+            step=1,  # Step size
+            key="degree_slider"
+        )
     
-    degree = st.session_state.poly_degree
+    
+    #degree = st.session_state.poly_degree
     
     col1, col2,col3,col4 = st.columns(4)
     
