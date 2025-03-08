@@ -360,36 +360,6 @@ def main():
     interval = intervals[st.session_state.index]
 
     # Add a button group for interval selection
-    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
-    with col1:
-        if st.button("1min"):
-            interval = "1m"
-            
-    with col2:
-        if st.button("5min", key="5m"):
-            interval = "5m"
-            
-    with col3:
-        if st.button("15min", key="15m"):
-            interval = "15m"
-
-    with col4:
-        if st.button("30min", key="30m"):
-            interval = "30m"
-            
-    with col5:
-        if st.button("1hr", key="1h"):
-            interval = "1h"
-            st.session_state.stop_sleep == 1
-            
-    with col6:
-        if st.button("3mo", key="3mo"):
-            interval = "3mo"
-            
-    with col7:
-        if st.button("6mo", key="6mo"):
-            interval = "6mo"
-
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
         data = fetch_stock_data1mo(ticker, interval="1h")
@@ -404,19 +374,6 @@ def main():
         st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
         return
 
-# Add a slider for backtracking
-    #backtrack_options = [0, 2, 5, 7, 10, 20, 30, 45, 60, 90, 100, 200]
-    #selected_backtrack = st.slider(
-       # "Select number of points to backtrack:",
-       # min_value=min(backtrack_options),
-       # max_value=max(backtrack_options),
-      #  value=0,  # Default value
-        #step=1,  # Step size
-        #key="backtrack_slider"
-   # )
-
-    # Adjust the data based on the selected backtrack
-    #data_recent = data.tail(300 + selected_backtrack)  # Get the most recent 300 + selected_backtrack data points
     #data_recent = data.tail(100 + selected_backtrack)  # Get the most recent 300 + selected_backtrack data points
     data_recent = data.tail(300)  # Use only the first 300 points after backtracking
     #data_recent = data_recent.head(100)  # Use only the first 300 points after backtracking
@@ -455,30 +412,6 @@ def main():
     ##############################
     
     degree = st.session_state.poly_degree
-    
-    col1, col2,col3,col4 = st.columns(4)
-    
-    with col1:
-        if st.button("degree 6"):
-            st.session_state.poly_degree = 6
-            st.rerun()
-
-    with col2:
-        if st.button("degree 7"):
-            st.session_state.poly_degree = 7
-            st.rerun()
-
-    with col3:
-        if st.button("degree 8"):
-            st.session_state.poly_degree = 8
-            st.rerun()
-
-    with col4:
-        if st.button("degree 9"):
-            st.session_state.poly_degree = 9
-            st.rerun()
-
-    st.write(f"selected PR degree: {degree}")
     
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
