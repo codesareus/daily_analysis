@@ -721,6 +721,32 @@ def main():
 
     ax.plot(x_values, emaavg, color="green", linewidth=6, label="EMA Average")
 
+    ######GMMA
+    # Define short-term and long-term EMA periods
+    short_emas = [3, 5, 8, 10, 12, 15]
+    long_emas = [30, 35, 40, 45, 50, 60]
+
+# Compute short-term EMAs
+    for period in short_emas:
+        data_recent[f"EMA_{period}"] = data_recent["Close"].ewm(span=period, adjust=False).mean()
+
+# Compute long-term EMAs
+    for period in long_emas:
+        data_recent[f"EMA_{period}"] = data_recent["Close"].ewm(span=period, adjust=False).mean()
+
+# Plot GMMA
+
+
+# Plot short-term EMAs (thin lines)
+    for period in short_emas:
+        ax.plot(x_values, data_recent[f"EMA_{period}"], color="red", linewidth=1, alpha=0.8, label=f"EMA {period}" if period == 3 else "")
+
+# Plot long-term EMAs (thicker lines)
+    for period in long_emas:
+        ax.plot(x_values, data_recent[f"EMA_{period}"], color="blue", linewidth=2, alpha=0.8, label=f"EMA {period}" if period == 30 else "")
+
+# Add labels
+
 #ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
     ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
     ax.plot(x_values, y_pred_poly, color="purple", linewidth=3, label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
