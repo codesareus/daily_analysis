@@ -536,7 +536,7 @@ def main():
 
     # Calculate the deviation of the current price from the polynomial regression model
     current_price_deviation = current_price - y_pred_poly[-1]  # Deviation from the polynomial model
-    deviation_in_std = current_price_deviation / std_dev  # Deviation in terms of standard deviations
+    deviation_in_std = round(current_price_deviation / std_dev ,0) # Deviation in terms of standard deviations
 
     # Add a message above the plot showing the price deviation
     if deviation_in_std >= 1:
