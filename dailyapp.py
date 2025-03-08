@@ -917,7 +917,7 @@ def main():
         delta = current_price - y_pred_poly
         dev_from_std = round(delta/std_dev,0)
 
-        return ema_score, emaAvg, rsi_score, macd_score, score, dev_from_std
+        return ema_trend, emaAvg, rsi_score, macd_score, score, dev_from_std
 
     def get_scores_more():
         price = data_recent['Close'].iloc[-1]
