@@ -682,10 +682,12 @@ def main():
 # Upper and lower channel lines
     upper_lr = y_pred_linear + dist
     lower_lr = y_pred_linear - dist
+    mid =(upper_lr +lower_lr)/2
 
 # Plot actual prices and regression lines
     ax.plot(x_values, upper_lr, color="blue", linestyle="--", linewidth=4,label="Upper Channel")
     ax.plot(x_values, lower_lr, color="blue", linestyle="--", linewidth=4,label="Lower Channel")
+    ax.plot(x_values, mid, color="red", linestyle="--", linewidth=4,label="mid line")
 
     ############### Draw horizontal lines from the lowest and highest points    
     min_price = np.min(y)
