@@ -921,11 +921,7 @@ def main():
         "Signal_Line": data_recent['Signal_Line'].iloc[-1],
     }
 
-    close_values = {
-        "price": round(data_recent['Close'].iloc[-1],2),
-        "prev_close": previous_close,
-        "d2_close": d2_close,
-    }
+    
 ############################## display ema, rsi, macd trends columns
 
     st.write(f"### Indicator trend ({interval})")
@@ -1015,33 +1011,6 @@ def main():
         # Display the table
         st.markdown(f"### <span style='color:{color3};'>MACD: {message}</span>", unsafe_allow_html=True)
         st.dataframe(macd_df, hide_index=True)
-
-    #########price vs close
-
-        close_df = pd.DataFrame(list(close_values.items()), columns=["price", "Value"])
-        close_df = close_df.sort_values(by="Value", ascending=False)
-
-        # Reset index and drop the numbers column
-        close_df = close_df.reset_index(drop=True)
-
-        ## message
-        message = " "
-        color3 = " "
-        if price > previous_close and price > d2_close :
-            message = "Up "
-            color3 = "green"
-            
-        elif price < previous_close and price < d2_close :
-            message = "Down"
-            color3 = "red"
-            
-        else:
-            message = "Neutral "
-            color3 = "gray"
-            
-        # Display the table
-        st.markdown(f"### <span style='color:{color3};'>price: {message}</span>", unsafe_allow_html=True)
-        st.dataframe(close_df, hide_index=True)
 
 ########################################
     if st.session_state.stop_sleep == 0:
