@@ -1020,10 +1020,8 @@ def main():
     now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  # Correct format
   #  ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
  #   ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
-    pr1=df[df["tFrame"] == "1m"]["y_pred_p_trend"].values[0]
-    pr5=df[df["tFrame"] == "5m"]["y_pred_p_trend"].values[0]
-    dev1=df[df["tFrame"] == "1m"]["dev_from_std"].values[0]
-    dev5=df[df["tFrame"] == "5m"]["dev_from_std"].values[0]
+    pr1=df[df["tFrame"] == "1m"]["ema100/200"].values[0]
+    pr5=df[df["tFrame"] == "5m"]["ema100/200"].values[0]
     
     st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
     # Extract "score_trend" for "1m"  ## 
@@ -1037,7 +1035,7 @@ def main():
     else:
         message = "Hold it"
         color = "orange"
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">polynomial 1min: {message}</s></p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">e100/200 1min: {message}</s></p>', unsafe_allow_html=True)
     if pr5 ==1:
         message = "___B OK 1"
         color = "green"
@@ -1047,7 +1045,7 @@ def main():
     else:
         message = "Hold it"
         color = "orange"
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">polynomial 5min: {message}</s></p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">e100/200 5min: {message}</s></p>', unsafe_allow_html=True)
 
     sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "6mo"])]["score_trend"].sum()
     
@@ -1065,83 +1063,11 @@ def main():
 
     #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
-    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "scoreTrendRest","note"])
-
-    b_condition =  sum_score_trend_rest >= 4 and pr1 ==1 and pr5==1 and dev1<=-1 and dev5<=-1
-    short_b = b_condition or ((current_price - st.session_state.temp_price) <= -1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) >= 0.5 and st.session_state.temp_price != 0)              
-    short_s =  sum_score_trend_rest <= -4 and pr1==-1 and pr5==-1 and dev1>=1 and dev5>=1
-    s_condition = short_s or ((current_price - st.session_state.temp_price) >=1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) <= -0.5 and st.session_state.temp_price != 0)
-
-    ########## B and S actions
-    def save_pe(type="AAA", price=None, total =0, note="zz"): 
-        updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "scoreTrendRest", "note"])
-        pl=0
-        if type == "S":
-            pl = price - updated_data["temp_pr"].iloc[-1]
-        elif type == "SB":
-            pl = updated_data["temp_pr"].iloc[-1] - price
-        else:
-            pl = 0
-        total = total + pl
-        
-        if type == "B":
-            new_data = pd.DataFrame([{
-                    "TimeStamp": f"{now}",
-                    "type": "B",
-                    "B_pr": round(price, 2),
-                    "S_pr": 0,
-                    "pl": pl,
-                    "total": round(total, 2),
-                    "temp_price": round(price, 2),
-                    "scoreTrendRest":sum_score_trend_rest,
-                    "note": note,
-                }])
-
-        elif type == "S":
-            new_data = pd.DataFrame([{
-                    "TimeStamp": f"{now}",
-                    "type": "S",
-                    "B_pr": 0,
-                    "S_pr": round(price, 2),
-                    "pl": round(pl, 2),
-                    "total": round(total, 2),
-                    "temp_price": 0,
-                    "scoreTrendRest":sum_score_trend_rest,
-                    "note": note,
-                }])
-
-        elif type == "SS":
-            new_data = pd.DataFrame([{
-                    "TimeStamp": f"{now}",
-                    "type": "SS",
-                    "B_pr": 0,
-                    "S_pr": round(price, 2),
-                    "pl": 0,
-                    "total": total, ## for now
-                    "temp_price": round(price, 2),
-                    "scoreTrendRest":sum_score_trend_rest,
-                    "note": note,
-                }])
-
-        elif type == "SB": 
-            new_data = pd.DataFrame([{
-                    "TimeStamp": f"{now}",
-                    "type": "SB",
-                    "B_pr": round(price, 2),
-                    "S_pr": 0,
-                    "pl": round(pl, 2),
-                    "total": round(total, 2),
-                    "temp_price": 0,
-                    "scoreTrendRest":sum_score_trend_rest,
-                    "note": note,
-                }])
-        # Append to CSV file
-        new_data.to_csv(pe_file, mode="a", header=False, index=False)
-                    
+    
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         # delete data button
-        if st.button("Ready SB: 1min"):
+        if st.button(" 1min"):
             #st.session_state.rerun_count = 0
             st.session_state.index = 0
            # st.session_state.stop_sleep = 0
@@ -1151,7 +1077,7 @@ def main():
 
     with col2:
         # delete data button
-        if st.button("keep 1m 5m"):
+        if st.button(" 1m 5m"):
             #st.session_state.rerun_count = 0
             
             st.session_state.index = 0
