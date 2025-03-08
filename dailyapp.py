@@ -722,6 +722,7 @@ def main():
     moving_avg_type = "EMA"  # Can be "SMA", "EMA", or "WMA"
     window = 20  # Lookback period for moving average & standard deviation
     std_dev_factor = 2  # Multiplier for standard deviation
+    std_dev_factor3 = 3
 
 # Function to calculate different types of moving averages
     def moving_average(series, window, method="SMA"):
@@ -744,6 +745,8 @@ def main():
 # Upper and Lower Bands
     data_recent["Upper_Band"] = data_recent["Middle_Band"] + (std_dev_factor * data_recent["Std_Dev"])
     data_recent["Lower_Band"] = data_recent["Middle_Band"] - (std_dev_factor * data_recent["Std_Dev"])
+    data_recent["Upper_Band3"] = data_recent["Middle_Band"] + (std_dev_factor3 * data_recent["Std_Dev"])
+    data_recent["Lower_Band3"] = data_recent["Middle_Band"] - (std_dev_factor3 * data_recent["Std_Dev"])
 
 # Plot Standard Deviation 
 
@@ -753,6 +756,7 @@ def main():
     ax.plot(x_values, data_recent["Lower_Band"], color="green", linewidth=2, linestyle="dashed", label="Lower Band")
 
 # Fill the area between the bands
+    ax.fill_between(x_values, data_recent["Lower_Band3"], data_recent["Upper_Band3"], color="blue", alpha=0.2)
     ax.fill_between(x_values, data_recent["Lower_Band"], data_recent["Upper_Band"], color="gray", alpha=0.2)
 
 #alligator
@@ -1163,6 +1167,7 @@ def main():
     with col4:
         if st.button("stop slp"):
             st.session_state.stop_sleep =1
+            st.session_state.index = 1
             st.rerun()
 
     st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
