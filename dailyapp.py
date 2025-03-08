@@ -712,18 +712,15 @@ def main():
 
     # draw ema vaerage 
     
-    emaavg = data_recent["EMA_9"].copy()
-    for i in range(1, len(x_values)):
-        emaavg[i] = (data_recent["EMA_9"][i] + data_recent["EMA_20"][i] + data_recent["EMA_50"][i]+data_recent["EMA_100"][i])/4
-        
+    emaavg = data_recent[["EMA_9", "EMA_20", "EMA_50", "EMA_100"]].mean(axis=1)
+
+# Print the last 5 values
     st.write(emaavg[-5:])
-    
-    
-    ax.plot(x_values, 
-            emaavg,
-            color="green", 
-            linewidth=6
-    )
+
+# Plot the EMA average
+
+    ax.plot(x_values, emaavg, color="green", linewidth=6, label="EMA Average")
+
 #ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
     ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
     ax.plot(x_values, y_pred_poly, color="purple", linewidth=3, label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
