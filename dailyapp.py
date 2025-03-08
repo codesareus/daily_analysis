@@ -653,14 +653,6 @@ def main():
     x_values = np.arange(len(data_recent))  # Numeric x-axis
 
     # Plot actual prices and regression lines
-    ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
-    ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
-    ax.plot(x_values, y_pred_poly, color="cyan", label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
-
-    # Draw bands for 1, 2, and 3 standard deviations from the polynomial model
-    ax.fill_between(x_values, y_pred_poly - std_dev, y_pred_poly + std_dev, color="blue", alpha=0.3, label="")
-    ax.fill_between(x_values, y_pred_poly - 2*std_dev, y_pred_poly + 2*std_dev, color="green", alpha=0.2, label="")
-    ax.fill_between(x_values, y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="red", alpha=0.1, label="")
 
     #channel_length = 100
     dist = np.max(np.abs(y_pred_linear - y))
@@ -669,80 +661,7 @@ def main():
     upper_lr = y_pred_linear + dist
     lower_lr = y_pred_linear - dist
 
-# Plot actual prices and regression lines
-    ax.plot(x_values, upper_lr, color="blue", linestyle="--", label="Upper Channel")
-    ax.plot(x_values, lower_lr, color="blue", linestyle="--", label="Lower Channel")
-
-    ############### Draw horizontal lines from the lowest and highest points    
-    min_price = np.min(y)
-    max_price = np.max(y)
-    ax.axhline(y=min_price, color="green", linestyle="--", label="")
-    ax.axhline(y=max_price, color="red", linestyle="--", label="")
-
-    # Add price labels for the highest and lowest prices
-    ax.text(x_values[-1], min_price, f'Low: {min_price:.2f}', color='green', verticalalignment='top')
-    ax.text(x_values[-1], max_price, f'High: {max_price:.2f}', color='red', verticalalignment='bottom')
-
-    # Draw gray line for current price
-    ax.axhline(y=current_price, color="gray", linestyle="--", label="")
-
-    # Modify the current price label to include the trend message and color
-    current_price_label = f"-----{current_price:.2f} {trend_message.split()[-1]}"
-    if trend_message == "Trend UP":
-        current_price_color = "green"  # Green for UP trend
-    elif trend_message == "Trend DOWN":
-        current_price_color = "red"  # Red for DOWN trend
-    else:
-        current_price_color = "gray"  # Default color for NEUTRAL trend
-
-    ax.text(x_values[-1], current_price, current_price_label, color=current_price_color, verticalalignment='top')
-
-    # Draw gray line for previous close
-    ax.axhline(y=previous_close, color="navy", linestyle="--", label="")
-
-    # Add price label for the previous_price
-    ax.text(0, previous_close, f'{previous_close:.2f}__c1', color='navy', verticalalignment='top')
-
-    # add time intervals on bottom of chart
-    ax.text(0.4, 0.95, f"Time Frame: {interval}__Now: {current_price:.2f}", 
-        horizontalalignment='left', verticalalignment='center', 
-        transform=ax.transAxes, fontsize=16, color="blue")
-    
-    # Draw gray line for d2 close
-    d2_close = fetch_d2_close(ticker)
-    ax.axhline(y=d2_close, color="navy", linestyle="--", label="")
-
-    # Add price label for the d2_close
-    ax.text(0, d2_close, f'{d2_close:.2f}__c2', color='navy', verticalalignment='top')
-
-    # Draw exponential moving averages with dashed lines
-    ax.plot(x_values, data_recent['EMA_9'], color="red", linestyle="--", label="EMA 9/20_blue")
-    ax.plot(x_values, data_recent['EMA_20'], color="blue", linestyle="--", label="")
-    ax.plot(x_values, data_recent['EMA_50'], color="gold", linestyle="--", label="EMA 50")
-    ax.plot(x_values, data_recent['EMA_100'], color="gray", linestyle="--", label="EMA 100")
-    ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
-
-    # Add price labels for EMAs
-    ax.text(x_values[-1], data_recent['EMA_9'].iloc[-1], f'^^^^^^e9', color='orange', verticalalignment='top')
-    ax.text(x_values[-1], data_recent['EMA_20'].iloc[-1], f'^^^^^^^^e20', color='blue', verticalalignment='top')
-    ax.text(x_values[-1], data_recent['EMA_50'].iloc[-1], f'^^^^^^^^e50', color='gold', verticalalignment='top')
-    ax.text(x_values[-1], data_recent['EMA_100'].iloc[-1], f'^^^^^^^^e100', color='gray', verticalalignment='top')
-    ax.text(x_values[-1], data_recent['EMA_200'].iloc[-1], f'^^^^^^^^e200', color='purple', verticalalignment='top')
-
-    # Add arrows for EMA crossovers
-    for i in range(1, len(data_recent)):
-        if data_recent['EMA_9'].iloc[i] > data_recent['EMA_20'].iloc[i] and data_recent['EMA_9'].iloc[i-1] <= data_recent['EMA_20'].iloc[i-1]:
-            ax.plot(x_values[i], data_recent['Close'].iloc[i], '^', markersize=5, color='blue', lw=0)
-        elif data_recent['EMA_9'].iloc[i] < data_recent['EMA_20'].iloc[i] and data_recent['EMA_9'].iloc[i-1] >= data_recent['EMA_20'].iloc[i-1]:
-            ax.plot(x_values[i], data_recent['Close'].iloc[i], 'v', markersize=5, color='red', lw=0)
-
-    # Format x-axis to show only hours (or every 3 hours for 30-minute interval)
-    ax.set_xticks(x_values)  # Set ticks for all time points
-    ax.set_xticklabels(simplified_time_labels)  # Show only hours or every 3 hours
-    ax.set_xlabel("Time (HH:MM)")
-    ax.set_ylabel(f"{ticker} Price")
-    ax.set_title(f"Combined Linear and Polynomial Regression for {ticker} (tFrame: {interval})")
-    ax.legend()
+# Plot actual prices and regression 
 
     # --- RSI Plot ---
     ax2.plot(x_values, data_recent['RSI'], color="navy", linestyle="-", label="RSI (14)")
