@@ -868,6 +868,8 @@ def main():
     ax.legend()
 
     # --- RSI Plot ---
+    ax2.fill_between(x_values, max(data_recent['RSI']),  min(data_recent['RSI']), color="gray", alpha=0.1)
+
     ax2.plot(x_values, data_recent['RSI'], color="navy", linestyle="-", label="RSI (14)")
     ax2.plot(x_values, data_recent['RSI2'], color="red", linestyle="--", label="RSI (25)")
     ax2.axhline(y=70, color="red", linestyle="--")
