@@ -838,13 +838,8 @@ def main():
         rsi_score = data_recent["rsi_score"].iloc[-1]
         macd_score = data_recent["macd_score"].iloc[-1]
         score = data_recent["score"].iloc[-1]
-        
-        std_dev = data_recent["std_dev"].iloc[-1]
-        y_pred_poly = data_recent["y_pred_poly"].iloc[-1]
-        delta = current_price - y_pred_poly
-        dev_from_std = round(delta/std_dev,0)
 
-        return ema_trend, emaAvg, rsi_score, macd_score, score, dev_from_std
+        return ema_trend, emaAvg, rsi_score, macd_score, score
 
     def get_scores_more():
         price = data_recent['Close'].iloc[-1]
@@ -861,7 +856,7 @@ def main():
         return price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal
 
     #get all scores:
-    ema_trend, emaAvg, rsi_score, macd_score, score, dev_from_std = get_scores()
+    ema_trend, emaAvg, rsi_score, macd_score, score = get_scores()
     price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal = get_scores_more()
 
     # File path
