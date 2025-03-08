@@ -667,7 +667,7 @@ def main():
     open=data_recent["Open"]
     close=data_recent["Close"]
     
-    hlLimit = 10
+    hlLimit = 5
     high=data_recent["High"]
     low=data_recent["Low"]
 
@@ -675,8 +675,7 @@ def main():
         if high[i] - close[i] >= hlLimit:
             high[i] = close[i] + hlLimit
         if low[i] - close[i] <= - hlLimit:
-            low[i] = close[i] - hlLimit
-            
+            low[i] = close[i] - hlLimit   
     
 # Loop through each data point and plot with different colors
     
@@ -691,8 +690,20 @@ def main():
             color=fill,  # Fill color
             edgecolor="blue" #=edge_color  # Edge color to ensure visibility
         )
-    ax.vlines(x_values, high , low, color="black", linewidth=1, label="High-Low Range")
-    #ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
+    # draw high
+    if open >= close:
+        setprice = open
+    else:
+        setprice = close
+    ax.vlines(x_values, high , setprice, color="black", linewidth=1, label="High-Low Range")
+
+    #draw low
+    if open >= close:
+        setprice = close
+    else:
+        setprice = open
+    ax.vlines(x_values, low , setprice, color="black", linewidth=1, label="High-Low Range")
+#ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
     ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
     ax.plot(x_values, y_pred_poly, color="purple", linewidth=3, label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
 
