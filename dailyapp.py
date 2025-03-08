@@ -802,7 +802,7 @@ def main():
     ax2.axhline(y=70, color="red", linestyle="--")
     ax2.axhline(y=30, color="green", linestyle="--")
     ax2.axhline(y=50, color="gray", linestyle="--")
-    ax2.set_title(f"RSI ({interval})..PR degree: {degree}")
+    ax2.set_title(f"RSI ({interval})")
     ax2.legend()
 
     # === MACD Plot (Only If Timeframe Is Valid) ===
