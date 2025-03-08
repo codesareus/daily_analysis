@@ -711,10 +711,10 @@ def main():
         )
 
     # draw ema vaerage 
-    recent_data = data_recent
-    emaavg = recent_data["ema9"]
+    
+    emaavg = data_recent["EMA_9"]
     for i in range(1, len(x_values)):
-        emaavg[i] = average(recent_data["ema9"][i] + recent_data["ema20"][i] + recent_data["ema50"][i]+recent_data["ema100"][i]+recent_data["ema200"][i])
+        emaavg[i] = average(data_recent["EMA_9"][i] + data_recent["EMA_20"][i] + data_recent["EMA_50"][i]+data_recent["EMA_100"][i]+data_recent["EMA_200"][i])
         ax.plot(x_values[i], 
             emaavg[i],
             color="darkorange", 
