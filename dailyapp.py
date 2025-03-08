@@ -764,10 +764,10 @@ def main():
     data_recent["Teeth"] = smoothed_ma(data_recent["Close"], 8).shift(5)  # Red line (shifted 5 periods)
     data_recent["Lips"] = smoothed_ma(data_recent["Close"], 5).shift(3)   # Green line (shifted 3 periods)
 
-    ax.plot(x_values, data_recent["Close"], color="gray", linewidth=1, label="Close Price")
+    #ax.plot(x_values, data_recent["Close"], color="gray", linewidth=1, label="Close Price")
     ax.plot(x_values, data_recent["Jaw"], color="blue", linewidth=2, label="Jaw (13 SMA, shift 8)")
-    ax.plot(x_values, data_recent["Teeth"], color="red", linewidth=2, label="Teeth (8 SMA, shift 5)")
-    ax.plot(x_values, data_recent["Lips"], color="green", linewidth=2, label="Lips (5 SMA, shift 3)")
+    #ax.plot(x_values, data_recent["Teeth"], color="red", linewidth=2, label="Teeth (8 SMA, shift 5)")
+    #ax.plot(x_values, data_recent["Lips"], color="green", linewidth=2, label="Lips (5 SMA, shift 3)")
 
 #ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
   #  ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
