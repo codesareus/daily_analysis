@@ -682,7 +682,7 @@ def main():
     for i in range(1, len(x_values)):  # Start from index 1 to compare with the previous value
         fill = "gray" if close[i] < open[i] else "none"  # Filled black if low decreases, empty otherwise
         edge_color = "blue"  if close[i] >= close[i-1] else "red" #Keep the edge black for all bars
-        width = 0.5 if close[i] >= close[i-1] else 1.5
+        width = 0.5 #if close[i] >= close[i-1] else 1
         
         ax.bar(
             x_values[i],  # X-position
