@@ -650,6 +650,33 @@ def main():
     #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
     new_data.to_csv(scoreT_file, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
 
+    # File path
+    file_path = 'scoreT.csv'
+
+    # Check if the file exists and is not empty
+    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+        # Load the CSV file into a DataFrame
+        df = pd.read_csv(file_path, header=None)
+
+        # Check if any row contains {interval} in the first column
+        if interval in df[0].values:
+            # Remove the row where the first column is {interval}
+            df = df[df[0] != interval]
+
+            # Save the updated DataFrame back to the CSV file
+            df.to_csv(file_path, index=False, header=False)
+        else:
+            print("No row with '{interval' found. File remains unchanged.")
+    else:
+        # If the file doesn't exist or is empty, create a new DataFrame
+        print("File does not exist or is empty. Creating a new file.")
+
+        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'score', 'dev_from_std', 'score_trend'])
+
+        # Save the empty DataFrame to the CSV file
+        df.to_csv(file_path, index=False, header=False)
+        st.success(f"✅ File created successfully as `{file_path}`")
+
     # Read the updated CSV file
     df = pd.read_csv(scoreT_file, header=None)
 
