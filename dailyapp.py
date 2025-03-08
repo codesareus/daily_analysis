@@ -688,7 +688,8 @@ def main():
             open[i] - close[i],  # Bar height (difference between high and low)
             bottom=close[i],  # Start bar from the low price
             color=fill,  # Fill color
-            edgecolor="lightblue" #=edge_color  # Edge color to ensure visibility
+            edgecolor="blue" #=edge_color  # Edge color to ensure visibility
+            linewidth=0.5
         )
     # draw high 
     for i in range(1, len(x_values)):
