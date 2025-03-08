@@ -888,13 +888,13 @@ def main():
 
     #ema_score, ema_trend, rsi_score, macd_score, score
     if price>= emaAvg:
-        emaAvg =1
+        pr/emaAvg =1
     else:
-        emaAvg =-1
+        pr/emaAvg =-1
         
-    if emaAvg >= 0 and rsi_score >= 0 and macd_score >= 0 and ema_trend >= 0:
+    if pr/emaAvg >= 0 and rsi_score >= 0 and macd_score >= 0 and ema_trend >= 0:
         score_trend = 1
-    elif emaAvg <0 and rsi_score < 0  and macd_score < 0 and ema_trend < 0:
+    elif pr/emaAvg <0 and rsi_score < 0  and macd_score < 0 and ema_trend < 0:
         score_trend = -1
     else:
         score_trend = 0
@@ -903,7 +903,7 @@ def main():
     new_data = pd.DataFrame([{
         "tFrame": f"{interval}",
         "ema9/20": round(ema_trend, 2),
-        "emaAvg": round(emaAvg, 2),
+        "pr/emaAvg": pr/emaAvg,
         "rsi": round(rsi_score, 2),
         "macd": round(macd_score, 2),
         "score": round(score, 2),
@@ -925,7 +925,7 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema9/20', 'emaAvg', 'rsi', 'macd', 'score', 'score_trend']
+    df.columns = ['tFrame', 'ema9/20', 'pr/emaAvg', 'rsi', 'macd', 'score', 'score_trend']
         
     #display table
     st.dataframe(df, hide_index=True) #original table looks neater
@@ -937,26 +937,26 @@ def main():
     #now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  # Correct format
 
  #   ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
-    emaAvg1=df[df["tFrame"] == "1m"]["emaAvg"].values[0]
-    emaAvg5=df[df["tFrame"] == "5m"]["emaAvg"].values[0]
+    emaAvg1=df[df["tFrame"] == "1m"]["pr/emaAvg"].values[0]
+    emaAvg5=df[df["tFrame"] == "5m"]["pr/emaAvg"].values[0]
     
     st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
     # Extract "score_trend" for "1m"  ## 
     
-    if emaAvg1 ==1:
+    if pr/emaAvg1 ==1:
         message = "___B OK 1"
         color = "green"
-    elif emaAvg1==-1:
+    elif pr/emaAvg1==-1:
         message = "___S OK -1"
         color = "red"
     else:
         message = "Hold it"
         color = "orange"
     st.markdown(f'<p style="color:{color}; font-weight:bold;">polynomial 1min: {message}</s></p>', unsafe_allow_html=True)
-    if emaAvg5==1:
+    if pr/emaAvg5==1:
         message = "___B OK 1"
         color = "green"
-    elif emaAvg5==-1:
+    elif pr/emaAvg5==-1:
         message = "___S OK -1"
         color = "red"
     else:
