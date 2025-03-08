@@ -934,7 +934,7 @@ def main():
         return price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal, y_pred_poly, y_pred_poly1
 
     #get all scores:
-     ema_trend, emaAvg, rsi_score, macd_score, score, dev_from_std = get_scores()
+    ema_trend, emaAvg, rsi_score, macd_score, score, dev_from_std = get_scores()
     price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal = get_scores_more()
 
     # File path
