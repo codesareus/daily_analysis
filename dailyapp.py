@@ -751,7 +751,7 @@ def main():
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         # delete data button
-        if st.button("Ready SB: 1min"):
+        if st.button("1min"):
             #st.session_state.rerun_count = 0
             st.session_state.index = 0
            # st.session_state.stop_sleep = 0
@@ -761,7 +761,7 @@ def main():
 
     with col2:
         # delete data button
-        if st.button("keep 1m 5m"):
+        if st.button("1m, 5m"):
             #st.session_state.rerun_count = 0
             
             st.session_state.index = 0
