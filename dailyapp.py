@@ -406,12 +406,12 @@ def main():
         return
 
 # # Add a slider for backtracking
-    backtrack_options = [76, 300]
+    backtrack_options = [50, 288]
     selected_datanumber = st.slider(
         "Select number of points to plot:",
         min_value=min(backtrack_options),
         max_value=max(backtrack_options),
-        value=96,  # Default value
+        value=192,  # Default value 5 min for 16 h  per day
         step=10,  # Step size
         key="backtrack_slider"
     )
