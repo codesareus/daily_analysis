@@ -651,7 +651,7 @@ def main():
     new_data.to_csv(scoreT_file, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
 
     # Read the updated CSV file
-    df = pd.read_csv(file_path, header=None)
+    df = pd.read_csv(scoreT_file, header=None)
 
     # Define the custom order for the first column
     custom_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
