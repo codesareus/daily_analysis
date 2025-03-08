@@ -714,12 +714,46 @@ def main():
     
     emaavg = data_recent[["EMA_9", "EMA_20", "EMA_50", "EMA_100"]].mean(axis=1)
 
-# Print the last 5 values
-    st.write(emaavg[-5:])
-
-    # Plot the EMA average
-
+#     # Plot the EMA average
     ax.plot(x_values, emaavg, color="green", linewidth=6, label="EMA Average")
+
+#### std
+# Parameters
+    moving_avg_type = "SMA"  # Can be "SMA", "EMA", or "WMA"
+    window = 20  # Lookback period for moving average & standard deviation
+    std_dev_factor = 2  # Multiplier for standard deviation
+
+# Function to calculate different types of moving averages
+    def moving_average(series, window, method="SMA"):
+        if method == "SMA":
+            return series.rolling(window=window).mean()
+        elif method == "EMA":
+            return series.ewm(span=window, adjust=False).mean()
+        elif method == "WMA":
+            weights = np.arange(1, window + 1)
+            return series.rolling(window).apply(lambda x: np.dot(x, weights) / weights.sum(), raw=True)
+        else:
+            raise ValueError("Invalid moving average type. Choose SMA, EMA, or WMA.")
+
+# Calculate the middle band
+    data_recent["Middle_Band"] = moving_average(data_recent["Close"], window, method=moving_avg_type)
+
+# Calculate standard deviation over the same window
+    data_recent["Std_Dev"] = data_recent["Close"].rolling(window=window).std()
+
+# Upper and Lower Bands
+    data_recent["Upper_Band"] = data_recent["Middle_Band"] + (std_dev_factor * data_recent["Std_Dev"])
+    data_recent["Lower_Band"] = data_recent["Middle_Band"] - (std_dev_factor * data_recent["Std_Dev"])
+
+# Plot Standard Deviation 
+
+    ax.plot(x_values, data_recent["Close"], color="gray", linewidth=1, label="Close Price")
+    ax.plot(x_values, data_recent["Middle_Band"], color="blue", linewidth=2, label="Middle Band")
+    ax.plot(x_values, data_recent["Upper_Band"], color="red", linewidth=2, linestyle="dashed", label="Upper Band")
+    ax.plot(x_values, data_recent["Lower_Band"], color="green", linewidth=2, linestyle="dashed", label="Lower Band")
+
+# Fill the area between the bands
+    ax.fill_between(x_values, data_recent["Lower_Band"], data_recent["Upper_Band"], color="gray", alpha=0.2)
 
 #alligator
     def smoothed_ma(series, period):
