@@ -756,7 +756,7 @@ def main():
     ax.plot(x_values, data_recent["Lower_Band"], color="green", linewidth=2, linestyle="dashed", label="Lower Band")
 
 # Fill the area between the bands
-    ax.fill_between(x_values, data_recent["Lower_Band3"], data_recent["Upper_Band3"], color="blue", alpha=0.2)
+    ax.fill_between(x_values, data_recent["Lower_Band3"], data_recent["Upper_Band3"], color="lightblue", alpha=0.2)
     ax.fill_between(x_values, data_recent["Lower_Band"], data_recent["Upper_Band"], color="gray", alpha=0.2)
 
 #alligator
