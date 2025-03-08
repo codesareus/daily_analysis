@@ -938,8 +938,8 @@ def main():
     #now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  # Correct format
 
  #   ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
-    emaAvg1=df[df["tFrame"] == "1m"]["pr_emaAvg"].values[0]
-    emaAvg5=df[df["tFrame"] == "5m"]["pr_emaAvg"].values[0]
+    pr_emaAvg1=df[df["tFrame"] == "1m"]["pr_emaAvg"].values[0]
+    pr_emaAvg5=df[df["tFrame"] == "5m"]["pr_emaAvg"].values[0]
     
     st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
     # Extract "score_trend" for "1m"  ## 
@@ -957,7 +957,7 @@ def main():
     if pr_emaAvg5==1:
         message = "___B OK 1"
         color = "green"
-    elif pr_emaAvg==-1:
+    elif pr_emaAvg5==-1:
         message = "___S OK -1"
         color = "red"
     else:
