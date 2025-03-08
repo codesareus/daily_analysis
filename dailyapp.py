@@ -670,7 +670,7 @@ def main():
 # Loop through each data point and plot with different colors
     for i in range(1, len(x_values)):  # Start from index 1 to compare with previous value
         color = "orange" if close[i] < close[i - 1] else "black"
-    ax.vlines(x_values[i], close[i], open[i], color=color, linewidth=1)
+        ax.vlines(x_values[i], close[i], open[i], color=color, linewidth=1)
 
     #ax.vlines(x_values, open , close, color="black", linewidth=1, label="High-Low Range")
     #ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
