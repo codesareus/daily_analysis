@@ -614,11 +614,37 @@ def main():
 
         return price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal, y_pred_poly, y_pred_poly1
 
-    #get all scores:
+    #    #get all scores:
     ema_score, ema_trend, rsi_score, macd_score, score, dev_from_std = get_scores()
     price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal, y_pred_poly, y_pred_poly1 = get_scores_more()
 
-    
+    # File path
+    file_path = 'scoreT.csv'
+
+    # Check if the file exists and is not empty
+    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+        # Load the CSV file into a DataFrame
+        df = pd.read_csv(file_path, header=None)
+
+        # Check if any row contains {interval} in the first column
+        if interval in df[0].values:
+            # Remove the row where the first column is {interval}
+            df = df[df[0] != interval]
+
+            # Save the updated DataFrame back to the CSV file
+            df.to_csv(file_path, index=False, header=False)
+        else:
+            print("No row with '{interval' found. File remains unchanged.")
+    else:
+        # If the file doesn't exist or is empty, create a new DataFrame
+        print("File does not exist or is empty. Creating a new file.")
+
+        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'score', 'dev_from_std', 'score_trend'])
+
+        # Save the empty DataFrame to the CSV file
+        df.to_csv(file_path, index=False, header=False)
+        st.success(f"✅ File created successfully as `{file_path}`")
+
     #ema_score, ema_trend, rsi_score, macd_score, score
     y_pred_p_trend = 0
     if y_pred_poly >= y_pred_poly1:
@@ -649,33 +675,6 @@ def main():
     }])
     #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
     new_data.to_csv(scoreT_file, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
-
-    # File path
-    file_path = 'scoreT.csv'
-
-    # Check if the file exists and is not empty
-    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-        # Load the CSV file into a DataFrame
-        df = pd.read_csv(file_path, header=None)
-
-        # Check if any row contains {interval} in the first column
-        if interval in df[0].values:
-            # Remove the row where the first column is {interval}
-            df = df[df[0] != interval]
-
-            # Save the updated DataFrame back to the CSV file
-            df.to_csv(file_path, index=False, header=False)
-        else:
-            print("No row with '{interval' found. File remains unchanged.")
-    else:
-        # If the file doesn't exist or is empty, create a new DataFrame
-        print("File does not exist or is empty. Creating a new file.")
-
-        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'score', 'dev_from_std', 'score_trend'])
-
-        # Save the empty DataFrame to the CSV file
-        df.to_csv(file_path, index=False, header=False)
-        st.success(f"✅ File created successfully as `{file_path}`")
 
     # Read the updated CSV file
     df = pd.read_csv(file_path, header=None)
@@ -743,7 +742,7 @@ def main():
         message = "Hold it"
         color = "orange"
     #st.write(f"score_trend_others: ||... {sum_score_trend_rest} ___ {message}")
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">score_trend_others: {message}__{sum_score_trend_rest}</s></p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">score_trend_others: {message}__{sum_score_trend_rest}</s></p>', unsafe_allow_html=
 
     #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
