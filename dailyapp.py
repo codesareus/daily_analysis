@@ -348,9 +348,6 @@ def main():
     if "setnote" not in st.session_state:
         st.session_state.setnote = "zz"
 
-    if "poly_degree" not in st.session_state:
-        st.session_state.poly_degree = 5
-    
     scoreT_file = f"scoreT.csv"
     pe_file = f"pe.csv"
 
@@ -454,48 +451,12 @@ def main():
         st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **......** {current_time}")
 
     ##############################
-    degree_options = [2, 15]
-    degree = st.slider(
-            "Select number of points to plot:",
-            min_value=min(degree_options),
-            max_value=max(degree_options),
-            value=5,  # Default value 5 min for 16 h  per day
-            step=1,  # Step size
-            key="degree_slider"
-        )
-    
-    
-    #degree = st.session_state.poly_degree
-    
-    col1, col2,col3,col4 = st.columns(4)
-    
-    with col1:
-        if st.button("degree 6"):
-            st.session_state.poly_degree = 6
-            st.rerun()
-
-    with col2:
-        if st.button("degree 7"):
-            st.session_state.poly_degree = 7
-            st.rerun()
-
-    with col3:
-        if st.button("degree 8"):
-            st.session_state.poly_degree = 8
-            st.rerun()
-
-    with col4:
-        if st.button("degree 9"):
-            st.session_state.poly_degree = 9
-            st.rerun()
-
-    st.write(f"selected PR degree: {degree}")
     
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
     # Perform polynomial regression with the selected degree
-    X, y, y_pred_poly, r2_poly, _ = perform_regression(data_recent, degree=degree)
+    X, y, y_pred_poly, r2_poly, _ = perform_regression(data_recent, degree=2)
 
     # Calculate residuals for each row
     data_recent["residuals"] = y - y_pred_poly
@@ -773,15 +734,6 @@ def main():
     ax.plot(x_values, data_recent["Teeth"], color="blue", linewidth=2, label="Teeth (8 SMA, shift 5)")
     #ax.plot(x_values, data_recent["Lips"], color="green", linewidth=2, label="Lips (5 SMA, shift 3)")
 
-#ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
-  #  ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
-    #ax.plot(x_values, y_pred_poly, color="purple", linewidth=3, label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
-
-    # Draw bands for 1, 2, and 3 standard deviations from the polynomial model
-    #ax.plot(x_values, emaavg - std_dev, emaavg + std_dev, color="blue", alpha=0.3, label="")
-    #ax.plot(x_values, y_pred_poly - 2*std_dev, y_pred_poly + 2*std_dev, color="green", alpha=0.2, label="")
-   # ax.plot(x_values, y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="red", alpha=0.1, label="")
-
     #channel_length = 100
     dist = np.max(np.abs(y_pred_linear - y))
     
@@ -875,7 +827,7 @@ def main():
     ax2.axhline(y=70, color="red", linestyle="--")
     ax2.axhline(y=30, color="green", linestyle="--")
     ax2.axhline(y=50, color="gray", linestyle="--")
-    ax2.set_title(f"RSI ({interval})..PR degree: {degree}")
+    ax2.set_title(f"RSI ({interval})")
     ax2.legend()
 
     # === MACD Plot (Only If Timeframe Is Valid) ===
