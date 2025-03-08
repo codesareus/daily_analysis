@@ -712,10 +712,10 @@ def main():
 
     # draw ema vaerage 
     
-    emaavg = []
+    emaavg = data_recent["EMA_9"]
     for i in range(1, len(x_values)):
-        avg = (data_recent["EMA_9"][i] + data_recent["EMA_20"][i] + data_recent["EMA_50"][i]+data_recent["EMA_100"][i])/4
-        emaavg.append(x_values[i], avg)
+        emaavg[i] = (data_recent["EMA_9"][i] + data_recent["EMA_20"][i] + data_recent["EMA_50"][i]+data_recent["EMA_100"][i])/4
+        
     st.write(emaavg[-5:])
     
     
