@@ -681,15 +681,16 @@ def main():
     
     for i in range(1, len(x_values)):  # Start from index 1 to compare with the previous value
         fill = "gray" if close[i] < open[i] else "none"  # Filled black if low decreases, empty otherwise
-        edge_color = "blue"  # Keep the edge black for all bars
-    
+        edge_color = "blue"  if close[i] >= close[i-1] else "red" #Keep the edge black for all bars
+        width = 0.5 if close[i] >= close[i-1] else 1.5
+        
         ax.bar(
             x_values[i],  # X-position
             open[i] - close[i],  # Bar height (difference between high and low)
             bottom=close[i],  # Start bar from the low price
             color=fill,  # Fill color
             edgecolor=edge_color,# Edge color to ensure visibility
-            linewidth=0.5
+            linewidth=width
         )
     # draw high 
     for i in range(1, len(x_values)):
