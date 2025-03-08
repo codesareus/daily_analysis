@@ -674,7 +674,7 @@ def main():
     for i in range(1, len(x_values)): 
         if high[i] - close[i] >= hlLimit:
             high[i] = close[i] + hlLimit
-        if low[i] - close[i] >= - hlLimit:
+        if low[i] - close[i] <= - hlLimit:
             low[i] = close[i] - hlLimit
             
     
