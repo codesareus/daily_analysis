@@ -711,6 +711,7 @@ def main():
         )
 
     # draw ema vaerage 
+    recent_data = data_recent
     emaavg = recent_data["ema9"]
     for i in range(1, len(x_values)):
         emaavg[i] = average(recent_data["ema9"][i] + recent_data["ema20"][i] + recent_data["ema50"][i]+recent_data["ema100"][i]+recent_data["ema200"][i])
