@@ -709,6 +709,16 @@ def main():
             color="black", 
             linewidth=1
         )
+
+    # draw ema vaerage 
+    emaavg = recent_data["ema9"]
+    for i in range(1, len(x_values)):
+        emaavg[i] = average(recent_data["ema9"][i] + recent_data["ema20"][i] + recent_data["ema50"][i]+recent_data["ema100"][i]+recent_data["ema200"][i])
+        ax.plot(x_values[i], 
+            emaavg[i],
+            color="darkorange", 
+            linewidth=3
+        )
 #ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
     ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
     ax.plot(x_values, y_pred_poly, color="purple", linewidth=3, label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
