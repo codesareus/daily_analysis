@@ -647,53 +647,7 @@ def main():
     valid_macd_timeframes = ["1m","5m","15m","30m","1h", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "max"]
 
     #if interval in valid_macd_timeframes:
-    fig, (ax2, ax3) = plt.subplots(2, 1, figsize=(20, 10), gridspec_kw={'height_ratios': [ 1, 1 ]})
-   
-    # Use numeric x-axis for plotting to avoid duplicate time issues
-    x_values = np.arange(len(data_recent))  # Numeric x-axis
-
-    # Plot actual prices and regression lines
-
-    #channel_length = 100
-    dist = np.max(np.abs(y_pred_linear - y))
     
-# Upper and lower channel lines
-    upper_lr = y_pred_linear + dist
-    lower_lr = y_pred_linear - dist
-
-# Plot actual prices and regression 
-
-    # --- RSI Plot ---
-    ax2.plot(x_values, data_recent['RSI'], color="navy", linestyle="-", label="RSI (14)")
-    ax2.plot(x_values, data_recent['RSI2'], color="red", linestyle="--", label="RSI (25)")
-    ax2.axhline(y=70, color="red", linestyle="--")
-    ax2.axhline(y=30, color="green", linestyle="--")
-    ax2.axhline(y=50, color="gray", linestyle="--")
-    ax2.set_title(f"RSI ({interval})..PR degree: {degree}")
-    ax2.legend()
-
-    # === MACD Plot (Only If Timeframe Is Valid) ===
-    if interval in valid_macd_timeframes:
-        # Create a sequence for the x-axis from 1 to len(data_recent)
-        x_values = range(1, len(data_recent) + 1)
-
-        # Plot the MACD and Signal lines with numeric x-values
-        ax3.plot(x_values, data_recent['MACD'], color="navy", label="MACD Line")
-        ax3.plot(x_values, data_recent['Signal_Line'], color="red", linestyle="--", label="Signal Line")
-
-        # Histogram Bars (Green for Positive, Red for Negative)
-        histogram_values = data_recent['MACD'] - data_recent['Signal_Line']
-        ax3.bar(x_values, histogram_values, color=['green' if val > 0 else 'red' for val in histogram_values], alpha=0.5)
-
-        ax3.set_title(f"MACD ({interval})")
-        ax3.legend()
-
-    fig.set_facecolor('lightgray')  # Use any valid color name or hex code
-    plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
-    st.pyplot(fig)  ## finally plot all 3 figures
-   
-    st.write("---------------------")
-
     ### get scores functions
     def get_scores():
         ema_score = data_recent["ema_score"].iloc[-1]
