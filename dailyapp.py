@@ -742,7 +742,7 @@ def main():
         message = "Hold it"
         color = "orange"
     #st.write(f"score_trend_others: ||... {sum_score_trend_rest} ___ {message}")
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">score_trend_others: {message}__{sum_score_trend_rest}</s></p>', unsafe_allow_html=
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">score_trend_others: {message}__{sum_score_trend_rest}</s></p>', unsafe_allow_html=True)
 
     #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
