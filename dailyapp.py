@@ -455,7 +455,7 @@ def main():
 
     ##############################
     degree_options = [2, 15]
-        degree = st.slider(
+    degree = st.slider(
             "Select number of points to plot:",
             min_value=min(degree_options),
             max_value=max(degree_options),
