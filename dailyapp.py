@@ -691,7 +691,7 @@ def main():
             edgecolor="blue" #=edge_color  # Edge color to ensure visibility
         )
     # draw high
-    setprice =x_values
+    setprice = close
     for i in range(1, len(x_values)): 
         if open[i] >= close[i]:
             setprice[i] = open[i]
