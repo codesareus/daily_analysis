@@ -714,7 +714,7 @@ def main():
     
     emaavg = data_recent["EMA_9"]
     for i in range(1, len(x_values)):
-        emaavg[i] = statistics.mean(data_recent["EMA_9"][i] + data_recent["EMA_20"][i] + data_recent["EMA_50"][i]+data_recent["EMA_100"][i]+data_recent["EMA_200"][i])
+        emaavg[i] = (data_recent["EMA_9"][i] + data_recent["EMA_20"][i] + data_recent["EMA_50"][i]+data_recent["EMA_100"][i]+data_recent["EMA_200"][i])/5
         ax.plot(x_values[i], 
             emaavg[i],
             color="darkorange", 
