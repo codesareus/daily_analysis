@@ -960,7 +960,7 @@ def main():
         # If the file doesn't exist or is empty, create a new DataFrame
         print("File does not exist or is empty. Creating a new file.")
 
-        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'score', 'dev_from_std', 'score_trend'])
+        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'score', 'score_trend'])
 
         # Save the empty DataFrame to the CSV file
         df.to_csv(file_path, index=False, header=False)
@@ -990,8 +990,6 @@ def main():
         "rsi": round(rsi_score, 2),
         "macd": round(macd_score, 2),
         "score": round(score, 2),
-        "dev_from_std": deviation_in_std,
-        "y_pred_p_trend": y_pred_p_trend,
         "score_trend": score_trend,
     }])
     #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
@@ -1010,7 +1008,7 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema9/20', 'ema100/200', 'rsi', 'macd', 'score', 'dev_from_std', "y_pred_p_trend", 'score_trend']
+    df.columns = ['tFrame', 'ema9/20', 'ema100/200', 'rsi', 'macd', 'score',  'score_trend']
         
     #display table
     st.dataframe(df, hide_index=True) #original table looks neater
