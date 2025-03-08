@@ -680,15 +680,15 @@ def main():
 # Loop through each data point and plot with different colors
     
     for i in range(1, len(x_values)):  # Start from index 1 to compare with the previous value
-        fill = "black" if close[i] < open[i] else "none"  # Filled black if low decreases, empty otherwise
-        edge_color = "black"  # Keep the edge black for all bars
+        fill = "gray" if close[i] < open[i] else "none"  # Filled black if low decreases, empty otherwise
+        edge_color = "blue"  # Keep the edge black for all bars
     
         ax.bar(
             x_values[i],  # X-position
             open[i] - close[i],  # Bar height (difference between high and low)
             bottom=close[i],  # Start bar from the low price
             color=fill,  # Fill color
-            edgecolor="blue", #=edge_color  # Edge color to ensure visibility
+            edgecolor=edge_color  # Edge color to ensure visibility
             linewidth=0.5
         )
     # draw high 
