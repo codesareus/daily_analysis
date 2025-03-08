@@ -672,7 +672,7 @@ def main():
 # Upper and Lower Bands
     data_recent["Upper_Band"] = data_recent["Middle_Band"] + (std_dev_factor * data_recent["Std_Dev"])
     data_recent["Lower_Band"] = data_recent["Middle_Band"] - (std_dev_factor * data_recent["Std_Dev"])
-    #data_recent["Upper_Band3"] = data_recent["Middle_Band"] + (std_dev_factor3 * data_recent["Std_Dev"])
+   # data_recent["delta2std"] =  data_recent["Std_Dev"] *  std_dev_factor * 2
     #data_recent["Lower_Band3"] = data_recent["Middle_Band"] - (std_dev_factor3 * data_recent["Std_Dev"])
 
 # Plot Standard Deviation 
@@ -758,6 +758,11 @@ def main():
         horizontalalignment='left', verticalalignment='center', 
         transform=ax.transAxes, fontsize=16, color="blue")
     
+    std2= data_recent["Upper_Band"].iloc[-1]
+    
+    ax.text(0.4, std2 , f"std*2: {std2}", 
+        horizontalalignment='left', verticalalignment='center', 
+        transform=ax.transAxes, fontsize=16, color="blue")
     # Draw gray line for d2 close
     d2_close = fetch_d2_close(ticker)
     ax.axhline(y=d2_close, color="navy", linestyle="--", label="")
