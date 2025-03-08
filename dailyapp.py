@@ -652,8 +652,7 @@ def main():
             edgecolor=edge_color,# Edge color to ensure visibility
             linewidth=width
         )
-    # draw high 
-    for i in range(1, len(x_values)):
+    # draw high in same loop
         ax.vlines(x_values[i], 
             high[i], 
             max(open[i], close[i]), 
@@ -662,7 +661,6 @@ def main():
         )
 
     #draw low   
-    for i in range(1, len(x_values)):
         ax.vlines(x_values[i], 
             low[i], 
             min(open[i], close[i]), 
