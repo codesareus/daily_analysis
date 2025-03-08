@@ -573,25 +573,6 @@ def main():
         else:
             macd_score = 0
 
-        pred = row['y_pred_poly']
-        
-        pred_1 = data_recent["y_pred_poly"].shift(1).loc[row.name]
-
-        pred_score = 0
-
-        if (pred > pred_1):
-            pred_score = 1
-        elif (pred < pred_1):
-            pred_score = - 1
-        else :
-            pred_score = 0
-        
-        std_dev = row['std_dev']
-
-        deviation_in_std = (price - pred) / std_dev
-        
-        std_score = - deviation_in_std
-
         score = ema_trend + ema_score + rsi_score + macd_score 
 
         return pd.Series([ema_trend, ema_score, rsi_score, macd_score, score], 
