@@ -691,10 +691,10 @@ def main():
             edgecolor="blue" #=edge_color  # Edge color to ensure visibility
         )
     # draw high 
-    ax.vlines(x_values[i], high[i], max[open[i], close[i]], color="black", linewidth=1, label="High-Low Range")
+    ax.vlines(x_values[i], high[i], max(open[i], close[i]), color="black", linewidth=1, label="High-Low Range")
 
     #draw low   
-    ax.vlines(x_values[i], low[i], min[open[i], close[i]], color="black", linewidth=1, label="High-Low Range")
+    ax.vlines(x_values[i], low[i], min(open[i], close[i]), color="black", linewidth=1, label="High-Low Range")
 #ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
     ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
     ax.plot(x_values, y_pred_poly, color="purple", linewidth=3, label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
