@@ -670,8 +670,6 @@ def main():
 
 # Plot Standard Deviation 
 
-    #ax.plot(x_values, data_recent["Close"], color="gray", linewidth=1, label="Close Price")
-    #ax.plot(x_values, data_recent["Middle_Band"], color="blue", linewidth=2, label="Middle Band")
     ax.plot(x_values, data_recent["Upper_Band"], color="red", linewidth=2, linestyle="dashed", label="Upper Band")
     ax.plot(x_values, data_recent["Lower_Band"], color="green", linewidth=2, linestyle="dashed", label="Lower Band")
 
@@ -780,13 +778,6 @@ def main():
     ax.text(x_values[-1], data_recent['EMA_100'].iloc[-1], f'^^^^^^^^e100', color='gray', verticalalignment='top')
     ax.text(x_values[-1], data_recent['EMA_200'].iloc[-1], f'^^^^^^^^e200', color='purple', verticalalignment='top')
 
-    # Add arrows for EMA crossovers
-    for i in range(1, len(data_recent)):
-        if data_recent['EMA_9'].iloc[i] > data_recent['EMA_20'].iloc[i] and data_recent['EMA_9'].iloc[i-1] <= data_recent['EMA_20'].iloc[i-1]:
-            ax.plot(x_values[i], data_recent['Close'].iloc[i], '^', markersize=5, color='blue', lw=0)
-        elif data_recent['EMA_9'].iloc[i] < data_recent['EMA_20'].iloc[i] and data_recent['EMA_9'].iloc[i-1] >= data_recent['EMA_20'].iloc[i-1]:
-            ax.plot(x_values[i], data_recent['Close'].iloc[i], 'v', markersize=5, color='red', lw=0)
-
     # Format x-axis to show only hours (or every 3 hours for 30-minute interval)
     ax.set_xticks(x_values)  # Set ticks for all time points
     ax.set_xticklabels(simplified_time_labels)  # Show only hours or every 3 hours
@@ -806,23 +797,21 @@ def main():
     ax2.set_title(f"RSI ({interval})")
     ax2.legend()
 
-    # === MACD Plot (Only If Timeframe Is Valid) ===
-    if interval in valid_macd_timeframes:
         # Create a sequence for the x-axis from 1 to len(data_recent)
-        x_values = range(1, len(data_recent) + 1)
+    x_values = range(1, len(data_recent) + 1)
 
         # Plot the MACD and Signal lines with numeric x-values
-        ax3.fill_between(x_values, min(data_recent['MACD']), max(data_recent['MACD']), color="gray", alpha=0.1)
+    ax3.fill_between(x_values, min(data_recent['MACD']), max(data_recent['MACD']), color="gray", alpha=0.1)
         
-        ax3.plot(x_values, data_recent['MACD'], color="navy", label="MACD Line")
-        ax3.plot(x_values, data_recent['Signal_Line'], color="red", linestyle="--", label="Signal Line")
+    ax3.plot(x_values, data_recent['MACD'], color="navy", label="MACD Line")
+    ax3.plot(x_values, data_recent['Signal_Line'], color="red", linestyle="--", label="Signal Line")
 
         # Histogram Bars (Green for Positive, Red for Negative)
-        histogram_values = data_recent['MACD'] - data_recent['Signal_Line']
-        ax3.bar(x_values, histogram_values, color=['green' if val > 0 else 'red' for val in histogram_values], alpha=0.5)
+    histogram_values = data_recent['MACD'] - data_recent['Signal_Line']
+    ax3.bar(x_values, histogram_values, color=['green' if val > 0 else 'red' for val in histogram_values], alpha=0.5)
 
-        ax3.set_title(f"MACD ({interval})")
-        ax3.legend()
+    ax3.set_title(f"MACD ({interval})")
+    ax3.legend()
 
     fig.set_facecolor('lightgray')  # Use any valid color name or hex code
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
