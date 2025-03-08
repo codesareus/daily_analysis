@@ -594,16 +594,7 @@ def main():
     open=data_recent["Open"]
     close=data_recent["Close"]
     
-    hlLimit = 5
-    high=data_recent["High"]
-    low=data_recent["Low"]
 
-    for i in range(1, len(x_values)): 
-        if high[i] - close[i] >= hlLimit:
-            high[i] = close[i] + hlLimit
-        if low[i] - close[i] <= - hlLimit:
-            low[i] = close[i] - hlLimit   
-    
 # Loop through each data point and plot with different colors
     
     for i in range(1, len(x_values)):  # Start from index 1 to compare with the previous value
