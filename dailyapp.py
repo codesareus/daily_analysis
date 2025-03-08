@@ -1,4 +1,4 @@
-### daily analysis 03-07-25
+### daily analysis 03-08-25
 
 import streamlit as st
 import yfinance as yf
@@ -712,10 +712,10 @@ def main():
 
     # draw ema vaerage 
     
-    emaavg = data_recent[["EMA_9", "EMA_20", "EMA_50"]].mean(axis=1)#ema100
-
+    data_recent["emaAvg"] = data_recent[["EMA_9", "EMA_20", "EMA_50"]].mean(axis=1)#ema100
+    emaAvg = data_recent["emaAvg"]
 #     # Plot the EMA average
-    ax.plot(x_values, emaavg, color="green", linewidth=6, label="EMA Average")
+    ax.plot(x_values, emaAvg, color="green", linewidth=6, label="EMA Average")
 
 #### std
 # Parameters
@@ -905,8 +905,9 @@ def main():
 
     ### get scores functions
     def get_scores():
-        ema_score = data_recent["ema_score"].iloc[-1]
+        
         ema_trend = data_recent["ema_trend"].iloc[-1]
+        emaAvg = data_recent["emaAvg"].iloc[-1]
         rsi_score = data_recent["rsi_score"].iloc[-1]
         macd_score = data_recent["macd_score"].iloc[-1]
         score = data_recent["score"].iloc[-1]
@@ -916,11 +917,10 @@ def main():
         delta = current_price - y_pred_poly
         dev_from_std = round(delta/std_dev,0)
 
-        return ema_score, ema_trend, rsi_score, macd_score, score, dev_from_std
+        return ema_score, emaAvg, rsi_score, macd_score, score, dev_from_std
 
     def get_scores_more():
         price = data_recent['Close'].iloc[-1]
-        
         ema9= data_recent['EMA_9'].iloc[-1]
         ema20= data_recent['EMA_20'].iloc[-1]
         ema50= data_recent['EMA_50'].iloc[-1]
@@ -930,14 +930,12 @@ def main():
         rsi2 = data_recent['RSI2'].iloc[-1]
         macd = data_recent['MACD'].iloc[-1]
         signal = data_recent['Signal_Line'].iloc[-1]
-        y_pred_poly = data_recent['y_pred_poly'].iloc[-1]
-        y_pred_poly1 = data_recent['y_pred_poly'].iloc[-2]
-
+        
         return price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal, y_pred_poly, y_pred_poly1
 
     #get all scores:
-    ema_score, ema_trend, rsi_score, macd_score, score, dev_from_std = get_scores()
-    price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal, y_pred_poly, y_pred_poly1 = get_scores_more()
+     ema_trend, emaAvg, rsi_score, macd_score, score, dev_from_std = get_scores()
+    price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal = get_scores_more()
 
     # File path
     file_path = 'scoreT.csv'
@@ -960,24 +958,21 @@ def main():
         # If the file doesn't exist or is empty, create a new DataFrame
         print("File does not exist or is empty. Creating a new file.")
 
-        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'score', 'dev_from_std', 'score_trend'])
+        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'emaAvg', 'rsi','macd', 'score',  'score_trend'])
 
         # Save the empty DataFrame to the CSV file
         df.to_csv(file_path, index=False, header=False)
         st.success(f"✅ File created successfully as `{file_path}`")
 
     #ema_score, ema_trend, rsi_score, macd_score, score
-    y_pred_p_trend = 0
-    if y_pred_poly >= y_pred_poly1:
-        y_pred_p_trend = 1
-        #y_pred_p_trend = "↑"
+    if price>= emaAvg:
+        emaAvg =1
     else:
-       # y_pred_p_trend = "↓"
-        y_pred_p_trend = -1
+        emaAvg =-1
         
-    if ema_score >= 0 and rsi_score >= 0 and macd_score >= 0 and ema_trend >= 0:
+    if emaAvg >= 0 and rsi_score >= 0 and macd_score >= 0 and ema_trend >= 0:
         score_trend = 1
-    elif ema_score <0 and rsi_score < 0  and macd_score < 0 and ema_trend < 0:
+    elif emaAvg <0 and rsi_score < 0  and macd_score < 0 and ema_trend < 0:
         score_trend = -1
     else:
         score_trend = 0
@@ -986,12 +981,10 @@ def main():
     new_data = pd.DataFrame([{
         "tFrame": f"{interval}",
         "ema9/20": round(ema_trend, 2),
-        "ema100/200": round(ema_score, 2),
+        "emaAvg": round(emaAvg, 2),
         "rsi": round(rsi_score, 2),
         "macd": round(macd_score, 2),
         "score": round(score, 2),
-        "dev_from_std": deviation_in_std,
-        "y_pred_p_trend": y_pred_p_trend,
         "score_trend": score_trend,
     }])
     #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
@@ -1010,7 +1003,7 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema9/20', 'ema100/200', 'rsi', 'macd', 'score', 'dev_from_std', "y_pred_p_trend", 'score_trend']
+    df.columns = ['tFrame', 'ema9/20', 'emaAvg', 'rsi', 'macd', 'score', 'score_trend']
         
     #display table
     st.dataframe(df, hide_index=True) #original table looks neater
@@ -1018,32 +1011,30 @@ def main():
     plot_bars(current_price)
 
     ################### all control buttons ###########################################################
-    current_price = round(data_recent['Close'].iloc[-1], 2)
-    now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  # Correct format
-  #  ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
+    #current_price = round(data_recent['Close'].iloc[-1], 2)
+    #now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  # Correct format
+
  #   ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
-    pr1=df[df["tFrame"] == "1m"]["y_pred_p_trend"].values[0]
-    pr5=df[df["tFrame"] == "5m"]["y_pred_p_trend"].values[0]
-    dev1=df[df["tFrame"] == "1m"]["dev_from_std"].values[0]
-    dev5=df[df["tFrame"] == "5m"]["dev_from_std"].values[0]
+    emaAvg1=df[df["tFrame"] == "1m"]["emaAvg"].values[0]
+    emaAvg5=df[df["tFrame"] == "5m"]["emaAvg"].values[0]
     
     st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
     # Extract "score_trend" for "1m"  ## 
     
-    if pr1 ==1:
+    if emaAvg1 ==1:
         message = "___B OK 1"
         color = "green"
-    elif pr1==-1:
+    elif emaAvg1==-1:
         message = "___S OK -1"
         color = "red"
     else:
         message = "Hold it"
         color = "orange"
     st.markdown(f'<p style="color:{color}; font-weight:bold;">polynomial 1min: {message}</s></p>', unsafe_allow_html=True)
-    if pr5 ==1:
+    if emaAvg5==1:
         message = "___B OK 1"
         color = "green"
-    elif pr5==-1:
+    elif emaAvg5==-1:
         message = "___S OK -1"
         color = "red"
     else:
@@ -1067,78 +1058,6 @@ def main():
 
     #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
-    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "scoreTrendRest","note"])
-
-    b_condition =  sum_score_trend_rest >= 4 and pr1 ==1 and pr5==1 and dev1<=-1 and dev5<=-1
-    short_b = b_condition or ((current_price - st.session_state.temp_price) <= -1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) >= 0.5 and st.session_state.temp_price != 0)              
-    short_s =  sum_score_trend_rest <= -4 and pr1==-1 and pr5==-1 and dev1>=1 and dev5>=1
-    s_condition = short_s or ((current_price - st.session_state.temp_price) >=1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) <= -0.5 and st.session_state.temp_price != 0)
-
-    ########## B and S actions
-    def save_pe(type="AAA", price=None, total =0, note="zz"): 
-        updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "scoreTrendRest", "note"])
-        pl=0
-        if type == "S":
-            pl = price - updated_data["temp_pr"].iloc[-1]
-        elif type == "SB":
-            pl = updated_data["temp_pr"].iloc[-1] - price
-        else:
-            pl = 0
-        total = total + pl
-        
-        if type == "B":
-            new_data = pd.DataFrame([{
-                    "TimeStamp": f"{now}",
-                    "type": "B",
-                    "B_pr": round(price, 2),
-                    "S_pr": 0,
-                    "pl": pl,
-                    "total": round(total, 2),
-                    "temp_price": round(price, 2),
-                    "scoreTrendRest":sum_score_trend_rest,
-                    "note": note,
-                }])
-
-        elif type == "S":
-            new_data = pd.DataFrame([{
-                    "TimeStamp": f"{now}",
-                    "type": "S",
-                    "B_pr": 0,
-                    "S_pr": round(price, 2),
-                    "pl": round(pl, 2),
-                    "total": round(total, 2),
-                    "temp_price": 0,
-                    "scoreTrendRest":sum_score_trend_rest,
-                    "note": note,
-                }])
-
-        elif type == "SS":
-            new_data = pd.DataFrame([{
-                    "TimeStamp": f"{now}",
-                    "type": "SS",
-                    "B_pr": 0,
-                    "S_pr": round(price, 2),
-                    "pl": 0,
-                    "total": total, ## for now
-                    "temp_price": round(price, 2),
-                    "scoreTrendRest":sum_score_trend_rest,
-                    "note": note,
-                }])
-
-        elif type == "SB": 
-            new_data = pd.DataFrame([{
-                    "TimeStamp": f"{now}",
-                    "type": "SB",
-                    "B_pr": round(price, 2),
-                    "S_pr": 0,
-                    "pl": round(pl, 2),
-                    "total": round(total, 2),
-                    "temp_price": 0,
-                    "scoreTrendRest":sum_score_trend_rest,
-                    "note": note,
-                }])
-        # Append to CSV file
-        new_data.to_csv(pe_file, mode="a", header=False, index=False)
                     
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -1177,8 +1096,6 @@ def main():
 
     st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
 
-    
-
 ########################################
     if st.session_state.stop_sleep == 0:
         # Sleep for 8 seconds (simulating some processing)
@@ -1198,9 +1115,6 @@ def main():
         elif st.session_state.sleepGap == 6:
             st.session_state.index = 0
         
-        ##p
-        #st.write(f"B: {b_condition}__SS: {short_s}__S: {s_condition}__SB:{short_b}__Status_0: {SB == "AAA" or SB == "S" or SB == "SB"}__interval: {intervals[st.session_state.index]}")
-       # st.empty()
         st.rerun()
         
 
