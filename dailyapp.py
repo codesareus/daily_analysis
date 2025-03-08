@@ -986,7 +986,7 @@ def main():
     new_data = pd.DataFrame([{
         "tFrame": f"{interval}",
         "ema9/20": round(ema_trend, 2),
-        "ema100/200": round(ema_score, 2),
+        "e100/200": round(ema_score, 2),
         "rsi": round(rsi_score, 2),
         "macd": round(macd_score, 2),
         "score": round(score, 2),
@@ -1008,7 +1008,7 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema9/20', 'ema100/200', 'rsi', 'macd', 'score',  'score_trend']
+    df.columns = ['tFrame', 'ema9/20', 'e100/200', 'rsi', 'macd', 'score',  'score_trend']
         
     #display table
     st.dataframe(df, hide_index=True) #original table looks neater
@@ -1020,8 +1020,8 @@ def main():
     now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  # Correct format
   #  ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
  #   ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
-    pr1=df[df["tFrame"] == "1m"]["ema100/200"].values[0]
-    pr5=df[df["tFrame"] == "5m"]["ema100/200"].values[0]
+    pr1=df[df["tFrame"] == "1m"]["e100/200"].values[0]
+    pr5=df[df["tFrame"] == "5m"]["e100/200"].values[0]
     
     st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
     # Extract "score_trend" for "1m"  ## 
