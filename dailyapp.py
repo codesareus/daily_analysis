@@ -647,7 +647,7 @@ def main():
     valid_macd_timeframes = ["1m","5m","15m","30m","1h", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "max"]
 
     #if interval in valid_macd_timeframes:
-    fig, (ax2, ax3, ax) = plt.subplots(3, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [ 1, 1, 4 ]})
+    fig, (ax2, ax3) = plt.subplots(2, 1, figsize=(20, 10), gridspec_kw={'height_ratios': [ 1, 1 ]})
    
     # Use numeric x-axis for plotting to avoid duplicate time issues
     x_values = np.arange(len(data_recent))  # Numeric x-axis
