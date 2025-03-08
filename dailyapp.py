@@ -454,42 +454,8 @@ def main():
         st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **......** {current_time}")
 
     ##############################
-    degree_options = [2, 15]
-    degree = st.slider(
-            "Select number of points to plot:",
-            min_value=min(degree_options),
-            max_value=max(degree_options),
-            value=5,  # Default value 5 min for 16 h  per day
-            step=1,  # Step size
-            key="degree_slider"
-        )
-    
-    
-    #degree = st.session_state.poly_degree
-    
-    col1, col2,col3,col4 = st.columns(4)
-    
-    with col1:
-        if st.button("degree 6"):
-            st.session_state.poly_degree = 6
-            st.rerun()
 
-    with col2:
-        if st.button("degree 7"):
-            st.session_state.poly_degree = 7
-            st.rerun()
-
-    with col3:
-        if st.button("degree 8"):
-            st.session_state.poly_degree = 8
-            st.rerun()
-
-    with col4:
-        if st.button("degree 9"):
-            st.session_state.poly_degree = 9
-            st.rerun()
-
-    st.write(f"selected PR degree: {degree}")
+    st.write(f"price now: {current_price}")
     
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
@@ -901,7 +867,7 @@ def main():
     st.pyplot(fig)  ## finally plot all 3 figures
    
     st.write("---------------------")
-    st.write(data_recent.tail(5))
+    #st.write(data_recent.tail(5))
 
     ### get scores functions
     def get_scores():
