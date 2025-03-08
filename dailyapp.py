@@ -811,7 +811,7 @@ def main():
     fig, ax = plt.subplots()
     ax.set_facecolor("lightgray")  # Set background color to light gray
     ax.plot([1, 2, 3], [4, 5, 2])
-    plt.show()
+    st.pyplot ()
     
         
 
