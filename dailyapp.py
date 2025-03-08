@@ -664,9 +664,15 @@ def main():
     x_values = np.arange(len(data_recent))  # Numeric x-axis
 
     # Plot actual prices and regression lines
-    high=data_recent["Open"]
-    low=data_recent["Close"]
-    ax.vlines(x_values, low, high, color="black", linewidth=1, label="High-Low Range")
+    open=data_recent["Open"]
+    close=data_recent["Close"]
+    
+# Loop through each data point and plot with different colors
+    for i in range(1, len(x_values)):  # Start from index 1 to compare with previous value
+        color = "orange" if close[i] < close[i - 1] else "black"
+    ax.vlines(x_values[i], close[i], open[i], color=color, linewidth=1)
+
+    ax.vlines(x_values, open , close, color="black", linewidth=1, label="High-Low Range")
     #ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
     ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
     ax.plot(x_values, y_pred_poly, color="purple", linewidth=3, label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
