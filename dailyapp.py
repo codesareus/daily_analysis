@@ -1143,35 +1143,7 @@ def main():
                 st.session_state.index = 0
         elif st.session_state.sleepGap == 6:
             st.session_state.index = 0
-        
-        ### run automatic SB
-        total = updated_data["total"].iloc[-1]
-        SB = updated_data["type"].iloc[-1]
-        #if (b_condition or (current_price <= st.session_state.setpr and st.session_state.settype =="B")) and (SB == "AAA" or SB == "S" or SB == "SB") and intervals[st.session_state.index] == "1m":
-         #   save_pe("B", current_price, total)
-           # st.session_state.temp_price = current_price
-           # st.write(f"B: Yes ||SB_status: {SB}")
-                  
-       # elif (s_condition or current_price >= st.session_state.setpr) and SB == "B" and intervals[st.session_state.index] == "1m":
-        if  (plnow >= 0.6 or plnow<=-0.3) and SB == "B" :
-            save_pe("S", st.session_state.setpr, total)
-            st.session_state.temp_price = 0
-            st.write(f"S: Yes ||SB_status: {SB}")
-    
-        #elif (short_s or (current_price >= st.session_state.setpr and st.session_state.settype =="SS")) and (SB == "AAA" or SB == "S" or SB== "SB") and intervals[st.session_state.index] == "1m":
-        #    save_pe("SS", current_price, total)
-         #   st.session_state.temp_price = current_price
-          #  st.write(f"SS: Yes ||SB_status: {SB}")
-    
-        #if (short_b or current_price <= st.session_state.setpr) and SB == "SS" and intervals[st.session_state.index] == "1m":
-        
-        if  (plnow <= -0.6 or plnow >= 0.3) and SB == "SS" :
-            save_pe("SB", st.session_state.setpr, total)
-            st.session_state.temp_price = 0
-            st.write(f"SB: Yes ||SB_status: {SB}")
 
-        #st.write(f"B: {b_condition}__SS: {short_s}__S: {s_condition}__SB:{short_b}__Status_0: {SB == "AAA" or SB == "S" or SB == "SB"}__interval: {intervals[st.session_state.index]}")
-       # st.empty()
         st.rerun()
         
 
