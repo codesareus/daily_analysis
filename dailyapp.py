@@ -953,7 +953,7 @@ def main():
     else:
         message = "Hold it"
         color = "orange"
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">polynomial 1min: {message}</s></p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">pr_emaAvg 1min: {message}</s></p>', unsafe_allow_html=True)
     if pr_emaAvg5==1:
         message = "___B OK 1"
         color = "green"
@@ -963,7 +963,7 @@ def main():
     else:
         message = "Hold it"
         color = "orange"
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">polynomial 5min: {message}</s></p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">pr_emaAvg 5min: {message}</s></p>', unsafe_allow_html=True)
 
     sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "6mo"])]["score_trend"].sum()
     
