@@ -511,27 +511,7 @@ def main():
         simplified_time_labels = [label if label.endswith('00') else '' for label in time_labels]
 
     # Calculate the deviation of the current price from the polynomial regression model
-    current_price_deviation = current_price - y_pred_poly[-1]  # Deviation from the polynomial model
-    deviation_in_std = round(current_price_deviation / std_dev ,0) # Deviation in terms of standard deviations
-
-    # Add a message above the plot showing the price deviation
-    if deviation_in_std >= 1:
-        deviation_message = f"{ticker}_Deviation from PR: +{deviation_in_std:.2f} std_dev"
-        deviation_color = "red"  # Red for >= +2 std_dev
-    elif deviation_in_std <= -1:
-        deviation_message = f"{ticker}_Deviation from PR: {deviation_in_std:.2f} std_dev"
-        deviation_color = "green"  # Green for <= -2 std_dev
-    else:
-        deviation_message = f"{ticker}_Deviation from PR: {deviation_in_std:.2f} std_dev"
-        deviation_color = "gray"  # Default color for other cases
-
-    # Display the deviation message with the appropriate color
-    st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message} ({interval})</h3>", unsafe_allow_html=True)
-
-    # Add a message above the plot showing the trend
-    st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})</h3>", unsafe_allow_html=True)
-        
-    # Calculate RSI before plotting
+        # Calculate RSI before plotting
     data_recent = calculate_rsi(data_recent)
     data_recent = calculate_macd(data_recent)
 
