@@ -740,7 +740,7 @@ def main():
     #ax.plot(x_values, y_pred_poly, color="purple", linewidth=3, label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
 
     # Draw bands for 1, 2, and 3 standard deviations from the polynomial model
-    ax.plot(x_values, emaavg - std_dev, emaavg + std_dev, color="blue", alpha=0.3, label="")
+    #ax.plot(x_values, emaavg - std_dev, emaavg + std_dev, color="blue", alpha=0.3, label="")
     #ax.plot(x_values, y_pred_poly - 2*std_dev, y_pred_poly + 2*std_dev, color="green", alpha=0.2, label="")
    # ax.plot(x_values, y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="red", alpha=0.1, label="")
 
