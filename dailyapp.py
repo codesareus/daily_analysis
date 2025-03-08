@@ -757,12 +757,15 @@ def main():
     ax.text(0.4, 0.95, f"Time Frame: {interval}__Now: {current_price:.2f}", 
         horizontalalignment='left', verticalalignment='center', 
         transform=ax.transAxes, fontsize=16, color="blue")
-    
+   
+    ############this stopped everything
     std2= data_recent["Upper_Band"].iloc[-1]
     
-    ax.text(0.4, std2 , f"std*2: {std2}", 
+    ax.text(0.4, std2 , f"std2: {std2}", 
         horizontalalignment='left', verticalalignment='center', 
         transform=ax.transAxes, fontsize=16, color="blue")
+    ####################
+    
     # Draw gray line for d2 close
     d2_close = fetch_d2_close(ticker)
     ax.axhline(y=d2_close, color="navy", linestyle="--", label="")
