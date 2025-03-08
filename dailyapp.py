@@ -23,6 +23,43 @@ import pandas_market_calendars as mcal
 #eastern = pytz.timezone("America/New")
 eastern = pytz.timezone("US/Eastern")
 
+def get_time_now():
+    eastern = timezone('US/Eastern')
+    now = datetime.now(eastern)
+    now_time = now.time()
+    
+    # Get market calendar for NYSE
+    nyse = mcal.get_calendar("NYSE")
+    
+    # Check if today is a market holiday
+    today = now.date()
+    holidays = nyse.holidays().holidays
+    if today in holidays:
+        return "holiday"
+
+    # Pre-market (4:00 AM - 9:30 AM)
+    if datetime.strptime("04:00", "%H:%M").time() <= now_time < datetime.strptime("09:30", "%H:%M").time():
+        return "pre"
+    
+    # Open wind (9:25 AM - 9:35 AM)
+    if datetime.strptime("09:25", "%H:%M").time() <= now_time < datetime.strptime("09:35", "%H:%M").time():
+        return "open_wind"
+    
+    # Regular market hours (9:35 AM - 3:55 PM)
+    if datetime.strptime("09:35", "%H:%M").time() <= now_time < datetime.strptime("15:55", "%H:%M").time():
+        return "open"
+    
+    # Close wind-down (3:55 PM - 4:00 PM)
+    if datetime.strptime("15:55", "%H:%M").time() <= now_time < datetime.strptime("16:00", "%H:%M").time():
+        return "close_wind"
+    
+    # After-hours (4:00 PM - 8:00 PM)
+    if datetime.strptime("16:00", "%H:%M").time() <= now_time < datetime.strptime("20:00", "%H:%M").time():
+        return "after_hours"
+    
+    # Market closed
+    return "closed"
+
 # Function to calculate RSI
 def calculate_rsi(data, window1=14, window2=25):
     # Calculate RSI with the first window (default 14)
@@ -59,22 +96,22 @@ def calculate_macd(data):
     return data
 
 # Function to fetch stock data with a specified interval
-def fetch_stock_data("SPY", interval="5m"):
+def fetch_stock_data(ticker, interval="5m"):
     # Fetch data for the specified stock with the given interval (including premarket)
-    stock = yf.Ticker("SPY")
+    stock = yf.Ticker(ticker)
     data = stock.history(period="5d", interval=interval, prepost=True)  # Include premarket data
     return data
 
 # Function to fetch stock data with a specified 1h interval
-def fetch_stock_data1mo("SPY", interval="1h"):
+def fetch_stock_data1mo(ticker, interval="1h"):
     # Fetch data for the specified stock with the given interval (including premarket)
-    stock = yf.Ticker("SPY")
+    stock = yf.Ticker(ticker)
     data = stock.history(period="1mo", interval="1h", prepost=True)  # no doest not Include premarket data
     return data
 
 # Function to fetch the previous 5 day's close price
-def fetch_daily5("SPY",):
-    stock = yf.Ticker("SPY")
+def fetch_daily5(ticker):
+    stock = yf.Ticker(ticker)
     daily5 = stock.history(period="3mo")  # Fetch 30 days of data
     if len(daily5) >= 2:
         return daily5['Close'][-5:]  ## return only last 5 days 
@@ -82,8 +119,8 @@ def fetch_daily5("SPY",):
         return None  # Handle cases where there isn't enough data
 
 # Function to fetch 3mo close price
-def fetch_3mo("SPY"):
-    stock = yf.Ticker("SPY")
+def fetch_3mo(ticker):
+    stock = yf.Ticker(ticker)
     daily3mo = stock.history(period="3mo")
     if len(daily3mo) >= 2:
         return daily3mo    
@@ -91,8 +128,8 @@ def fetch_3mo("SPY"):
         return None  # Handle cases where there isn't enough data
     
 # Function to fetch 6mo close price
-def fetch_6mo("SPY"):
-    stock = yf.Ticker("SPY")
+def fetch_6mo(ticker):
+    stock = yf.Ticker(ticker)
     daily6mo = stock.history(period="6mo")
     if len(daily6mo) >= 2:
         return daily6mo
@@ -100,8 +137,8 @@ def fetch_6mo("SPY"):
         return None  # Handle cases where there isn't enough data
 
 # Function to fetch the previous day's close price
-def fetch_previous_close("SPY"):
-    close_prices = fetch_daily5("SPY")
+def fetch_previous_close(ticker):
+    close_prices = fetch_daily5(ticker)
     if close_prices is None:
         return None  # Handle cases where there isn't enough data
     
@@ -121,8 +158,8 @@ def fetch_previous_close("SPY"):
     return previous_close
 
 # Function to fetch the day before yesterday's close price
-def fetch_d2_close("SPY"):
-    close_prices = fetch_daily5("SPY")
+def fetch_d2_close(ticker):
+    close_prices = fetch_daily5(ticker)
     if close_prices is None:
         return None  # Handle cases where there isn't enough data
     
@@ -319,6 +356,9 @@ def clear_text():
 def main():
     st.title("Score Regression Analysis")
 
+    # Input box for user to enter stock ticker
+    ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
+
     # Initialize session states
     if 'index' not in st.session_state:
         st.session_state.index = 0
@@ -389,18 +429,32 @@ def main():
 
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
-        data = fetch_stock_data1mo("SPY", interval="1h")
+        data = fetch_stock_data1mo(ticker, interval="1h")
     elif interval == "3mo":
-        data = fetch_3mo("SPY")
+        data = fetch_3mo(ticker)
     elif interval == "6mo":
-        data = fetch_6mo("SPY")
+        data = fetch_6mo(ticker)
     else:
-        data = fetch_stock_data("SPY", interval=interval)
+        data = fetch_stock_data(ticker, interval=interval)
 
     if data.empty:
-        st.error(f"Failed to fetch data for {"SPY"}. Please check the ticker and try again.")
+        st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
         return
 
+# Add a slider for backtracking
+    #backtrack_options = [0, 2, 5, 7, 10, 20, 30, 45, 60, 90, 100, 200]
+    #selected_backtrack = st.slider(
+       # "Select number of points to backtrack:",
+       # min_value=min(backtrack_options),
+       # max_value=max(backtrack_options),
+      #  value=0,  # Default value
+        #step=1,  # Step size
+        #key="backtrack_slider"
+   # )
+
+    # Adjust the data based on the selected backtrack
+    #data_recent = data.tail(300 + selected_backtrack)  # Get the most recent 300 + selected_backtrack data points
+    #data_recent = data.tail(100 + selected_backtrack)  # Get the most recent 300 + selected_backtrack data points
     data_recent = data.tail(300)  # Use only the first 300 points after backtracking
     #data_recent = data_recent.head(100)  # Use only the first 300 points after backtracking
     columns_to_drop = ['Stock Splits', 'Capital Gains']
@@ -413,7 +467,7 @@ def main():
     current_price = data_recent['Close'].iloc[-1]
 
     # Fetch the previous day's close price
-    previous_close = fetch_previous_close("SPY")
+    previous_close = fetch_previous_close(ticker)
     if previous_close is None:
         st.error("Failed to fetch the previous day's close price. Please try again.")
         return
@@ -428,6 +482,14 @@ def main():
     #current_time = datetime.now(eastern).strftime("%H:%M:%S")
     current_time = datetime.now(eastern).strftime("%I:%M:%S %p")
 
+    # Display the percentage change message with current local time
+    #st.write("### Current Price vs Previous Close___" f"{ticker}")
+    if percentage_change >= 0:
+        st.success(f"🟢 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, previous_close **{previous_close:.2f}**)  |  **___** {current_time} **___**")
+    else:
+        st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **......** {current_time}")
+
+    ##############################
     
     degree = st.session_state.poly_degree
     
@@ -495,12 +557,12 @@ def main():
 
     #3mo and 6mo data has only day information not hours and minute
     elif interval == "3mo":
-        data3mo = fetch_3mo("SPY")
+        data3mo = fetch_3mo(ticker)
         time_labels = data3mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
         simplified_time_labels = [label if idx % 9 == 0 else '' for idx, label in enumerate(time_labels)]
 
     elif interval == "6mo":
-        data6mo = fetch_6mo("SPY")
+        data6mo = fetch_6mo(ticker)
         time_labels = data6mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
         simplified_time_labels = [label if idx % 9 == 0 else '' for idx, label in enumerate(time_labels)]    
 
@@ -512,6 +574,23 @@ def main():
     current_price_deviation = current_price - y_pred_poly[-1]  # Deviation from the polynomial model
     deviation_in_std = current_price_deviation / std_dev  # Deviation in terms of standard deviations
 
+    # Add a message above the plot showing the price deviation
+    if deviation_in_std >= 1:
+        deviation_message = f"{ticker}_Deviation from PR: +{deviation_in_std:.2f} std_dev"
+        deviation_color = "red"  # Red for >= +2 std_dev
+    elif deviation_in_std <= -1:
+        deviation_message = f"{ticker}_Deviation from PR: {deviation_in_std:.2f} std_dev"
+        deviation_color = "green"  # Green for <= -2 std_dev
+    else:
+        deviation_message = f"{ticker}_Deviation from PR: {deviation_in_std:.2f} std_dev"
+        deviation_color = "gray"  # Default color for other cases
+
+    # Display the deviation message with the appropriate color
+    st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message} ({interval})</h3>", unsafe_allow_html=True)
+
+    # Add a message above the plot showing the trend
+    st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})</h3>", unsafe_allow_html=True)
+        
     # Calculate RSI before plotting
     data_recent = calculate_rsi(data_recent)
     data_recent = calculate_macd(data_recent)
@@ -667,7 +746,7 @@ def main():
         transform=ax.transAxes, fontsize=16, color="blue")
     
     # Draw gray line for d2 close
-    d2_close = fetch_d2_close("SPY")
+    d2_close = fetch_d2_close(ticker)
     ax.axhline(y=d2_close, color="navy", linestyle="--", label="")
 
     # Add price label for the d2_close
@@ -698,8 +777,8 @@ def main():
     ax.set_xticks(x_values)  # Set ticks for all time points
     ax.set_xticklabels(simplified_time_labels)  # Show only hours or every 3 hours
     ax.set_xlabel("Time (HH:MM)")
-    ax.set_ylabel(f"{"SPY"} Price")
-    ax.set_title(f"Combined Linear and Polynomial Regression for {"SPY"} (tFrame: {interval})")
+    ax.set_ylabel(f"{ticker} Price")
+    ax.set_title(f"Combined Linear and Polynomial Regression for {ticker} (tFrame: {interval})")
     ax.legend()
 
     # --- RSI Plot ---
@@ -899,6 +978,77 @@ def main():
     #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
     updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "scoreTrendRest","note"])
+
+    b_condition =  sum_score_trend_rest >= 4 and pr1 ==1 and pr5==1 and dev1<=-1 and dev5<=-1
+    short_b = b_condition or ((current_price - st.session_state.temp_price) <= -1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) >= 0.5 and st.session_state.temp_price != 0)              
+    short_s =  sum_score_trend_rest <= -4 and pr1==-1 and pr5==-1 and dev1>=1 and dev5>=1
+    s_condition = short_s or ((current_price - st.session_state.temp_price) >=1.0 and st.session_state.temp_price != 0) or ((current_price - st.session_state.temp_price) <= -0.5 and st.session_state.temp_price != 0)
+
+    ########## B and S actions
+    def save_pe(type="AAA", price=None, total =0, note="zz"): 
+        updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "scoreTrendRest", "note"])
+        pl=0
+        if type == "S":
+            pl = price - updated_data["temp_pr"].iloc[-1]
+        elif type == "SB":
+            pl = updated_data["temp_pr"].iloc[-1] - price
+        else:
+            pl = 0
+        total = total + pl
+        
+        if type == "B":
+            new_data = pd.DataFrame([{
+                    "TimeStamp": f"{now}",
+                    "type": "B",
+                    "B_pr": round(price, 2),
+                    "S_pr": 0,
+                    "pl": pl,
+                    "total": round(total, 2),
+                    "temp_price": round(price, 2),
+                    "scoreTrendRest":sum_score_trend_rest,
+                    "note": note,
+                }])
+
+        elif type == "S":
+            new_data = pd.DataFrame([{
+                    "TimeStamp": f"{now}",
+                    "type": "S",
+                    "B_pr": 0,
+                    "S_pr": round(price, 2),
+                    "pl": round(pl, 2),
+                    "total": round(total, 2),
+                    "temp_price": 0,
+                    "scoreTrendRest":sum_score_trend_rest,
+                    "note": note,
+                }])
+
+        elif type == "SS":
+            new_data = pd.DataFrame([{
+                    "TimeStamp": f"{now}",
+                    "type": "SS",
+                    "B_pr": 0,
+                    "S_pr": round(price, 2),
+                    "pl": 0,
+                    "total": total, ## for now
+                    "temp_price": round(price, 2),
+                    "scoreTrendRest":sum_score_trend_rest,
+                    "note": note,
+                }])
+
+        elif type == "SB": 
+            new_data = pd.DataFrame([{
+                    "TimeStamp": f"{now}",
+                    "type": "SB",
+                    "B_pr": round(price, 2),
+                    "S_pr": 0,
+                    "pl": round(pl, 2),
+                    "total": round(total, 2),
+                    "temp_price": 0,
+                    "scoreTrendRest":sum_score_trend_rest,
+                    "note": note,
+                }])
+        # Append to CSV file
+        new_data.to_csv(pe_file, mode="a", header=False, index=False)
                     
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -935,6 +1085,134 @@ def main():
             st.rerun()
 
     st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
+
+    setnote_input = st.text_input("Enter note): ", value=str(st.session_state.setnote))
+    st.session_state.setpr = current_price
+    
+    SB = updated_data["type"].iloc[-1]
+    plnow = 0
+    
+    if st.session_state.temp_price !=0:
+        if SB=="B":
+            plnow=  round(st.session_state.setpr - st.session_state.temp_price,2)
+        elif SB=="SS":
+            plnow=  - round(st.session_state.setpr - st.session_state.temp_price,2)
+    
+    if plnow >= 0:
+        color="green"
+    else:
+        color="red"
+
+    st.markdown(f'<p style="color:{color}; font-weight:bold;">SPY now: ${st.session_state.setpr:.2f}__ pl now__{plnow:.2f}</s></p>', unsafe_allow_html=True)
+
+    #set them
+    col1, col2=st.columns(2)
+    with col1:
+        if st.button("set note"): #save note
+            if setnote_input != "zz":
+    # Attempt to convert the input to a float and update the session state
+                total = updated_data["total"].iloc[-1]
+                note = setnote_input
+                new_data = pd.DataFrame([{
+                    "TimeStamp": f"{now}",
+                    "type": "aaa",
+                    "B_pr": 0,
+                    "S_pr": 0,
+                    "pl": 0,
+                    "total": round(total, 2),
+                    "scoreTrendRest":0,
+                    "temp_price": 0,
+                    "note": note,
+                }])
+        # Append to CSV file
+                new_data.to_csv(pe_file, mode="a", header=False, index=False)
+                st.session_state.setnote = "zz"
+                st.session_state.confirmation_message = f"Success!"
+                setnote_input ="zz"
+                clear_text()
+            else:
+                st.write("no note")
+            st.rerun()
+# Display the current value of setpr from the session state
+    with col2:
+        st.write(f"setpr: {st.session_state.setpr}__temp_price: {st.session_state.temp_price}__setnote: {st.session_state.setnote}")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    total = updated_data["total"].iloc[-1]
+    
+    with col1:
+        if st.button("B >>>"):
+            if  (SB == "AAA" or SB == "S" or SB== "SB")  and st.session_state.setpr !=0:
+                save_pe("B", st.session_state.setpr, total, st.session_state.setnote)
+                st.session_state.temp_price = st.session_state.setpr
+                #st.session_state.setpr = 0
+                st.write(f"B: Yes ||SB_status: {SB}")
+            else:
+                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}__setpr: { st.session_state.setpr}")  
+            st.rerun()
+            
+    with col2:
+        if st.button("S >>>"):
+            if SB == "B" and st.session_state.setpr !=0:
+                save_pe("S", st.session_state.setpr, total,st.session_state.setnote)
+                st.session_state.temp_price = 0
+                #st.session_state.setpr = 0
+                st.write(f"S: Yes ||SB_status: {SB}")
+            else:
+                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}__setpr: { st.session_state.setpr}")  
+            st.rerun()
+
+    with col3:
+        if st.button("SS >>>"):
+            if  (SB == "AAA" or SB == "S" or SB== "SB")  and st.session_state.setpr !=0:
+                save_pe("SS", st.session_state.setpr, total, st.session_state.setnote)
+                st.session_state.temp_price = st.session_state.setpr
+                #st.session_state.setpr = 0
+                st.write(f"SS: Yes ||SB_status: {SB}")
+            else:
+                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}__setpr: { st.session_state.setpr}")  
+            st.rerun()
+        
+    with col4:
+        if st.button("SB >>>"):
+            if SB == "SS"  and st.session_state.setpr !=0:
+                save_pe("SB", st.session_state.setpr, total, st.session_state.setnote)
+                st.session_state.temp_price = 0
+                #st.session_state.setpr = 0
+                st.write(f"SB: Yes ||SB_status: {SB}")
+            else:
+                st.write(f"NO, Can not ||SB_status: {SB}__interval: {interval}__setpr: { st.session_state.setpr}")       
+            st.rerun()
+
+    st.write(f"SB_type: {updated_data["type"].iloc[-1]}")
+    #show which timeframes are in bar chart:
+    timeframes = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
+    message_here = timeframes[:st.session_state.rerun_count]
+
+     # Read the updated CSV file ---- example
+    updated_data = pd.read_csv(pe_file, names=["type", "B_pr", "S_pr", "pl", "total", "temp_pr", "scoreTrendRest","note"])
+   
+    ###plnow = 0
+    st.markdown(f'<p style="color:orange; font-weight:bold;">pe_table: ___now interval__{interval}___now pl:__{plnow:.2f}</s></p>', unsafe_allow_html=True)
+    st.dataframe(updated_data.tail(5), hide_index=False)
+    st.write(f"{len(updated_data["total"])} rows")
+    
+    st.write(f"now: _<{now}>_{get_time_now()}")
+    message1 = 1 if {b_condition} == True else 0
+    message2 = 1 if {s_condition} == True else 0
+    
+    #st.write(f"Pre_Post_status: {st.session_state.prepo}")
+    if st.button("Clear data"):
+        #st.session_state.stop_sleep = 1
+        data = pd.read_csv(pe_file)
+
+# Remove the last row
+        new_data = data.iloc[:-1]
+
+# Save the modified data back to the file
+        new_data.to_csv(pe_file, mode="w", header=True, index=False)
+        st.write("data cleared")
+        st.rerun()
             
     st.write("---------------------")
 
@@ -1101,6 +1379,34 @@ def main():
         elif st.session_state.sleepGap == 6:
             st.session_state.index = 0
         
+        ### run automatic SB
+        total = updated_data["total"].iloc[-1]
+        SB = updated_data["type"].iloc[-1]
+        #if (b_condition or (current_price <= st.session_state.setpr and st.session_state.settype =="B")) and (SB == "AAA" or SB == "S" or SB == "SB") and intervals[st.session_state.index] == "1m":
+         #   save_pe("B", current_price, total)
+           # st.session_state.temp_price = current_price
+           # st.write(f"B: Yes ||SB_status: {SB}")
+                  
+       # elif (s_condition or current_price >= st.session_state.setpr) and SB == "B" and intervals[st.session_state.index] == "1m":
+        if  (plnow >= 0.6 or plnow<=-0.3) and SB == "B" :
+            save_pe("S", st.session_state.setpr, total)
+            st.session_state.temp_price = 0
+            st.write(f"S: Yes ||SB_status: {SB}")
+    
+        #elif (short_s or (current_price >= st.session_state.setpr and st.session_state.settype =="SS")) and (SB == "AAA" or SB == "S" or SB== "SB") and intervals[st.session_state.index] == "1m":
+        #    save_pe("SS", current_price, total)
+         #   st.session_state.temp_price = current_price
+          #  st.write(f"SS: Yes ||SB_status: {SB}")
+    
+        #if (short_b or current_price <= st.session_state.setpr) and SB == "SS" and intervals[st.session_state.index] == "1m":
+        
+        if  (plnow <= -0.6 or plnow >= 0.3) and SB == "SS" :
+            save_pe("SB", st.session_state.setpr, total)
+            st.session_state.temp_price = 0
+            st.write(f"SB: Yes ||SB_status: {SB}")
+
+        #st.write(f"B: {b_condition}__SS: {short_s}__S: {s_condition}__SB:{short_b}__Status_0: {SB == "AAA" or SB == "S" or SB == "SB"}__interval: {intervals[st.session_state.index]}")
+       # st.empty()
         st.rerun()
         
 
