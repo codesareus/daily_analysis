@@ -593,6 +593,8 @@ def main():
     # Plot actual prices and regression lines
     open=data_recent["Open"]
     close=data_recent["Close"]
+    high=data_recent["High"]
+    low=data_recent["Low"]
     
 
 # Loop through each data point and plot with different colors
