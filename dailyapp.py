@@ -359,6 +359,11 @@ def main():
     # Get the current interval
     interval = intervals[st.session_state.index]
 
+    fig, ax = plt.subplots()
+    ax.set_facecolor("lightgray")  # Set background color to light gray
+    ax.plot([1, 2, 3], [4, 5, 2])
+    plt.show()
+    
     # Add a button group for interval selection
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
