@@ -715,7 +715,7 @@ def main():
     emaavg = []
     for i in range(1, len(x_values)):
         avg = (data_recent["EMA_9"][i] + data_recent["EMA_20"][i] + data_recent["EMA_50"][i]+data_recent["EMA_100"][i])/4
-        emaavg.append(avg)
+        emaavg.append([x_values[i], avg])
     st.write(emaavg[-5:])
     
     
