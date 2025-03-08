@@ -887,10 +887,11 @@ def main():
         st.success(f"✅ File created successfully as `{file_path}`")
 
     #ema_score, ema_trend, rsi_score, macd_score, score
+    pr_emaAvg = 0
     if price>= emaAvg:
-        pr_emaAvg =1
+        pr_emaAvg = 1
     else:
-        pr_emaAvg =-1
+        pr_emaAvg = -1
         
     if pr_emaAvg >= 0 and rsi_score >= 0 and macd_score >= 0 and ema_trend >= 0:
         score_trend = 1
