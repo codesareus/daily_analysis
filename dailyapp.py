@@ -654,8 +654,8 @@ def main():
     x_values = np.arange(len(data_recent))  # Numeric x-axis
 
     # Plot actual prices and regression lines
-    high=data_recent["High"]
-    low=data_recent["Low"]
+    high=data_recent["Open"]
+    low=data_recent["Close"]
     ax.vlines(x_values, low, high, color="black", linewidth=1, label="High-Low Range")
     #ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
     ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
