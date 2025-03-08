@@ -451,7 +451,7 @@ def main():
         st.error(f"🔴 {ticker}:  **{current_price:.2f}**, **{change:.2f}**  (**{percentage_change:.2f}%**, prev_close **{previous_close:.2f}**)  |  **......** {current_time}")
 
     ##############################
-    
+    degree = 2
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
@@ -629,14 +629,13 @@ def main():
     close=data_recent["Close"]
     
     hlLimit = 5
-    high=data_recent["High"]
-    low=data_recent["Low"]
+    high = data_recent["High"].copy()
+    low = data_recent["Low"].copy()
+    close = data_recent["Close"]
 
-    for i in range(1, len(x_values)): 
-        if high[i] - close[i] >= hlLimit:
-            high[i] = close[i] + hlLimit
-        if low[i] - close[i] <= - hlLimit:
-            low[i] = close[i] - hlLimit   
+# Apply conditions using NumPy vectorized operations
+    high = np.where(high - close >= hlLimit, close + hlLimit, high)
+    low = np.where(low - close <= -hlLimit, close - hlLimit, low)
     
 # Loop through each data point and plot with different colors
     
