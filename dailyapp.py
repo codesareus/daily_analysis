@@ -715,10 +715,13 @@ def main():
     emaavg = data_recent["EMA_9"]
     for i in range(1, len(x_values)):
         emaavg[i] = (data_recent["EMA_9"][i] + data_recent["EMA_20"][i] + data_recent["EMA_50"][i]+data_recent["EMA_100"][i]+data_recent["EMA_200"][i])/5
+    st.write(emaavg[-5:])
+    
+    for i in range(1, len(x_values)):
         ax.plot(x_values[i], 
             emaavg[i],
-            color="darkorange", 
-            linewidth=3
+            color="green", 
+            linewidth=6
         )
 #ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
     ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
