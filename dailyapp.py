@@ -868,7 +868,7 @@ def main():
     ax.legend()
 
     # --- RSI Plot ---
-    ax2.fill_between(x_values, max(data_recent['RSI']),  min(data_recent['RSI']), color="gray", alpha=0.1)
+    ax2.fill_between(x_values, min(data_recent['RSI']), max(data_recent['RSI']), color="gray", alpha=0.1)
 
     ax2.plot(x_values, data_recent['RSI'], color="navy", linestyle="-", label="RSI (14)")
     ax2.plot(x_values, data_recent['RSI2'], color="red", linestyle="--", label="RSI (25)")
@@ -884,6 +884,8 @@ def main():
         x_values = range(1, len(data_recent) + 1)
 
         # Plot the MACD and Signal lines with numeric x-values
+        ax3.fill_between(x_values, min(data_recent['MACD']), max(data_recent['MACD']), color="gray", alpha=0.1)
+        
         ax3.plot(x_values, data_recent['MACD'], color="navy", label="MACD Line")
         ax3.plot(x_values, data_recent['Signal_Line'], color="red", linestyle="--", label="Signal Line")
 
