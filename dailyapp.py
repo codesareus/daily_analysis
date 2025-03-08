@@ -717,7 +717,10 @@ def main():
 # Print the last 5 values
     st.write(emaavg[-5:])
 
-    
+    # Plot the EMA average
+
+    ax.plot(x_values, emaavg, color="green", linewidth=6, label="EMA Average")
+
 #alligator
     def smoothed_ma(series, period):
         return series.ewm(span=period, adjust=False).mean()
@@ -727,52 +730,19 @@ def main():
     data_recent["Teeth"] = smoothed_ma(data_recent["Close"], 8).shift(5)  # Red line (shifted 5 periods)
     data_recent["Lips"] = smoothed_ma(data_recent["Close"], 5).shift(3)   # Green line (shifted 3 periods)
 
-
-
     ax.plot(x_values, data_recent["Close"], color="gray", linewidth=1, label="Close Price")
     ax.plot(x_values, data_recent["Jaw"], color="blue", linewidth=2, label="Jaw (13 SMA, shift 8)")
     ax.plot(x_values, data_recent["Teeth"], color="red", linewidth=2, label="Teeth (8 SMA, shift 5)")
     ax.plot(x_values, data_recent["Lips"], color="green", linewidth=2, label="Lips (5 SMA, shift 3)")
 
-
-# Plot the EMA average
-
-    #ax.plot(x_values, emaavg, color="green", linewidth=6, label="EMA Average")
-
-    ######GMMA
-    # Define short-term and long-term EMA periods
-    #short_emas = [3, 5, 8, 10, 12, 15]
-    #long_emas = [30, 35, 40, 45, 50, 60]
-
-# Compute short-term EMAs
-    #for period in short_emas:
-        #data_recent[f"EMA_{period}"] = data_recent["Close"].ewm(span=period, adjust=False).mean()
-
-# Compute long-term EMAs
-   # for period in long_emas:
-      #  data_recent[f"EMA_{period}"] = data_recent["Close"].ewm(span=period, adjust=False).mean()
-
-# Plot GMMA
-
-
-# Plot short-term EMAs (thin lines)
-    #for period in short_emas:
-      #  ax.plot(x_values, data_recent[f"EMA_{period}"], color="red", linewidth=1, alpha=0.8, label=f"EMA {period}" if period == 3 else "")
-
-# Plot long-term EMAs (thicker lines)
-    #for period in long_emas:
-       # ax.plot(x_values, data_recent[f"EMA_{period}"], color="blue", linewidth=2, alpha=0.8, label=f"EMA {period}" if period == 30 else "")
-
-# Add labels
-
 #ax.plot(x_values, y, color="black", label="Actual Prices")  # Actual prices as a gray line plot
-    ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
+  #  ax.plot(x_values, y_pred_linear, color="red", label=f"L.R. (R² = {r2_linear:.2f})")
     ax.plot(x_values, y_pred_poly, color="purple", linewidth=3, label=f"P.R. (d {degree}, R² = {r2_poly:.2f})")
 
     # Draw bands for 1, 2, and 3 standard deviations from the polynomial model
-    ax.plot(x_values, y_pred_poly - std_dev, y_pred_poly + std_dev, color="blue", alpha=0.3, label="")
-    ax.plot(x_values, y_pred_poly - 2*std_dev, y_pred_poly + 2*std_dev, color="green", alpha=0.2, label="")
-    ax.plot(x_values, y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="red", alpha=0.1, label="")
+   ## ax.plot(x_values, y_pred_poly - std_dev, y_pred_poly + std_dev, color="blue", alpha=0.3, label="")
+    #ax.plot(x_values, y_pred_poly - 2*std_dev, y_pred_poly + 2*std_dev, color="green", alpha=0.2, label="")
+   # ax.plot(x_values, y_pred_poly - 3*std_dev, y_pred_poly + 3*std_dev, color="red", alpha=0.1, label="")
 
     #channel_length = 100
     dist = np.max(np.abs(y_pred_linear - y))
@@ -832,8 +802,8 @@ def main():
     # Draw exponential moving averages with dashed lines
     ax.plot(x_values, data_recent['EMA_9'], color="red", linestyle="--", label="EMA 9/20_blue")
     ax.plot(x_values, data_recent['EMA_20'], color="blue", linestyle="--", label="")
-    ax.plot(x_values, data_recent['EMA_50'], color="gold", linestyle="--", label="EMA 50")
-    ax.plot(x_values, data_recent['EMA_100'], color="gray", linestyle="--", label="EMA 100")
+    #ax.plot(x_values, data_recent['EMA_50'], color="gold", linestyle="--", label="EMA 50")
+    #ax.plot(x_values, data_recent['EMA_100'], color="gray", linestyle="--", label="EMA 100")
     ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
 
     # Add price labels for EMAs
