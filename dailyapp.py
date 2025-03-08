@@ -719,7 +719,7 @@ def main():
 
 #### std
 # Parameters
-    moving_avg_type = "SMA"  # Can be "SMA", "EMA", or "WMA"
+    moving_avg_type = "EMA"  # Can be "SMA", "EMA", or "WMA"
     window = 20  # Lookback period for moving average & standard deviation
     std_dev_factor = 2  # Multiplier for standard deviation
 
@@ -747,8 +747,8 @@ def main():
 
 # Plot Standard Deviation 
 
-    ax.plot(x_values, data_recent["Close"], color="gray", linewidth=1, label="Close Price")
-    ax.plot(x_values, data_recent["Middle_Band"], color="blue", linewidth=2, label="Middle Band")
+    #ax.plot(x_values, data_recent["Close"], color="gray", linewidth=1, label="Close Price")
+    #ax.plot(x_values, data_recent["Middle_Band"], color="blue", linewidth=2, label="Middle Band")
     ax.plot(x_values, data_recent["Upper_Band"], color="red", linewidth=2, linestyle="dashed", label="Upper Band")
     ax.plot(x_values, data_recent["Lower_Band"], color="green", linewidth=2, linestyle="dashed", label="Lower Band")
 
