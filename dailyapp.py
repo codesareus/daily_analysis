@@ -104,9 +104,9 @@ def fetch_6mo(ticker):
     else:
         return None  # Handle cases where there isn't enough data
 
-def fetch_long_period(ticker="SPY", period= "6mo"):
+def fetch_long_interval(ticker="SPY", interval= "6mo"):
     stock = yf.Ticker(ticker)
-    daily = stock.history(period=period)
+    daily = stock.history(period=interval)
     if len(daily) >= 2:
         return daily
     else:
@@ -337,7 +337,7 @@ def main():
 
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
-    data1y = fetch_long_period(ticker="SPY", period= "1y")
+    
     st.write(data1y.head(5))
     # Initialize session states
     if 'index' not in st.session_state:
@@ -368,7 +368,7 @@ def main():
     pe_file = f"pe.csv"
 
     # List of intervals
-    intervals = ['1m', '5m', '15m', '30m', '1h', '3mo', '6mo']
+    intervals = ['1m', '5m', '15m', '30m', '1h', '3mo', '6mo', '1y']
 
     # Get the current interval
     interval = intervals[st.session_state.index]
@@ -408,9 +408,11 @@ def main():
     if interval == "1h":
         data = fetch_stock_data1mo(ticker, interval="1h")
     elif interval == "3mo":
-        data = fetch_3mo(ticker)
+        data = fetch_long_interval(ticker, interval= "3mo")
     elif interval == "6mo":
-        data = fetch_6mo(ticker)
+        data = fetch_long_interval(ticker, interval= "6mo")
+    elif interval == "1y":
+        data= fetch_long_interval(ticker, interval= "1y")
     else:
         data = fetch_stock_data(ticker, interval=interval)
 
