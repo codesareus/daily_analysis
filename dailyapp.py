@@ -380,35 +380,42 @@ def main():
                 st.session_state.backtrack = True
                 st.write(st.session_state.backtrack)
                 st.rerun()
-            
+            st.rerun()
     with col2:
         if st.button("5min", key="5m"):
             st.session_state.index = 1
+            st.rerun()
             
     with col3:
         if st.button("15min", key="15m"):
             st.session_state.index = 2
+            st.rerun()
             
     with col4:
         if st.button("30min", key="30m"):
             st.session_state.index = 3
+            st.rerun()
             
     with col5:
         if st.button("1hr", key="1h"):
             st.session_state.index = 4
             st.session_state.stop_sleep == 1
+            st.rerun()
             
     with col6:
         if st.button("3mo", key="3mo"):
             st.session_state.index = 5
+            st.rerun()
             
     with col7:
         if st.button("6mo", key="6mo"):
             st.session_state.index = 6
+            st.rerun()
             
     with col8:
         if st.button("1y", key="1y"):
             st.session_state.index = 7
+            st.rerun()
 
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
