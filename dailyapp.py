@@ -547,7 +547,7 @@ def main():
    # st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message} ({interval})</h3>", unsafe_allow_html=True)
 
     # Add a message above the plot showing the trend
-    st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})__{selected_datanumber}_da_Pts({st.session_state.tf}{daysCall}</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})__{selected_datanumber}_da_Pts({st.session_state.tf}{daysCall})</h3>", unsafe_allow_html=True)
         
     # Calculate RSI before plotting
     data_recent = calculate_rsi(data_recent)
