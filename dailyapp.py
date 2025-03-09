@@ -323,7 +323,7 @@ def plot_bars(price=0):
     st.pyplot(plt)
     plt.close()  # Prevent memory leaks
 
-def testbarplot()
+def testbarplot():
 # Sample data
     categories = ['A', 'B', 'C', 'D']
     values = [10, 20, 15, 25]
@@ -770,7 +770,7 @@ def main():
     ax.plot(x_values, upper_lr, color="blue", linestyle="--", linewidth=4,label="Upper Channel")
     ax.plot(x_values, lower_lr, color="blue", linestyle="--", linewidth=4,label="Lower Channel")
     ax.plot(x_values, mid, color="red", linestyle="--", linewidth=4,label="mid line")
-    ax.fill_between(x_values, upper_lr, lower_lr, color="gray", alpha=0.1)
+    ax.fill_between(x_values, upper_lr, lower_lr, color="gray", alpha=0.0.15)
 
     ############### Draw horizontal lines from the lowest and highest points    
     min_price = np.min(y)
@@ -844,7 +844,7 @@ def main():
     ax.legend()
 
     # --- RSI Plot ---
-    ax2.fill_between(x_values, 0, 100, color="gray", alpha=0.1)
+    ax2.fill_between(x_values, 0, 100, color="gray", alpha=0.15)
 
     ax2.plot(x_values, data_recent['RSI'], color="navy", linestyle="-", label="RSI (14)")
     ax2.plot(x_values, data_recent['RSI2'], color="red", linestyle="--", label="RSI (25)")
@@ -860,7 +860,7 @@ def main():
         x_values = range(1, len(data_recent) + 1)
 
         # Plot the MACD and Signal lines with numeric x-values
-        ax3.fill_between(x_values, min(data_recent['MACD']), max(data_recent['MACD']), color="gray", alpha=0.1)
+        ax3.fill_between(x_values, min(data_recent['MACD']), max(data_recent['MACD']), color="gray", alpha=0.5)
         
         ax3.plot(x_values, data_recent['MACD'], color="navy", label="MACD Line")
         ax3.plot(x_values, data_recent['Signal_Line'], color="red", linestyle="--", label="Signal Line")
