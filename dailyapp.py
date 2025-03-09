@@ -914,7 +914,7 @@ def main():
         # If the file doesn't exist or is empty, create a new DataFrame
         print("File does not exist or is empty. Creating a new file.")
 
-        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'score', 'score_trend'])
+        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'ema', 'rsi','macd', 'score', 'score_trend','pr_eAvg'])
 
         # Save the empty DataFrame to the CSV file
         df.to_csv(file_path, index=False, header=False)
@@ -935,7 +935,10 @@ def main():
         score_trend = -1
     else:
         score_trend = 0
-        
+    if current_price >= emaAvg.iloc[-1] :
+        pr_eAvg = 1
+    else:
+        pr_eAvg = -1
     # total == score (above) 
     new_data = pd.DataFrame([{
         "tFrame": f"{interval}",
@@ -945,6 +948,7 @@ def main():
         "macd": round(macd_score, 2),
         "score": round(score, 2),
         "score_trend": score_trend,
+        "pr_eAvg": pr_eAvg
     }])
     #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
     new_data.to_csv(scoreT_file, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
@@ -962,7 +966,7 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema9/20', 'e100/200', 'rsi', 'macd', 'score',  'score_trend']
+    df.columns = ['tFrame', 'ema9/20', 'e100/200', 'rsi', 'macd', 'score',  'score_trend', 'pr_eAvg']
         
     #display table
     st.dataframe(df, hide_index=True) #original table looks neater
