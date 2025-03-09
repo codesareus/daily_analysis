@@ -18,7 +18,7 @@ from matplotlib.lines import Line2D
 
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
-#from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score
 
 import pandas_market_calendars as mcal
 #from gtts import gTTS  # Text-to-speech
