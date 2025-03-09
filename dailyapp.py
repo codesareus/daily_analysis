@@ -346,7 +346,7 @@ def main():
         st.session_state.setnote = "zz"
 
     if "backtrack" not in st.session_state:
-        st.session_state.backtrack == False
+        st.session_state.backtrack = False
 
     scoreT_file = f"scoreT.csv"
     pe_file = f"pe.csv"
