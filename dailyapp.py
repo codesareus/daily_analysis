@@ -86,24 +86,6 @@ def fetch_daily5(ticker):
     else:
         return None  # Handle cases where there isn't enough data
 
-# Function to fetch 3mo close price
-def fetch_3mo(ticker):
-    stock = yf.Ticker(ticker)
-    daily3mo = stock.history(period="3mo")
-    if len(daily3mo) >= 2:
-        return daily3mo    
-    else:
-        return None  # Handle cases where there isn't enough data
-    
-# Function to fetch 6mo close price
-def fetch_6mo(ticker):
-    stock = yf.Ticker(ticker)
-    daily6mo = stock.history(period="6mo")
-    if len(daily6mo) >= 2:
-        return daily6mo
-    else:
-        return None  # Handle cases where there isn't enough data
-
 def fetch_long_interval(ticker="SPY", interval= "6mo"):
     stock = yf.Ticker(ticker)
     daily = stock.history(period=interval)
@@ -366,6 +348,18 @@ def main():
     scoreT_file = f"scoreT.csv"
     pe_file = f"pe.csv"
 
+
+    # # Add a slider for backtracking
+    backtrack_options = [50, 288]
+    selected_datanumber = st.slider(
+        "Select number of points to plot:",
+        min_value=min(backtrack_options),
+        max_value=max(backtrack_options),
+        value=192,  # Default value 5 min for 16 h  per day
+        step=10,  # Step size
+        key="backtrack_slider"
+    )
+    
     # List of intervals
     intervals = ['1m', '5m', '15m', '30m', '1h', '3mo', '6mo', '1y']
 
@@ -377,34 +371,43 @@ def main():
     with col1:
         if st.button("1min"):
             interval = "1m"
+            selected_datanumber = 200
             
     with col2:
         if st.button("5min", key="5m"):
             interval = "5m"
+            selected_datanumber = 192
             
     with col3:
         if st.button("15min", key="15m"):
             interval = "15m"
-
+            selected_datanumber = 300
+            
     with col4:
         if st.button("30min", key="30m"):
             interval = "30m"
+            selected_datanumber = 300
             
     with col5:
         if st.button("1hr", key="1h"):
             interval = "1h"
             st.session_state.stop_sleep == 1
+            selected_datanumber = 300
             
     with col6:
         if st.button("3mo", key="3mo"):
             interval = "3mo"
+            selected_datanumber = 300
             
     with col7:
         if st.button("6mo", key="6mo"):
             interval = "6mo"
+            selected_datanumber = 300
+            
     with col8:
         if st.button("1y", key="1y"):
             interval = "1y"
+            selected_datanumber = 300
 
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
@@ -421,17 +424,6 @@ def main():
     if data.empty:
         st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
         return
-
-# # Add a slider for backtracking
-    backtrack_options = [50, 288]
-    selected_datanumber = st.slider(
-        "Select number of points to plot:",
-        min_value=min(backtrack_options),
-        max_value=max(backtrack_options),
-        value=192,  # Default value 5 min for 16 h  per day
-        step=10,  # Step size
-        key="backtrack_slider"
-    )
 
     # Adjust the data based on the selected backtrack
     #data_recent = data.tail(300 + selected_backtrack)  # Get the most recent 300 + selected_backtrack data points
