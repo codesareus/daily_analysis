@@ -322,13 +322,20 @@ def plot_bars(price=0):
     st.pyplot(plt)
     plt.close()  # Prevent memory leaks
 
-if st.session_state.get("show_confirmation", False):
-        st.success("Text saved successfully!")
-        st.button("ClearInput", on_click=clear_text)
-        st.session_state.show_confirmation = False
+def testbarplot()
+# Sample data
+    categories = ['A', 'B', 'C', 'D']
+    values = [10, 20, 15, 25]
 
-def clear_text():
-    st.session_state["text_input"] = "zz"
+# Create the bar plot
+    plt.bar(categories, values, color='skyblue')
+
+# Set the background color of the entire plot to light blue
+    plt.gca().set_facecolor('lightblue')
+
+# Display the plot
+    st.pyplot(plt)
+    plt.close()  # 
         
 # Streamlit app
 # Streamlit app
@@ -1071,7 +1078,7 @@ def main():
 
     st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
 
-    
+    testbarplot()
 
 ########################################
     if st.session_state.stop_sleep == 0:
@@ -1097,18 +1104,7 @@ def main():
        # st.empty()
         st.rerun()
 
-# Sample data
-    categories = ['A', 'B', 'C', 'D']
-    values = [10, 20, 15, 25]
 
-# Create the bar plot
-    plt.bar(categories, values, color='skyblue')
-
-# Set the background color of the entire plot to light blue
-    plt.gca().set_facecolor('lightblue')
-
-# Display the plot
-    plt.show()
         
 
 if __name__ == "__main__":
