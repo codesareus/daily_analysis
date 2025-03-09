@@ -375,7 +375,8 @@ def main():
     with col1:
         if st.button("1min"):
             interval = "1m"
-            if st.button("backtrack"):
+            if st.button("bkTrak"):
+                interval = "1m"
                 st.session_state.backtrack = True
                 st.write(st.session_state.backtrack)
                 st.rerun()
