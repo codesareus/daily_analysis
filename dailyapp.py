@@ -374,41 +374,41 @@ def main():
     col1, col2, col3, col4, col5, col6, col7, col8= st.columns(8)
     with col1:
         if st.button("1min"):
-            interval = "1m"
+            st.session_state.index = 0
             if st.button("bkTrak"):
-                interval = "1m"
+                st.session_state.index = 0
                 st.session_state.backtrack = True
                 st.write(st.session_state.backtrack)
                 st.rerun()
             
     with col2:
         if st.button("5min", key="5m"):
-            interval = "5m"
+            st.session_state.index = 1
             
     with col3:
         if st.button("15min", key="15m"):
-            interval = "15m"
+            st.session_state.index = 2
             
     with col4:
         if st.button("30min", key="30m"):
-            interval = "30m"
+            st.session_state.index = 3
             
     with col5:
         if st.button("1hr", key="1h"):
-            interval = "1h"
+            st.session_state.index = 4
             st.session_state.stop_sleep == 1
             
     with col6:
         if st.button("3mo", key="3mo"):
-            interval = "3mo"
+            st.session_state.index = 5
             
     with col7:
         if st.button("6mo", key="6mo"):
-            interval = "6mo"
+            st.session_state.index = 6
             
     with col8:
         if st.button("1y", key="1y"):
-            interval = "1y"
+            st.session_state.index = 7
 
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
@@ -426,13 +426,14 @@ def main():
         st.error(f"Failed to fetch data for {ticker}. Please check the ticker and try again.")
         return
 
+    data_recent = data.tail(selected_datanumber)  # Use only the first 300 points after backtracking
     # Adjust the data based on the selected backtrack
     
     if interval=="1m" and st.session_state.backtrack == True:
-        data_recent = data.tail(100 + 100)  # Get the most recent 300 + selected_backtrack data points
+        data = fetch_stock_data(ticker, interval="1m")
+        data_recent = data.tail(200)  # Get the most recent 300 + selected_backtrack data points
         data_recent = data.head(100)  # Get the most recent 300 + selected_backtrack data points
-    else: 
-        data_recent = data.tail(selected_datanumber)  # Use only the first 300 points after backtracking
+        
     #data_recent = data_recent.head(100)  # Use only the first 300 points after backtracking
     columns_to_drop = ['Stock Splits', 'Capital Gains']
     data_recent = data_recent.drop(columns=columns_to_drop)
