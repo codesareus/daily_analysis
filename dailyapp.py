@@ -346,8 +346,6 @@ def main():
 
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
-
-    testbarplot()
     
     # Initialize session states
     if 'index' not in st.session_state:
@@ -821,11 +819,14 @@ def main():
     #ax.plot(x_values, data_recent['EMA_100'], color="gray", linestyle="--", label="EMA 100")
     ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
 
+# Set the background color of the axes to light blue
+    ax.set_facecolor('lightblue')
+
     # Add price labels for EMAs
     ax.text(x_values[-1], data_recent['EMA_9'].iloc[-1], f'^^^^^^e9', color='orange', verticalalignment='top')
     ax.text(x_values[-1], data_recent['EMA_20'].iloc[-1], f'^^^^^^^^e20', color='blue', verticalalignment='top')
-    ax.text(x_values[-1], data_recent['EMA_50'].iloc[-1], f'^^^^^^^^e50', color='gold', verticalalignment='top')
-    ax.text(x_values[-1], data_recent['EMA_100'].iloc[-1], f'^^^^^^^^e100', color='gray', verticalalignment='top')
+    #ax.text(x_values[-1], data_recent['EMA_50'].iloc[-1], f'^^^^^^^^e50', color='gold', verticalalignment='top')
+    #ax.text(x_values[-1], data_recent['EMA_100'].iloc[-1], f'^^^^^^^^e100', color='gray', verticalalignment='top')
     ax.text(x_values[-1], data_recent['EMA_200'].iloc[-1], f'^^^^^^^^e200', color='purple', verticalalignment='top')
 
     # Add arrows for EMA crossovers
@@ -1081,8 +1082,6 @@ def main():
             st.rerun()
 
     st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
-
-    testbarplot()
 
 ########################################
     if st.session_state.stop_sleep == 0:
