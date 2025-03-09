@@ -245,7 +245,7 @@ def plot_bars(price=0):
     df = pd.read_csv("scoreT.csv", names=['tFrame', 'ema_trend', 'e100/200', 'pr_eAvg', 'rsi', 'macd', 'score',  'score_trend'])
     
     # Define custom order
-    timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
+    timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo", "1y"]
     
     # Convert 'tFrame' to categorical with order
     df["tFrame"] = pd.Categorical(df["tFrame"], categories=timeframe_order, ordered=True)
