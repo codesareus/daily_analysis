@@ -854,7 +854,7 @@ def main():
     st.pyplot(fig)  ## finally plot all 3 figures
    
     st.write("---------------------")
-    st.write(data_recent.tail(5))
+    #st.write(data_recent.tail(5))
 
     ### get scores functions
     def get_scores():
