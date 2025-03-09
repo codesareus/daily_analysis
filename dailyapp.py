@@ -849,6 +849,7 @@ def main():
 
     ax2.plot(x_values, data_recent['RSI'], color="navy", linestyle="-", label="RSI (14)")
     ax2.plot(x_values, data_recent['RSI2'], color="red", linestyle="--", label="RSI (25)")
+    ax2.set_facecolor('lightblue')
     ax2.axhline(y=70, color="red", linestyle="--")
     ax2.axhline(y=30, color="green", linestyle="--")
     ax2.axhline(y=50, color="gray", linestyle="--")
@@ -865,15 +866,15 @@ def main():
         
         ax3.plot(x_values, data_recent['MACD'], color="navy", label="MACD Line")
         ax3.plot(x_values, data_recent['Signal_Line'], color="red", linestyle="--", label="Signal Line")
-
+        
         # Histogram Bars (Green for Positive, Red for Negative)
         histogram_values = data_recent['MACD'] - data_recent['Signal_Line']
         ax3.bar(x_values, histogram_values, color=['green' if val > 0 else 'red' for val in histogram_values], alpha=0.5)
-
+        ax3.set_facecolor('lightblue')
+        
         ax3.set_title(f"MACD ({interval})")
         ax3.legend()
 
-    fig.set_facecolor('lightgray')  # Use any valid color name or hex code
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
     st.pyplot(fig)  ## finally plot all 3 figures
    
