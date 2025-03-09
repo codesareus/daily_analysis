@@ -26,6 +26,7 @@ import pandas_market_calendars as mcal
 
 #eastern = pytz.timezone("America/New")
 eastern = pytz.timezone("US/Eastern")
+bgcolor = "skyblue"
 
 # Function to calculate RSI
 def calculate_rsi(data, window1=14, window2=25):
@@ -330,7 +331,6 @@ def main():
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
     
-    bgcolor = "gray"
     # Initialize session states
     if 'index' not in st.session_state:
         st.session_state.index = 0
