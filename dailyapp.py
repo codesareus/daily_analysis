@@ -504,15 +504,19 @@ def main():
 
     #3mo and 6mo data has only day information not hours and minute
     elif interval == "3mo":
-        data3mo = fetch_3mo(ticker)
+        data3mo =  fetch_long_interval(ticker, interval= "3mo"):
         time_labels = data3mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
         simplified_time_labels = [label if idx % 9 == 0 else '' for idx, label in enumerate(time_labels)]
 
     elif interval == "6mo":
-        data6mo = fetch_6mo(ticker)
+        data6mo =  fetch_long_interval(ticker, interval= "6mo"):
         time_labels = data6mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
         simplified_time_labels = [label if idx % 9 == 0 else '' for idx, label in enumerate(time_labels)]    
 
+    elif interval == "1y":
+        data1y =  fetch_long_interval(ticker, interval= "1y"):
+        time_labels = data1y.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
+        simplified_time_labels = [label if idx % 9 == 0 else '' for idx, label in enumerate(time_labels)]    
     else:
         # For 1-minute and 5-minute intervals, show only hours (e.g., 09:00, 10:00)
         simplified_time_labels = [label if label.endswith('00') else '' for label in time_labels]
