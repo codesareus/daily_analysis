@@ -976,7 +976,7 @@ def main():
     df = pd.read_csv(file_path, header=None)
 
     # Define the custom order for the first column
-    custom_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
+    custom_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo","1y"]
 
     # Convert the first column to a categorical type with the custom order
     df[0] = pd.Categorical(df[0], categories=custom_order, ordered=True)
