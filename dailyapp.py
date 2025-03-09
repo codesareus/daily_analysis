@@ -375,11 +375,6 @@ def main():
     with col1:
         if st.button("1min"):
             st.session_state.index = 0
-            if st.button("bkTrak"):
-                st.session_state.index = 0
-                st.session_state.backtrack = True
-                st.write(st.session_state.backtrack)
-                st.rerun()
             st.rerun()
     with col2:
         if st.button("5min", key="5m"):
@@ -435,12 +430,6 @@ def main():
 
     data_recent = data.tail(selected_datanumber)  # Use only the first 300 points after backtracking
     # Adjust the data based on the selected backtrack
-    
-    if interval=="1m" and st.session_state.backtrack == True:
-        data = fetch_stock_data(ticker, interval="1m")
-        data_recent = data.tail(200)  # Get the most recent 300 + selected_backtrack data points
-        data_recent = data.head(100)  # Get the most recent 300 + selected_backtrack data points
-        
     #data_recent = data_recent.head(100)  # Use only the first 300 points after backtracking
     columns_to_drop = ['Stock Splits', 'Capital Gains']
     data_recent = data_recent.drop(columns=columns_to_drop)
