@@ -477,9 +477,9 @@ def main():
     # Calculate residuals for each row
     data_recent["residuals"] = y - y_pred_poly
     # Option 1: Rolling standard deviation (e.g., over 50 time points)
-    data_recent["std_dev"] = data_recent["residuals"].rolling(window=30).std()## first 50 time points no data
+   # data_recent["std_dev"] = data_recent["residuals"].rolling(window=30).std()## first 50 time points no data
 
-    std_dev = data_recent["std_dev"].iloc[-1]
+    #std_dev = data_recent["std_dev"].iloc[-1]
 
     # Determine the trend message
     if current_price > data_recent['EMA_9'].iloc[-1] and data_recent['EMA_9'].iloc[-1] > data_recent['EMA_20'].iloc[-1]:
@@ -541,7 +541,7 @@ def main():
         deviation_color = "gray"  # Default color for other cases
 
     # Display the deviation message with the appropriate color
-    st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message} ({interval})</h3>", unsafe_allow_html=True)
+   # st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message} ({interval})</h3>", unsafe_allow_html=True)
 
     # Add a message above the plot showing the trend
     st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})</h3>", unsafe_allow_html=True)
