@@ -367,7 +367,7 @@ def main():
     # Get the current interval
     interval = intervals[st.session_state.index]
 
-    selectedNum =[100, 192,128,250,300,300,300,300]
+    selectedNum =[300,288,240,240,240,300,300,300]
     selected_datanumber = selectedNum[st.session_state.index]
 
     # Add a button group for interval selection
@@ -794,9 +794,11 @@ def main():
     ax.text(0, previous_close, f'{previous_close:.2f}__c1', color='navy', verticalalignment='top')
 
     # add time intervals on bottom of chart
-    ax.text(0.4, 0.95, f"Time Frame: {interval}__Now: {current_price:.2f}", 
+    rangeList = [0.2, 1, 2.5,5,10,60,120,240]
+    range = rangeList[st.session_state.index]
+    ax.text(0.4, 0.9, f"Time Frame: {interval}__Now: {current_price:.2f}__range: {range}_days", 
         horizontalalignment='left', verticalalignment='center', 
-        transform=ax.transAxes, fontsize=16, color="blue")
+        transform=ax.transAxes, fontsize=20, color="blue")
     
     # Draw gray line for d2 close
     d2_close = fetch_d2_close(ticker)
