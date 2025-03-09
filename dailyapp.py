@@ -765,7 +765,7 @@ def main():
     ax.text(x_values[-1], max_price, f'High: {max_price:.2f}', color='red', verticalalignment='bottom')
 
     # Draw gray line for current price
-    ax.axhline(y=current_price, color="gray", linestyle="--", label="")
+    ax.axhline(y=current_price, color="red", linestyle="--", linewidth=2label="")
 
     # Modify the current price label to include the trend message and color
     current_price_label = f"-----{current_price:.2f} {trend_message.split()[-1]}"
