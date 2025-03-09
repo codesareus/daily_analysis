@@ -327,6 +327,7 @@ def main():
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
+    st.write("testing if after ticker is OK")
     # Initialize session states
     if 'index' not in st.session_state:
         st.session_state.index = 0
