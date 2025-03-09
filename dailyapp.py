@@ -967,7 +967,7 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema9/20', 'e100/200', 'pr_eAvg' 'rsi', 'macd', 'score',  'score_trend']
+    df.columns = ['tFrame', 'ema9/20', 'e100/200', 'pr_eAvg', 'rsi', 'macd', 'score',  'score_trend']
         
     #display table
     st.dataframe(df, hide_index=True) #original table looks neater
