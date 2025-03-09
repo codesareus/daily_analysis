@@ -347,7 +347,10 @@ def main():
 
     if "backtrack" not in st.session_state:
         st.session_state.backtrack = False
-
+        
+    if "range" not in st.session_state:
+        st.session_state.range = 0.2
+        
     scoreT_file = f"scoreT.csv"
     pe_file = f"pe.csv"
 
@@ -795,8 +798,9 @@ def main():
 
     # add time intervals on bottom of chart
     rangeList = [0.2, 1, 2.5,5,10,60,120,240]
-    range = rangeList[st.session_state.index]
-    ax.text(0.4, 0.9, f"Time Frame: {interval}__Now: {current_price:.2f}__range: {range}_days", 
+    st.session_state.range = rangeList[st.session_state.index]
+    
+    ax.text(0.4, 0.9, f"Time Frame: {interval}__Now: {current_price:.2f}__range: {st.session_state.range}_days", 
         horizontalalignment='left', verticalalignment='center', 
         transform=ax.transAxes, fontsize=20, color="blue")
     
