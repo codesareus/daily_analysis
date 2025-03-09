@@ -364,11 +364,17 @@ def main():
     
     # List of intervals
     intervals = ['1m', '5m', '15m', '30m', '1h', '3mo', '6mo', '1y']
-    # Get the current interval
     interval = intervals[st.session_state.index]
 
     selectedNum =[300,288,240,240,240,300,300,300]
     selected_datanumber = selectedNum[st.session_state.index]
+
+    tfList = [0.2, 1, 2.5,5,10,60,120,240]
+    st.session_state.tf = tfList[st.session_state.index]
+
+    daysCall = "days"
+    if interval =="5m":
+        daysCall = "day"
 
     # Add a button group for interval selection
     col1, col2, col3, col4, col5, col6, col7, col8= st.columns(8)
@@ -541,7 +547,7 @@ def main():
    # st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message} ({interval})</h3>", unsafe_allow_html=True)
 
     # Add a message above the plot showing the trend
-    st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})__{selected_datanumber}_dataPoints</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})__{selected_datanumber}_da_Pts({st.session_state.tf}{daysCall}</h3>", unsafe_allow_html=True)
         
     # Calculate RSI before plotting
     data_recent = calculate_rsi(data_recent)
@@ -793,13 +799,7 @@ def main():
     # Add price label for the previous_price
     ax.text(0, previous_close, f'{previous_close:.2f}__c1', color='navy', verticalalignment='top')
 
-    # add time intervals on bottom of chart
-    tfList = [0.2, 1, 2.5,5,10,60,120,240]
-    st.session_state.tf = tfList[st.session_state.index]
-
-    daysCall = "days"
-    if interval =="5m":
-        daysCall = "day"
+    # add time intervals on bottom of char
     
     ax.text(0.4, 0.9, f"interval: {interval}__Now: {current_price:.2f}__tFrame: {st.session_state.tf}_{daysCall}", 
         horizontalalignment='left', verticalalignment='center', 
