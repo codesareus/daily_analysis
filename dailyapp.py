@@ -252,7 +252,7 @@ def plot_bars(price=0):
     eastern = 'US/Eastern'  # Example timezone, replace with actual timezone if needed
 
     # Read the data
-    df = pd.read_csv("scoreT.csv", names=['tFrame', 'ema_trend', 'ema', 'rsi', 'macd', 'total', 'dev_from_std', "y_pred_p_trend", 'score_trend'])
+    df = pd.read_csv("scoreT.csv", names=['tFrame', 'ema_trend', 'e100/200', 'pr_eAvg', 'rsi', 'macd', 'score',  'score_trend'])
     
     # Define custom order
     timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo"]
@@ -268,10 +268,10 @@ def plot_bars(price=0):
     
     # Calculate metric values
     ema_trend = [df[df["tFrame"] == interval]["ema_trend"].mean() for interval in unique_intervals]
-    ema_values = [df[df["tFrame"] == interval]["ema"].mean() for interval in unique_intervals]
+    ema_values = [df[df["tFrame"] == interval]["e100/200"].mean() for interval in unique_intervals]
     rsi_values = [df[df["tFrame"] == interval]["rsi"].mean() for interval in unique_intervals]
     macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
-    total_values = [df[df["tFrame"] == interval]["total"].mean() for interval in unique_intervals]
+    total_values = [df[df["tFrame"] == interval]["score"].mean() for interval in unique_intervals]
     
     # Define bar positions
     offsets = [-2 * width, -width, 0, width, 2 * width]
