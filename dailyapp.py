@@ -104,6 +104,13 @@ def fetch_6mo(ticker):
     else:
         return None  # Handle cases where there isn't enough data
 
+def fetch_long_period(ticker="SPY", period= "6mo"):
+    stock = yf.Ticker(ticker)
+    daily = stock.history(period=period)
+    if len(daily) >= 2:
+        return daily
+    else:
+        return None  # Handle cases where there isn't enough data
 # Function to fetch the previous day's close price
 def fetch_previous_close(ticker):
     close_prices = fetch_daily5(ticker)
@@ -330,7 +337,8 @@ def main():
 
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
-    
+    data1y = fetch_long_period(ticker="SPY", period= "1y")
+    st.write(data1y.head(5))
     # Initialize session states
     if 'index' not in st.session_state:
         st.session_state.index = 0
