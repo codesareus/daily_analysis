@@ -348,66 +348,59 @@ def main():
     scoreT_file = f"scoreT.csv"
     pe_file = f"pe.csv"
 
-
     # # Add a slider for backtracking
-    backtrack_options = [50, 288]
-    selected_datanumber = st.slider(
-        "Select number of points to plot:",
-        min_value=min(backtrack_options),
-        max_value=max(backtrack_options),
-        value=192,  # Default value 5 min for 16 h  per day
-        step=10,  # Step size
-        key="backtrack_slider"
-    )
+    #backtrack_options = [50, 300]
+    #selected_datanumber = st.slider(
+        #"Select number of points to plot:",
+       # min_value=min(backtrack_options),
+        #max_value=max(backtrack_options),
+        #value=192,  # Default value 5 min for 16 h  per day
+        #step=10,  # Step size
+        #key="backtrack_slider"
+    #)
     
     # List of intervals
     intervals = ['1m', '5m', '15m', '30m', '1h', '3mo', '6mo', '1y']
-
     # Get the current interval
     interval = intervals[st.session_state.index]
+
+    selectedNum =[100, 192,128,250,300,300,300,300]
+    selected_datanumber = selectedNum[st.session_state.index]
 
     # Add a button group for interval selection
     col1, col2, col3, col4, col5, col6, col7, col8= st.columns(8)
     with col1:
         if st.button("1min"):
             interval = "1m"
-            selected_datanumber = 200
             
     with col2:
         if st.button("5min", key="5m"):
             interval = "5m"
-            selected_datanumber = 192
             
     with col3:
         if st.button("15min", key="15m"):
             interval = "15m"
-            selected_datanumber = 300
             
     with col4:
         if st.button("30min", key="30m"):
             interval = "30m"
-            selected_datanumber = 300
             
     with col5:
         if st.button("1hr", key="1h"):
             interval = "1h"
             st.session_state.stop_sleep == 1
-            selected_datanumber = 300
             
     with col6:
         if st.button("3mo", key="3mo"):
             interval = "3mo"
-            selected_datanumber = 300
             
     with col7:
         if st.button("6mo", key="6mo"):
             interval = "6mo"
-            selected_datanumber = 300
             
     with col8:
         if st.button("1y", key="1y"):
             interval = "1y"
-            selected_datanumber = 300
 
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
@@ -417,6 +410,7 @@ def main():
     elif interval == "6mo":
         data = fetch_long_interval(ticker, interval= "6mo")
     elif interval == "1y":
+        selected_datanumber = 300
         data= fetch_long_interval(ticker, interval= "1y")
     else:
         data = fetch_stock_data(ticker, interval=interval)
