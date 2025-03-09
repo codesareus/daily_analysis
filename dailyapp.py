@@ -373,7 +373,7 @@ def main():
     interval = intervals[st.session_state.index]
 
     # Add a button group for interval selection
-    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
+    col1, col2, col3, col4, col5, col6, col7, col8= st.columns(8)
     with col1:
         if st.button("1min"):
             interval = "1m"
@@ -402,6 +402,9 @@ def main():
     with col7:
         if st.button("6mo", key="6mo"):
             interval = "6mo"
+    with col8:
+        if st.button("1y", key="1y"):
+            interval = "1y"
 
     # Fetch data for the user-specified stock and interval
     if interval == "1h":
