@@ -504,7 +504,7 @@ def main():
 
     #3mo and 6mo data has only day information not hours and minute
     elif interval == "3mo":
-        data3mo =  fetch_long_interval(ticker, interval= "3mo"):
+        data3mo =  fetch_long_interval(ticker, interval= "3mo")
         time_labels = data3mo.index.strftime('%Y-%m-%d')  # Format to YYYY-MM-DD
         simplified_time_labels = [label if idx % 9 == 0 else '' for idx, label in enumerate(time_labels)]
 
