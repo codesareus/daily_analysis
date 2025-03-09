@@ -317,36 +317,19 @@ def plot_bars(price=0):
     # Add legend and adjust layout
     plt.legend()
     plt.tight_layout()
-    plt.gca().set_facecolor('lightblue')
+    plt.gca().set_facecolor(bgcolor)
 
 # Display the plot
     st.pyplot(plt)
     plt.close()  # Prevent memory leaks
 
-def testbarplot():
-# Sample data
-    categories = ['A', 'B', 'C', 'D']
-    values = [10, 20, 15, 25]
-
-# Create the bar plot
-    plt.bar(categories, values, color='skyblue')
-
-# Set the background color of the entire plot to light blue
-    plt.gca().set_facecolor('lightblue')
-
-# Display the plot
-    st.pyplot(plt)
-    plt.close()  # 
-    st.write("test bar plot")
-        
-# Streamlit app
 # Streamlit app
 def main():
     st.title("Score Regression Analysis")
 
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
-    
+     bgcolor = "gray"
     # Initialize session states
     if 'index' not in st.session_state:
         st.session_state.index = 0
@@ -820,7 +803,7 @@ def main():
     ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
 
 # Set the background color of the axes to light blue
-    ax.set_facecolor('lightblue')
+    ax.set_facecolor(bgcolor)
 
     # Add price labels for EMAs
     ax.text(x_values[-1], data_recent['EMA_9'].iloc[-1], f'^^^^^^e9', color='orange', verticalalignment='top')
@@ -849,7 +832,8 @@ def main():
 
     ax2.plot(x_values, data_recent['RSI'], color="navy", linestyle="-", label="RSI (14)")
     ax2.plot(x_values, data_recent['RSI2'], color="red", linestyle="--", label="RSI (25)")
-    ax2.set_facecolor('lightblue')
+    ax2.set_facecolor(bgcolor)
+
     ax2.axhline(y=70, color="red", linestyle="--")
     ax2.axhline(y=30, color="green", linestyle="--")
     ax2.axhline(y=50, color="gray", linestyle="--")
@@ -870,7 +854,7 @@ def main():
         # Histogram Bars (Green for Positive, Red for Negative)
         histogram_values = data_recent['MACD'] - data_recent['Signal_Line']
         ax3.bar(x_values, histogram_values, color=['green' if val > 0 else 'red' for val in histogram_values], alpha=0.5)
-        ax3.set_facecolor('lightblue')
+        ax3.set_facecolor(bgcolor)
         
         ax3.set_title(f"MACD ({interval})")
         ax3.legend()
