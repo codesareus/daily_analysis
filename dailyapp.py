@@ -344,9 +344,6 @@ def main():
  
     if "setnote" not in st.session_state:
         st.session_state.setnote = "zz"
-
-    if "backtrack" not in st.session_state:
-        st.session_state.backtrack = False
         
     if "tf" not in st.session_state:
         st.session_state.tf = 0.2
@@ -544,7 +541,7 @@ def main():
    # st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message} ({interval})</h3>", unsafe_allow_html=True)
 
     # Add a message above the plot showing the trend
-    st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})__{selected_datanumber}_dataPoints</h3>", unsafe_allow_html=True)
         
     # Calculate RSI before plotting
     data_recent = calculate_rsi(data_recent)
