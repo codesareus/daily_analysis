@@ -1096,6 +1096,19 @@ def main():
         #st.write(f"B: {b_condition}__SS: {short_s}__S: {s_condition}__SB:{short_b}__Status_0: {SB == "AAA" or SB == "S" or SB == "SB"}__interval: {intervals[st.session_state.index]}")
        # st.empty()
         st.rerun()
+
+# Sample data
+    categories = ['A', 'B', 'C', 'D']
+    values = [10, 20, 15, 25]
+
+# Create the bar plot
+    plt.bar(categories, values, color='skyblue')
+
+# Set the background color of the entire plot to light blue
+    plt.gca().set_facecolor('lightblue')
+
+# Display the plot
+    plt.show()
         
 
 if __name__ == "__main__":
