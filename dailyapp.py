@@ -798,7 +798,7 @@ def main():
 
     # add time intervals on bottom of chart
     tfList = [0.2, 1, 2.5,5,10,60,120,240]
-    st.session_state.tf = rangeList[st.session_state.index]
+    st.session_state.tf = tfList[st.session_state.index]
     
     ax.text(0.4, 0.9, f"Time Frame: {interval}__Now: {current_price:.2f}__tFrame: {st.session_state.tf}_days", 
         horizontalalignment='left', verticalalignment='center', 
