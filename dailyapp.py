@@ -1,24 +1,28 @@
 ### daily analysis 03-08-25
 
-import streamlit as st
-import yfinance as yf
-import pandas as pd
+import os
+import time
+from time import sleep
+from datetime import datetime, timedelta
+
 import numpy as np
+import pandas as pd
+import yfinance as yf
+import pytz
+from pytz import timezone
+
+import streamlit as st
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from matplotlib.lines import Line2D
+
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import r2_score
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-from datetime import datetime, timedelta
-from pytz import timezone
-import pytz
-from gtts import gTTS
-import os
-import time
-from datetime import datetime, time
-from time import sleep
-from matplotlib.lines import Line2D
+
 import pandas_market_calendars as mcal
+#from gtts import gTTS  # Text-to-speech
+
 
 #eastern = pytz.timezone("America/New")
 eastern = pytz.timezone("US/Eastern")
