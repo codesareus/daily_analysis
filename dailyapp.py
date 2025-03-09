@@ -277,7 +277,7 @@ def plot_bars(price=0):
     offsets = [-2 * width, -width, 0, width, 2 * width]
     
     # Plot bars
-    plt.figure(figsize=(12, 4),facecolor='lightgray')
+    plt.figure(figsize=(12, 5,facecolor='lightgray')
     
     plt.bar(x + offsets[0], ema_trend, width, color="red", edgecolor="black")
     plt.bar(x + offsets[1], ema_values, width, color="darkred", edgecolor="black")
@@ -291,8 +291,8 @@ def plot_bars(price=0):
             plt.text(x[i] + offset, values[i] + 0.2, f"{values[i]:.1f}", ha='center', fontsize=10)
     
     # Add threshold lines
-    plt.axhline(y=4, color="red", linestyle="--", linewidth=1)
-    plt.axhline(y=-4, color="green", linestyle="--", linewidth=1)
+    plt.axhline(y=7, color="red", linestyle="--", linewidth=1)
+    plt.axhline(y=-7, color="green", linestyle="--", linewidth=1)
     plt.axhline(y=0, color="gray", linestyle="-", linewidth=1)
     
     #current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
