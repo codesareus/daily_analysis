@@ -317,6 +317,7 @@ def plot_bars(price=0):
     # Add legend and adjust layout
     plt.legend()
     plt.tight_layout()
+    plt.gca().set_facecolor('lightblue')
 
 # Display the plot
     st.pyplot(plt)
@@ -336,6 +337,7 @@ def testbarplot()
 # Display the plot
     st.pyplot(plt)
     plt.close()  # 
+    st.write("test bar plot")
         
 # Streamlit app
 # Streamlit app
@@ -344,6 +346,8 @@ def main():
 
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
+
+    testbarplot()
     
     # Initialize session states
     if 'index' not in st.session_state:
