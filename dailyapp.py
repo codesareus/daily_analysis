@@ -277,7 +277,7 @@ def plot_bars(price=0):
     
     # Define bar positions
     # Define the width of each bar
-    width = 0.5
+    width = 0.1
 
 # Generate offsets for six bars (equally spaced)
     offsets = [-3 * width, -2 * width, -width, 0, width, 2 * width]
