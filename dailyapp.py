@@ -269,25 +269,36 @@ def plot_bars(price=0):
     # Calculate metric values
     ema_trend = [df[df["tFrame"] == interval]["ema_trend"].mean() for interval in unique_intervals]
     ema_values = [df[df["tFrame"] == interval]["e100/200"].mean() for interval in unique_intervals]
+    premaAvg = [df[df["tFrame"] == interval]["pr_eAvg"].mean() for interval in unique_intervals]
+  
     rsi_values = [df[df["tFrame"] == interval]["rsi"].mean() for interval in unique_intervals]
     macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
     total_values = [df[df["tFrame"] == interval]["score"].mean() for interval in unique_intervals]
     
     # Define bar positions
-    offsets = [-2 * width, -width, 0, width, 2 * width]
+    # Define the width of each bar
+    width = 0.5
+
+# Generate offsets for six bars (equally spaced)
+    offsets = [-3 * width, -2 * width, -width, 0, width, 2 * width]
+
+# Now you can use this `offsets` list for your six bars
+
+    #offsets = [-2 * width, -width, 0, width, 2 * width]
     
     # Plot bars
     plt.figure(figsize=(12,5),facecolor='lightgray')
     
     plt.bar(x + offsets[0], ema_trend, width, color="red", edgecolor="black")
     plt.bar(x + offsets[1], ema_values, width, color="darkred", edgecolor="black")
-    plt.bar(x + offsets[2], rsi_values, width, color="navy", edgecolor="black")
-    plt.bar(x + offsets[3], macd_values, width, color="orange", edgecolor="black", label="MACD")
-    plt.bar(x + offsets[4], total_values, width, color="gray", edgecolor="black")
+    plt.bar(x + offsets[2], premaAvg, width, color="darkred", edgecolor="black")
+    plt.bar(x + offsets[3], rsi_values, width, color="navy", edgecolor="black")
+    plt.bar(x + offsets[4], macd_values, width, color="orange", edgecolor="black", label="MACD")
+    plt.bar(x + offsets[5], total_values, width, color="gray", edgecolor="black")
     
     # Add value labels
     for i, interval in enumerate(unique_intervals):
-        for offset, values in zip(offsets, [ema_trend, ema_values, rsi_values, macd_values, total_values]):
+        for offset, values in zip(offsets, [ema_trend, ema_values, premaAvg,rsi_values, macd_values, total_values]):
             plt.text(x[i] + offset, values[i] + 0.2, f"{values[i]:.1f}", ha='center', fontsize=10)
     
     # Add threshold lines
