@@ -845,8 +845,9 @@ def main():
     #ax.plot(x_values, data_recent['EMA_100'], color="gray", linestyle="--", label="EMA 100")
     ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
 
-    ###### marker line
-    ax.axhline(y=marker_position, color=markerColor,lw=5, linestyle='--')
+##### ######### #######. marker line
+    ax.axhline(y=marker_position, color=markerColor,lw=0.5 linestyle='-')
+    ax.axhline(y=marker_position - 0.2, color=markerColor,lw=0.5 linestyle='-')
     #ax.axhline(y=marker_position2, color='r', lw=5, linestyle='--')
 
 # Set the background color of the axes to light blue
