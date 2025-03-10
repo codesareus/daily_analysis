@@ -900,7 +900,7 @@ def main():
 
 # Compute total minutes from start_time to now
     total_minutes = int((now_time - start_time).total_seconds() // 60)
-    dataNum= (total_minutes // time_frame)  # Simulated data
+    dataNum= (total_minutes // 5)  # Simulated data
     
     #sssssss
 
@@ -910,7 +910,7 @@ def main():
 
 # Find start and end indices (adjust based on your data structure)
 # Example for a list of datetime objects:
-    start_idx = len(data_recent[-dataNum]) - 1 
+    start_idx = len(data_recent[-dataNum + 1]) 
     
     end_idx = len(data_recent) - 1  # If now is beyond the last data point
 
@@ -922,8 +922,8 @@ def main():
 # end_pos = df.index.get_loc(end_idx)
 
 # Plotting
-
-    ax.axvspan(start_idx, end_idx, color='red', alpha=0.3, label='4 AM to Now')
+    if interval == "5m":
+        ax.axvspan(start_idx, end_idx, color='red', alpha=0.3, label='4 AM to Now')
 
     
     
