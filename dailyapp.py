@@ -26,7 +26,7 @@ import pandas_market_calendars as mcal
 marker_position = 565
 marker_width = 1
 markerColor = "red"
-markerColor = "#4444FF"#dark blue
+#markerColor = "#4444FF"#dark blue
 #eastern = pytz.timezone("America/New")
 eastern = pytz.timezone("US/Eastern")
 bgcolor = "lightblue"
