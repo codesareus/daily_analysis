@@ -797,7 +797,7 @@ def main():
     ############### Draw horizontal lines from the lowest and highest points    
     min_price = np.min(y)
     max_price = np.max(y)
-    ax.axhline(y=min_price, color="green", linestyle="--", lw=5,label="")
+    ax.axhline(y=min_price, color="red", linestyle="--", lw=5,label="")
     ax.axhline(y=max_price, color="red", linestyle="--", lw=5,label="")
 
     # Add price labels for the highest and lowest prices
