@@ -881,7 +881,7 @@ def main():
 ##########. try cloud for today
  
     tfAll = [1,5,15,30]
-    if st.session_state.index <4:
+    if st.session_state.index <4 and st.session_state.index >0:
         time_frame = tfAll[st.session_state.index]  # Change this to 1, 5, 15, etc. (minutes per data point)
 
 # Simulated data covering from 20:00 (yesterday) to now
