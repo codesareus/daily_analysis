@@ -882,16 +882,50 @@ def main():
     # Example data
     tfAll = [1,5,15,30,60,24*60,  24*60, 24*60, 24*60]
     time_frame = tfAll[st.session_state.index]  # Change this to 1, 5, 15, etc. (minutes per data point)
-    data_recentNew = np.random.randn(24 * 60 // time_frame)  # Simulated data for a full day
+    data_recentNew = np.random.randn(16 * 60 // time_frame)  # Simulated data for a full day
     x_valuesNew = np.arange(len(data_recentNew))  # Numeric x-axis
 
 # Calculate index for 4 AM
-    minutes_per_day = 24 * 60
+    minutes_per_day = 16 * 60
     index_4am = (4 * 60) // time_frame  # Convert 4 AM into index based on time frame
 
 # Add grey shading from 4 AM onward
     ax.axvspan(index_4am, len(data_recentNew) - 1, color='gray', alpha=0.3)
-#####################
+###########
+    
+
+# Simulated data covering from 20:00 (yesterday) to now
+    start_time = datetime.now(pytz.timezone("US/Eastern")).replace(hour=20, minute=0, second=0, microsecond=0) - timedelta(days=1)
+    now_time = datetime.now(pytz.timezone("US/Eastern"))
+
+# Compute total minutes from start_time to now
+    total_minutes = int((now_time - start_time).total_seconds() // 60)
+    data_recentNew= np.random.randn(total_minutes // time_frame)  # Simulated data
+
+# X-axis values
+    x_values = np.arange(len(data_recentNew))
+
+# Calculate index for 4 AM today
+    four_am_today = now_time.replace(hour=4, minute=0, second=0, microsecond=0)
+    minutes_since_start = int((four_am_today - start_time).total_seconds() // 60)
+
+    if minutes_since_start < 0:
+        minutes_since_start = 0  # If 4 AM is before the dataset starts
+
+    index_4am = minutes_since_start // time_frame  # Convert minutes to index
+
+# Add grey shading from 4 AM to now
+    ax.axvspan(index_4am, len(data_recent) - 1, color='red', alpha=0.3)
+
+    
+    
+    
+    
+    
+    
+    
+    
+    #####################
     # redeclare, messed up by above
     x_values = np.arange(len(data_recent))  # Numeric x-axis
     # --- RSI Plot ---
