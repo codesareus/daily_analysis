@@ -721,11 +721,11 @@ def main():
 
     # draw ema vaerage 
     
-    data_recent["EMA_Avg"] = data_recent[["EMA_9", "EMA_20", "EMA_50"]].mean(axis=1)
-    emaavg = data_recent["EMA_Avg"]
+    #data_recent["EMA_Avg"] = data_recent[["EMA_9", "EMA_20", "EMA_50"]].mean(axis=1)
+    #emaavg = data_recent["EMA_Avg"]
 
 #     # Plot the EMA average
-    ax.plot(x_values, emaavg, color="green", linewidth=6, label="EMA Average")
+    #ax.plot(x_values, emaavg, color="green", linewidth=6, label="EMA Average")
 
 
 #### std
