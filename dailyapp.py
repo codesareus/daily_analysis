@@ -24,6 +24,7 @@ import pandas_market_calendars as mcal
 #from gtts import gTTS  # Text-to-speech
 
 marker_position = 565
+marker_width = 1
 markerColor = "red"
 markerColor = "#4444FF"#dark blue
 #eastern = pytz.timezone("America/New")
@@ -847,8 +848,8 @@ def main():
     ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
 
 ##### ######### #######. marker line
-    ax.axhline(y=marker_position, color=markerColor,lw=0.5, linestyle='-')
-    ax.axhline(y=marker_position - 0.2, color=markerColor,lw=0.5, linestyle='-')
+    ax.axhline(y=marker_position, color=markerColor,lw=0.5, lw= marker_width ,linestyle='-')
+    ax.axhline(y=marker_position - 0.2, color=markerColor,lw=0.5, lw= marker_width ,linestyle='-')
     #ax.axhline(y=marker_position2, color='r', lw=5, linestyle='--')
 
 # Set the background color of the axes to light blue
