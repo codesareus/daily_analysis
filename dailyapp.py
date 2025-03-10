@@ -313,6 +313,31 @@ def plot_bars(price=0):
     st.pyplot(plt)
     plt.close()  # Prevent memory leaks
 
+class DraggableLine:
+    def __init__(self, line):
+        self.line = line
+        self.press = None
+        self.cid_press = line.figure.canvas.mpl_connect('button_press_event', self.on_press)
+        self.cid_release = line.figure.canvas.mpl_connect('button_release_event', self.on_release)
+        self.cid_motion = line.figure.canvas.mpl_connect('motion_notify_event', self.on_motion)
+
+    def on_press(self, event):
+        if event.inaxes != self.line.axes: return
+        contains, _ = self.line.contains(event)
+        if contains:
+            self.press = (event.xdata, event.ydata)
+
+    def on_motion(self, event):
+        if self.press is None or event.inaxes != self.line.axes: return
+        if self.line.get_linestyle() == '-':  # Horizontal line
+            self.line.set_ydata([event.ydata, event.ydata])
+        else:  # Vertical line
+            self.line.set_xdata([event.xdata, event.xdata])
+        self.line.figure.canvas.draw()
+
+    def on_release(self, event):
+        self.press = None
+
 # Streamlit app
 def main():
     st.title("Score Regression Analysis")
@@ -818,6 +843,14 @@ def main():
     #ax.plot(x_values, data_recent['EMA_50'], color="gold", linestyle="--", label="EMA 50")
     #ax.plot(x_values, data_recent['EMA_100'], color="gray", linestyle="--", label="EMA 100")
     ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
+
+    # Add a draggable vertical and horizontal line
+    h_line = ax.axhline(y=current_price -5, color='r', lw=5, linestyle='--')
+    v_line = ax.axvline(x=5, color='b', lw=2, linestyle='--')
+
+# Make them draggable
+    DraggableLine(h_line)
+    DraggableLine(v_line)
 
 # Set the background color of the axes to light blue
     ax.set_facecolor(bgcolor)
