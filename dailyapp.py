@@ -23,7 +23,7 @@ from sklearn.metrics import r2_score
 import pandas_market_calendars as mcal
 #from gtts import gTTS  # Text-to-speech
 
-
+marker_position = 570
 #eastern = pytz.timezone("America/New")
 eastern = pytz.timezone("US/Eastern")
 bgcolor = "lightblue"
@@ -845,12 +845,10 @@ def main():
     ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
 
     # Add a draggable vertical and horizontal line
-    h_line = ax.axhline(y=current_price -5, color='r', lw=5, linestyle='--')
-    v_line = ax.axvline(x=5, color='b', lw=2, linestyle='--')
+    h_line = ax.axhline(y=marker_position, color='r', lw=5, linestyle='--')
 
 # Make them draggable
     DraggableLine(h_line)
-    DraggableLine(v_line)
 
 # Set the background color of the axes to light blue
     ax.set_facecolor(bgcolor)
