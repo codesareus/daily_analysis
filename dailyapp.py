@@ -879,55 +879,25 @@ def main():
     ax.legend()
 
 ##########. try cloud for today
-    # Example data
-    tfAll = [1,5,15,30,60,24*60,  24*60, 24*60, 24*60]
-    time_frame = tfAll[st.session_state.index]  # Change this to 1, 5, 15, etc. (minutes per data point)
-    data_recentNew = np.random.randn(16 * 60 // time_frame)  # Simulated data for a full day
-    x_valuesNew = np.arange(len(data_recentNew))  # Numeric x-axis
-
-# Calculate index for 4 AM
-    
-
-# Add grey shading from 4 AM onward
-    #ax.axvspan(index_4am, len(data_recentNew) - 1, color='gray', alpha=0.3)
-###########
-    
+ 
+    tfAll = [1,5,15,30]
+    if st.session_state.index <4:
+        time_frame = tfAll[st.session_state.index]  # Change this to 1, 5, 15, etc. (minutes per data point)
 
 # Simulated data covering from 20:00 (yesterday) to now
-    start_time = datetime.now(pytz.timezone("US/Eastern")).replace(hour=4, minute=0, second=0, microsecond=0) 
-    now_time = datetime.now(pytz.timezone("US/Eastern"))
+        start_time = datetime.now(pytz.timezone("US/Eastern")).replace(hour=4, minute=0, second=0, microsecond=0) 
+        now_time = datetime.now(pytz.timezone("US/Eastern"))
 
 # Compute total minutes from start_time to now
-    total_minutes = int((now_time - start_time).total_seconds() // 60)
-    dataNum= (total_minutes // 5)  # Simulated data
+        total_minutes = int((now_time - start_time).total_seconds() // 60)
+        dataNum= (total_minutes // time_frame)  # Simulated data
+        indexNum = (dataNum-1)
     
-    #sssssss
+        start_idx = x_values[-indexNum]
+        end_idx = len(data_recent) - 1  # If now is beyond the last data point
 
-# Sample data_recent (replace with your actual data)
-# Get current time and today's 4 AM
-    
-
-# Find start and end indices (adjust based on your data structure)
-# Example for a list of datetime objects:
-    indexNum = (dataNum-1)
-    start_idx = x_values[-indexNum]
-    
-    end_idx = len(data_recent) - 1  # If now is beyond the last data point
-
-# If using pandas DataFrame with datetime index:
-# mask = (df.index >= today_4am) & (df.index <= now)
-# start_idx = df[mask].index[0]
-# end_idx = df[mask].index[-1]
-# start_pos = df.index.get_loc(start_idx)
-# end_pos = df.index.get_loc(end_idx)
-
-# Plotting
-    if interval == "5m":
         ax.axvspan(start_idx, end_idx, color='red', alpha=0.3, label='4 AM to Now')
 
-    
-    
-    
     
     #####################
     # redeclare, messed up by above
