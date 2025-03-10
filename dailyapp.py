@@ -897,9 +897,58 @@ def main():
         end_idx = len(data_recent) - 1  # If now is beyond the last data point
 
         ax.axvspan(start_idx, end_idx, color='gray', alpha=0.2, label='4 AM to Now')
+    ##################### tap position
+
+# Assuming data_recent has a 'timestamp' column (timezone-aware in ET) and 'close' column
+
+
+# Track existing annotations/lines
+    current_vline = None
+    current_hline = None
+    current_text = None
+
+    def on_pick(event):
+        global current_vline, current_hline, current_text
+    # Check if the clicked artist is the line
+    if event.artist != line[0]:
+           return
+    
+    # Get the index of the clicked point
+    idx = event.ind[0]
+    timestamp = data_recent.iloc[idx]['timestamp']
+    close_price = data_recent.iloc[idx]['close']
+    
+    # Remove previous lines/text
+    if current_vline:
+        current_vline.remove()
+        current_hline.remove()
+        current_text.remove()
+    
+    # Add new crosshair lines
+    current_vline = ax.axvline(x=idx, color='gray', linestyle='--', alpha=0.7)
+    current_hline = ax.axhline(y=close_price, color='gray', linestyle='--', alpha=0.7)
+    
+    # Format timestamp (e.g., "2023-10-01 09:30 EST")
+    timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M %Z")
+    
+    # Add annotation box
+    current_text = ax.text(
+        0.05, 0.95,  # Position at top-left corner
+        f"Time: {timestamp_str}\nPrice: ${close_price:.2f}",
+        transform=ax.transAxes,  # Use axes coordinates (0-1)
+        va='top', ha='left',
+        backgroundcolor='white',
+        bbox=dict(facecolor='white', alpha=0.8)
+    )
+    
+    plt.draw()
+
+# Connect the pick event to the function
+    fig.canvas.mpl_connect('pick_event', on_pick)
+
+    plt.show()
 
     
-    #####################
     # redeclare, messed up by above
     x_values = np.arange(len(data_recent))  # Numeric x-axis
     # --- RSI Plot ---
