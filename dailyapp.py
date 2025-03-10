@@ -895,24 +895,20 @@ def main():
     
 
 # Simulated data covering from 20:00 (yesterday) to now
-    start_time = datetime.now(pytz.timezone("US/Eastern")).replace(hour=20, minute=0, second=0, microsecond=0) - timedelta(days=1)
+    start_time = datetime.now(pytz.timezone("US/Eastern")).replace(hour=4, minute=0, second=0, microsecond=0) - timedelta(days=1)
     now_time = datetime.now(pytz.timezone("US/Eastern"))
 
 # Compute total minutes from start_time to now
     total_minutes = int((now_time - start_time).total_seconds() // 60)
-    data_recentNew= np.random.randn(total_minutes // time_frame)  # Simulated data
+    dataNum= (total_minutes // time_frame)  # Simulated data
 
 # X-axis values
-    x_values = np.arange(len(data_recentNew))
 
 # Calculate index for 4 AM today
-    four_am_today = now_time.replace(hour=4, minute=0, second=0, microsecond=0)
-    minutes_since_start = int((four_am_today - start_time).total_seconds() // 60)
+    
 
-    if minutes_since_start < 0:
-        minutes_since_start = 0  # If 4 AM is before the dataset starts
-
-    index_4am = minutes_since_start // time_frame  # Convert minutes to index
+    index_4am = x_values[-dataNum:]
+    
 
 # Add grey shading from 4 AM to now
     ax.axvspan(index_4am, len(data_recent) - 1, color='red', alpha=0.3)
