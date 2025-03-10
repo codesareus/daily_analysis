@@ -910,7 +910,7 @@ def main():
 
 # Find start and end indices (adjust based on your data structure)
 # Example for a list of datetime objects:
-    start_idx = len(data_recent[-dataNum + 1]) 
+    start_idx = len(data_recent[-(dataNum-1)]) 
     
     end_idx = len(data_recent) - 1  # If now is beyond the last data point
 
