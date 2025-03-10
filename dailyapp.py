@@ -24,7 +24,7 @@ import pandas_market_calendars as mcal
 #from gtts import gTTS  # Text-to-speech
 
 marker_position = 570
-marker_position2 = 567
+marker_position2 = 566.16
 #eastern = pytz.timezone("America/New")
 eastern = pytz.timezone("US/Eastern")
 bgcolor = "lightblue"
