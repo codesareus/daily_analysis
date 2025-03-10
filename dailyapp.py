@@ -894,7 +894,7 @@ def main():
     
 
 # Simulated data covering from 20:00 (yesterday) to now
-    start_time = datetime.now(pytz.timezone("US/Eastern")).replace(hour=4, minute=0, second=0, microsecond=0) )
+    start_time = datetime.now(pytz.timezone("US/Eastern")).replace(hour=4, minute=0, second=0, microsecond=0) 
     now_time = datetime.now(pytz.timezone("US/Eastern"))
 
 # Compute total minutes from start_time to now
