@@ -902,8 +902,37 @@ def main():
     total_minutes = int((now_time - start_time).total_seconds() // 60)
     dataNum= (total_minutes // time_frame)  # Simulated data
     
-    
-    
+    #sssssss
+
+# Sample data_recent (replace with your actual data)
+# Get current time and today's 4 AM
+    now = datetime.now()
+    today_4am = datetime.combine(now.date(), time(4, 0))
+
+# Find start and end indices (adjust based on your data structure)
+# Example for a list of datetime objects:
+    start_idx = None
+    end_idx = None
+    for i, dt in enumerate(data_recent):
+        if dt >= today_4am and start_idx is None:
+            start_idx = i
+        if dt > now:
+            end_idx = i - 1
+        break
+    else:
+        end_idx = len(data_recent) - 1  # If now is beyond the last data point
+
+# If using pandas DataFrame with datetime index:
+# mask = (df.index >= today_4am) & (df.index <= now)
+# start_idx = df[mask].index[0]
+# end_idx = df[mask].index[-1]
+# start_pos = df.index.get_loc(start_idx)
+# end_pos = df.index.get_loc(end_idx)
+
+# Plotting
+
+    ax.axvspan(start_idx, end_idx, color='grey', alpha=0.3, label='4 AM to Now')
+
     
     
     
