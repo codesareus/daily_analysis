@@ -24,10 +24,20 @@ import pandas_market_calendars as mcal
 #from gtts import gTTS  # Text-to-speech
 
 marker_position = 570
+marker_position2 = 565
 #eastern = pytz.timezone("America/New")
 eastern = pytz.timezone("US/Eastern")
 bgcolor = "lightblue"
 
+def place_markers():
+
+     # Add a draggable vertical and horizontal line
+    h_line = ax.axhline(y=marker_position, color='r', lw=5, linestyle='--')
+    h_line2 = ax.axhline(y=marker_position2, color='r', lw=5, linestyle='--')
+# Make them draggable
+    DraggableLine(h_line)
+    DraggableLine(h_line2)
+    
 # Function to calculate RSI
 def calculate_rsi(data, window1=14, window2=25):
     # Calculate RSI with the first window (default 14)
@@ -844,11 +854,7 @@ def main():
     #ax.plot(x_values, data_recent['EMA_100'], color="gray", linestyle="--", label="EMA 100")
     ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
 
-    # Add a draggable vertical and horizontal line
-    h_line = ax.axhline(y=marker_position, color='r', lw=5, linestyle='--')
-
-# Make them draggable
-    DraggableLine(h_line)
+    place_markers()
 
 # Set the background color of the axes to light blue
     ax.set_facecolor(bgcolor)
