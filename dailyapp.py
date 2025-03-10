@@ -427,8 +427,8 @@ def main():
             
     with col5:
         if st.button("1hr", key="1h"):
+            st.session_state.stop_sleep = 1
             st.session_state.index = 4
-            st.session_state.stop_sleep == 1
             st.rerun()
             
     with col6:
