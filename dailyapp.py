@@ -849,7 +849,7 @@ def main():
 
 ##### ######### #######. marker line
     ax.axhline(y=marker_position, color=markerColor, lw= marker_width ,linestyle='-')
-    ax.axhline(y=marker_position - 0.2, color=markerColor, lw= marker_width ,linestyle='-')
+    ax.axhline(y=marker_position - 0.1, color=markerColor, lw= marker_width ,linestyle='-')
     #ax.axhline(y=marker_position2, color='r', lw=5, linestyle='--')
 
 # Set the background color of the axes to light blue
