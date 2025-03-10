@@ -1019,7 +1019,7 @@ def main():
     else:
         score_trend = 0
         
-    if current_price >= emaavg.iloc[-1] :
+    if current_price >= ema20.iloc[-1] :
         pr_eAvg = 1
     else:
         pr_eAvg = -1
