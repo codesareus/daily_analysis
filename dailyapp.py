@@ -896,7 +896,7 @@ def main():
         start_idx = x_values[-indexNum]
         end_idx = len(data_recent) - 1  # If now is beyond the last data point
 
-        ax.axvspan(start_idx, end_idx, color='gray', alpha=0.3, label='4 AM to Now')
+        ax.axvspan(start_idx, end_idx, color='gray', alpha=0.2, label='4 AM to Now')
 
     
     #####################
