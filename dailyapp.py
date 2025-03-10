@@ -862,12 +862,12 @@ def main():
     # Create plot
     
     
-    ax.set_ylim(0, 700)
+    ax.set_ylim(0, 10)
 
 # Connect the click event
     fig.canvas.mpl_connect('button_press_event', on_click)
 
-    plt.show()
+    #plt.show()
 
 # Set the background color of the axes to light blue
     ax.set_facecolor(bgcolor)
