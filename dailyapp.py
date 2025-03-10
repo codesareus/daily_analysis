@@ -1019,7 +1019,7 @@ def main():
     else:
         score_trend = 0
         
-    if current_price >= ema20.iloc[-1] :
+    if current_price >= data_recent["EMA_20"].iloc[-1] :
         pr_eAvg = 1
     else:
         pr_eAvg = -1
@@ -1028,7 +1028,7 @@ def main():
         "tFrame": f"{interval}",
         "ema9/20": round(ema_trend, 2),
         "e100/200": round(ema_score, 2),
-        "pr_eAvg": pr_eAvg,
+        "pr_E20": pr_eAvg,
         "rsi": round(rsi_score, 2),
         "macd": round(macd_score, 2),
         "score": (score + pr_eAvg),
@@ -1050,7 +1050,7 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema9/20', 'e100/200', 'pr_eAvg', 'rsi', 'macd', 'score',  'score_trend']
+    df.columns = ['tFrame', 'ema9/20', 'e100/200', 'pr_E20', 'rsi', 'macd', 'score',  'score_trend']
         
     #display table
     st.dataframe(df, hide_index=True) #original table looks neater
