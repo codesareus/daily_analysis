@@ -727,6 +727,20 @@ def main():
 #     # Plot the EMA average
     ax.plot(x_values, emaavg, color="green", linewidth=6, label="EMA Average")
 
+##########. try cloud for today
+    # Example data
+    tfAll = [1,5,15,30,60,24*60,  24*60, 24*60, 24*60]
+    time_frame = tfAll[st.session_state.index]  # Change this to 1, 5, 15, etc. (minutes per data point)
+    data_recent = np.random.randn(24 * 60 // time_frame)  # Simulated data for a full day
+    x_values = np.arange(len(data_recent))  # Numeric x-axis
+
+# Calculate index for 4 AM
+    minutes_per_day = 24 * 60
+    index_4am = (4 * 60) // time_frame  # Convert 4 AM into index based on time frame
+
+# Add grey shading from 4 AM onward
+    ax.axvspan(index_4am, len(data_recent) - 1, color='grey', alpha=0.3)
+    
 #### std
 # Parameters
     moving_avg_type = "EMA"  # Can be "SMA", "EMA", or "WMA"
