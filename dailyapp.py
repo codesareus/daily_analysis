@@ -931,7 +931,7 @@ def main():
 
 # Plotting
 
-    ax.axvspan(start_idx, end_idx, color='grey', alpha=0.3, label='4 AM to Now')
+    ax.axvspan(start_idx, end_idx, color='red', alpha=0.3, label='4 AM to Now')
 
     
     
