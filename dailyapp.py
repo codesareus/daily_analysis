@@ -798,8 +798,8 @@ def main():
     ############### Draw horizontal lines from the lowest and highest points    
     min_price = np.min(y)
     max_price = np.max(y)
-    ax.axhline(y=min_price, color="green", linestyle="--", label="")
-    ax.axhline(y=max_price, color="red", linestyle="--", label="")
+    ax.axhline(y=min_price, color="green", linestyle="--", lw=5,label="")
+    ax.axhline(y=max_price, color="red", linestyle="--", lw=5,label="")
 
     # Add price labels for the highest and lowest prices
     ax.text(x_values[-1], min_price, f'Low: {min_price:.2f}', color='green', verticalalignment='top')
@@ -845,8 +845,8 @@ def main():
     #ax.plot(x_values, data_recent['EMA_100'], color="gray", linestyle="--", label="EMA 100")
     ax.plot(x_values, data_recent['EMA_200'], color="purple", linestyle="--", label="EMA 200")
 
-    ax.axhline(y=marker_position, color='r', lw=5, linestyle='--')
-    ax.axhline(y=marker_position2, color='r', lw=5, linestyle='--')
+    #ax.axhline(y=marker_position, color='r', lw=5, linestyle='--')
+    #ax.axhline(y=marker_position2, color='r', lw=5, linestyle='--')
 
 # Set the background color of the axes to light blue
     ax.set_facecolor(bgcolor)
