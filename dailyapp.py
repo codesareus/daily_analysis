@@ -886,11 +886,10 @@ def main():
     x_valuesNew = np.arange(len(data_recentNew))  # Numeric x-axis
 
 # Calculate index for 4 AM
-    minutes_per_day = 16 * 60
-    index_4am = (4 * 60) // time_frame  # Convert 4 AM into index based on time frame
+    
 
 # Add grey shading from 4 AM onward
-    ax.axvspan(index_4am, len(data_recentNew) - 1, color='gray', alpha=0.3)
+    #ax.axvspan(index_4am, len(data_recentNew) - 1, color='gray', alpha=0.3)
 ###########
     
 
@@ -910,7 +909,8 @@ def main():
 
 # Find start and end indices (adjust based on your data structure)
 # Example for a list of datetime objects:
-    start_idx = len(data_recent[-(dataNum-1)]) 
+    indexNum = (dataNum-1)
+    start_idx = x_values[-indexNum]
     
     end_idx = len(data_recent) - 1  # If now is beyond the last data point
 
