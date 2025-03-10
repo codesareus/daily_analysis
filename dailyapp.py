@@ -882,8 +882,8 @@ def main():
     # Example data
     tfAll = [1,5,15,30,60,24*60,  24*60, 24*60, 24*60]
     time_frame = tfAll[st.session_state.index]  # Change this to 1, 5, 15, etc. (minutes per data point)
-    data_recent = np.random.randn(24 * 60 // time_frame)  # Simulated data for a full day
-    x_values = np.arange(len(data_recent))  # Numeric x-axis
+    data_recentNew = np.random.randn(24 * 60 // time_frame)  # Simulated data for a full day
+    x_values = np.arange(len(data_recentNew))  # Numeric x-axis
 
 # Calculate index for 4 AM
     minutes_per_day = 24 * 60
@@ -892,7 +892,8 @@ def main():
 # Add grey shading from 4 AM onward
     ax.axvspan(index_4am, len(data_recent) - 1, color='red', alpha=0.5)
 #####################
-
+    # redeclare, messed up by above
+    x_values = np.arange(len(data_recent))  # Numeric x-axis
     # --- RSI Plot ---
     ax2.fill_between(x_values, 0, 100, color="gray", alpha=0.15)
 
