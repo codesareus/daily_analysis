@@ -29,17 +29,6 @@ marker_position2 = 565
 eastern = pytz.timezone("US/Eastern")
 bgcolor = "lightblue"
 
-import matplotlib.pyplot as plt
-
-def on_click(event):
-    """Display Y-value when clicking on the plot."""
-    if event.inaxes:  # Ensure click is inside the plot
-        ax.annotate(f'Y={event.ydata:.2f}', 
-                    xy=(event.xdata, event.ydata), 
-                    xytext=(event.xdata + 0.2, event.ydata), 
-                    arrowprops=dict(facecolor='black', arrowstyle='->'))
-        fig.canvas.draw()
-    
 # Function to calculate RSI
 def calculate_rsi(data, window1=14, window2=25):
     # Calculate RSI with the first window (default 14)
@@ -858,16 +847,6 @@ def main():
 
     ax.axhline(y=marker_position, color='r', lw=5, linestyle='--')
     ax.axhline(y=marker_position2, color='r', lw=5, linestyle='--')
-
-    # Create plot
-    
-    
-    ax.set_ylim(0, 10)
-
-# Connect the click event
-    fig.canvas.mpl_connect('button_press_event', on_click)
-
-    #plt.show()
 
 # Set the background color of the axes to light blue
     ax.set_facecolor(bgcolor)
