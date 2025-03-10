@@ -901,19 +901,6 @@ def main():
 # Compute total minutes from start_time to now
     total_minutes = int((now_time - start_time).total_seconds() // 60)
     dataNum= (total_minutes // time_frame)  # Simulated data
-
-# X-axis values
-
-# Calculate index for 4 AM today
-    
-
-    index_4am = x_values[-dataNum:]
-    
-
-# Add grey shading from 4 AM to now
-    ax.axvspan(index_4am, len(data_recent) - 1, color='red', alpha=0.3)
-
-    
     
     
     
