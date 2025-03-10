@@ -32,11 +32,11 @@ bgcolor = "lightblue"
 def place_markers():
 
      # Add a draggable vertical and horizontal line
-    h_line = ax.axhline(y=marker_position, color='r', lw=5, linestyle='--')
-    h_line2 = ax.axhline(y=marker_position2, color='r', lw=5, linestyle='--')
+    ax.axhline(y=marker_position, color='r', lw=5, linestyle='--')
+    ax.axhline(y=marker_position2, color='r', lw=5, linestyle='--')
 # Make them draggable
-    DraggableLine(h_line)
-    DraggableLine(h_line2)
+    
+    #DraggableLine(h_line2)
     
 # Function to calculate RSI
 def calculate_rsi(data, window1=14, window2=25):
