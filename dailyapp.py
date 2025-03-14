@@ -964,7 +964,7 @@ def main():
     ax.set_xlabel("Time (HH:MM)")
     ax.set_ylabel(f"{ticker} Price")
     ax.set_title(f"Combined Linear and Polynomial Regression for {ticker} (tFrame: {interval})")
-    ax.legend()
+    ax.legend(f"{data5["Datetime"].iloc[-1][:12]}")
 
 ##########. try cloud for today
     if st.session_state.index <5 and st.session_state.index >0:
@@ -1018,7 +1018,7 @@ def main():
         ax3.set_title(f"MACD ({interval})")
         ax3.legend()
 
-    plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
+    pltplt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
     st.pyplot(fig)  ## finally plot all 3 figures
 
     # === Add Download Button ===
