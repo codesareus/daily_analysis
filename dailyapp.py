@@ -1019,7 +1019,21 @@ def main():
 
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
     st.pyplot(fig)  ## finally plot all 3 figures
-   
+
+    # === Add Download Button ===
+# Save the figure to a BytesIO buffer
+    buffer = io.BytesIO()
+    fig.savefig(buffer, format="png")  # Save as PNG (you can also use "pdf" or other formats)
+    buffer.seek(0)  # Move the buffer's pointer to the beginning
+
+# Create a download button
+    st.download_button(
+        label="Download Plot as PNG",
+        data=buffer,
+        file_name="plot.png",  # Name of the downloaded file
+        mime="image/png"       # MIME type of the file
+    )
+
     st.write("---------------------")
     #st.write(data_recent.tail(5))
 
