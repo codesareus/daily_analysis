@@ -1,6 +1,7 @@
 ### daily analysis 03-08-25
 
 import os
+import io
 import time
 from time import sleep
 from datetime import datetime, timedelta
