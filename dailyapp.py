@@ -963,7 +963,7 @@ def main():
     ax.set_xticklabels(simplified_time_labels)  # Show only hours or every 3 hours
     ax.set_xlabel("Time (HH:MM)")
     ax.set_ylabel(f"{ticker} Price")
-    ax.set_title(f"{data5["Datetime"].iloc[-1][:12]} Linear and Polynomial Regression for {ticker} (tFrame: {interval})")
+    ax.set_title(f"{data5.iloc[-1,0][:12]} Linear and Polynomial Regression for {ticker} (tFrame: {interval})")
     ax.legend()
 
 ##########. try cloud for today
@@ -996,7 +996,7 @@ def main():
     ax2.axhline(y=70, color="red", linestyle="--")
     ax2.axhline(y=30, color="green", linestyle="--")
     ax2.axhline(y=50, color="gray", linestyle="--")
-    ax2.set_title(f"{data5["Datetime"].iloc[-1][:12]} RSI ({interval})")
+    ax2.set_title(f"{data5.iloc[-1,0][:12]} RSI ({interval})")
     ax2.legend()
 
     # === MACD Plot (Only If Timeframe Is Valid) ===
@@ -1015,7 +1015,7 @@ def main():
         ax3.bar(x_values, histogram_values, color=['green' if val > 0 else 'red' for val in histogram_values], alpha=0.5)
         ax3.set_facecolor(bgcolor)
         
-        ax3.set_title(f"{data5["Datetime"].iloc[-1][:12]} MACD ({interval})")
+        ax3.set_title(f"{data5.iloc[-1,0][:12]} MACD ({interval})")
         ax3.legend()
 
     pltplt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
