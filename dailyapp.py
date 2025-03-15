@@ -1021,7 +1021,7 @@ def main():
         ax3.set_title(f"{current_date} MACD ({interval})")
         ax3.legend()
 
-    pltplt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
     st.pyplot(fig)  ## finally plot all 3 figures
 
     # === Add Download Button ===
