@@ -966,12 +966,11 @@ def main():
     ax.set_xticklabels(simplified_time_labels)  # Show only hours or every 3 hours
     ax.set_xlabel("Time (HH:MM)")
     ax.set_ylabel(f"{ticker} Price")
-    ax.set_title(f"{current_date} Linear and Polynomial Regression for {ticker} (tFrame: {interval})")
     ax.legend()
 
     ax.set_title(
         f"{current_date} Linear and Polynomial Regression for {ticker} (tFrame: {interval})",
-        fontsize=16,          # Font size
+        fontsize=20,          # Font size
         fontweight='bold',    # Bold text
         color='navy',         # Text color
         fontfamily='sans-serif'  # Font family (e.g., 'serif', 'monospace')
@@ -1006,7 +1005,11 @@ def main():
     ax2.axhline(y=70, color="red", linestyle="--")
     ax2.axhline(y=30, color="green", linestyle="--")
     ax2.axhline(y=50, color="gray", linestyle="--")
-    ax2.set_title(f"{current_date} RSI ({interval})")
+    ax2.set_title(f"{current_date} RSI ({interval})",
+        fontsize=20,          # Font size
+        fontweight='bold',    # Bold text
+        color='navy',         # Text color
+        fontfamily='sans-serif')
     ax2.legend()
 
     # === MACD Plot (Only If Timeframe Is Valid) ===
@@ -1025,7 +1028,11 @@ def main():
         ax3.bar(x_values, histogram_values, color=['green' if val > 0 else 'red' for val in histogram_values], alpha=0.5)
         ax3.set_facecolor(bgcolor)
         
-        ax3.set_title(f"{current_date} MACD ({interval})")
+        ax3.set_title(f"{current_date} MACD ({interval})", 
+            fontsize=20,          # Font size
+            fontweight='bold',    # Bold text
+            color='navy',         # Text color
+            fontfamily='sans-serif')
         ax3.legend()
 
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
