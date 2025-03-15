@@ -24,6 +24,8 @@ from sklearn.metrics import r2_score
 import pandas_market_calendars as mcal
 #from gtts import gTTS  # Text-to-speech
 
+eastern_tz = pytz.timezone('US/Eastern') 
+current_date = datetime.now(eastern_tz).strftime("%Y-%m-%d %H:%M)
 
 marker_position = 540
 separationLen = 5
@@ -959,8 +961,6 @@ def main():
             ax.plot(x_values[i], data_recent['Close'].iloc[i], 'v', markersize=5, color='red', lw=0)
 
     # Format x-axis to show only hours (or every 3 hours for 30-minute interval)
-    eastern_tz = pytz.timezone('US/Eastern') 
-    current_date = datetime.now(eastern_tz).strftime("%Y-%m-%d:%h")
     
     ax.set_xticks(x_values)  # Set ticks for all time points
     ax.set_xticklabels(simplified_time_labels)  # Show only hours or every 3 hours
