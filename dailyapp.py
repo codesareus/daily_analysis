@@ -959,7 +959,7 @@ def main():
             ax.plot(x_values[i], data_recent['Close'].iloc[i], 'v', markersize=5, color='red', lw=0)
 
     # Format x-axis to show only hours (or every 3 hours for 30-minute interval)
-    eastern_tz = time_zone("US/Eastern")
+    eastern_tz = pytz.timezone('US/Eastern') 
     current_date = datetime.now(eastern_tz).strftime("%Y-%m-%d:%h")
     
     ax.set_xticks(x_values)  # Set ticks for all time points
