@@ -25,7 +25,7 @@ import pandas_market_calendars as mcal
 #from gtts import gTTS  # Text-to-speech
 
 eastern_tz = pytz.timezone('US/Eastern') 
-current_date = datetime.now(eastern_tz).strftime("%Y-%m-%d %H:%M)
+current_date = datetime.now(eastern_tz).strftime("%Y-%m-%d %H:%M")
 
 marker_position = 540
 separationLen = 5
@@ -969,6 +969,13 @@ def main():
     ax.set_title(f"{current_date} Linear and Polynomial Regression for {ticker} (tFrame: {interval})")
     ax.legend()
 
+    ax.set_title(
+        f"{current_date} Linear and Polynomial Regression for {ticker} (tFrame: {interval})",
+        fontsize=16,          # Font size
+        fontweight='bold',    # Bold text
+        color='navy',         # Text color
+        fontfamily='sans-serif'  # Font family (e.g., 'serif', 'monospace')
+    )
 ##########. try cloud for today
     if st.session_state.index <5 and st.session_state.index >0:
         time_frame = tfAll[st.session_state.index]  # Change this to 1, 5, 15, etc. (minutes per data point)
