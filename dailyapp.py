@@ -461,14 +461,15 @@ def main():
     #if data.empty:
         #st.error(f"Failed to fetch data for SPY. Please check the ticker and try again.")
         #return
-
     data_recent = data.tail(selected_datanumber)  # Use only the first 300 points after backtracking
-    st.write(data_recent["Close"].isnull().sum()) 
-    data_recent = data_recent.dropna(subset=['Close'])
-    showInfo=st.checkbox("showInfo")
+    
+    showInfo=st.checkbox("showInfo",value=False)
     if showInfo:
         st.write(data_recent.info())  # Check for missing values and data types
         st.write(data_recent.tail()) 
+
+    st.write(data_recent["Close"].isnull().sum()) 
+    data_recent = data_recent.dropna(subset=['Close'])
         
 ##########$$$############### tap function 
     
