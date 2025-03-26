@@ -332,7 +332,7 @@ def plot_bars(price=0):
 def main():
     st.title("Score Regression Analysis")
     data5 = fetch_stock_data("SPY", "5m")
-    st.write(data5.tail(1))
+    st.write(data5.tail())
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
     
