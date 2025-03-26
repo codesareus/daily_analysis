@@ -465,12 +465,15 @@ def main():
     
     showInfo=st.checkbox("showInfo",value=False)
     if showInfo:
-        st.write(f"None: {data_recent.info()}")  # Check for missing values and data types
-        if data_recent["Volume"].iloc[-1] >= data_recent["Volume"].iloc[-2]:
-            st.write("High Volume!")
-        st.write(data_recent.tail()) 
+        if data_recent["Close"].iloc[-1] > data_recent["Close"].iloc[-2]:
+            st.write("Higher!")
+        elif if data_recent["Close"].iloc[-1] < data_recent["Close"].iloc[-2]:
+            st.write("Lower!")
+            
+    if data_recent["Volume"].iloc[-1] >= data_recent["Volume"].iloc[-2]:
+        st.write("High Volume!")
 
-    st.write(f"None: {data_recent["Close"].isnull().sum()}") 
+    st.write(f"None: {data_recent["Close"].isnull().sum()} will be dropped") 
     data_recent = data_recent.dropna(subset=['Close'])
         
 ##########$$$############### tap function 
