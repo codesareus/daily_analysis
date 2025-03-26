@@ -89,7 +89,7 @@ def fetch_stock_data(ticker, interval="5m"):
 def fetch_stock_data1mo(ticker, interval="1h"):
     # Fetch data for the specified stock with the given interval (including premarket)
     stock = yf.Ticker(ticker)
-    data = stock.history(period="1mo", interval="1h", prepost=True)  # no doest not Include premarket data
+    data = stock.history(period="1mo", interval=interval, prepost=True)  # no doest not Include premarket data
     return data
 
 # Function to fetch the previous 5 day's close price
@@ -436,8 +436,8 @@ def main():
 
     # Fetch data for the user-specified stock and interval
 
-    if interval == "1h":
-        data = fetch_stock_data1mo("SPY", "1h")
+    if interval == "1h" or interval == "30min":
+        data = fetch_stock_data1mo("SPY", interval)
         if data.empty:
             st.error(f"Failed to fetch data for 1h. Please check the ticker and try again.")
             
