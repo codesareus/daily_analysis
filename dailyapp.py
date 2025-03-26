@@ -467,7 +467,7 @@ def main():
     if showInfo:
         if data_recent["Close"].iloc[-1] > data_recent["Close"].iloc[-2]:
             st.write("Higher!")
-        elif if data_recent["Close"].iloc[-1] < data_recent["Close"].iloc[-2]:
+        elif data_recent["Close"].iloc[-1] < data_recent["Close"].iloc[-2]:
             st.write("Lower!")
             
     if data_recent["Volume"].iloc[-1] >= data_recent["Volume"].iloc[-2]:
