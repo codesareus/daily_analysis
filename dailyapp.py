@@ -463,12 +463,13 @@ def main():
         #return
 
     data_recent = data.tail(selected_datanumber)  # Use only the first 300 points after backtracking
-    if interval=="30m":
+    st.write(data_recent["Close"].isnull().sum()) 
+    data_recent = data_recent.dropna(subset=['Close'])
+    showInfo=st.checkbox("showInfo")
+    if showInfo:
         st.write(data_recent.info())  # Check for missing values and data types
         st.write(data_recent.tail()) 
-        st.write(data_recent.isnull().sum())  # Cou
-        data_recent = data_recent.dropna(subset=['Close'])
-        st.write(data_recent.isnull().sum())  # Count missing values in each column
+        
 ##########$$$############### tap function 
     
 ########$$$#data_recent = data_recent.head(100)  # Use only the first 300 points after backtracking
