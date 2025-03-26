@@ -1230,7 +1230,7 @@ def main():
     #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
     
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4,col5 = st.columns(5)
     with col1:
         # delete data button
         if st.button(" 1min"):
@@ -1265,7 +1265,8 @@ def main():
             st.session_state.index = 1
             st.rerun()
 
-    st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
+    with col5:
+        st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
 
 ########################################
     if st.session_state.stop_sleep == 0:
