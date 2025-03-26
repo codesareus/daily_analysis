@@ -582,7 +582,7 @@ def main():
 # Verify the result
     st.write(dataSimple.tail())
     
-    col1, col2, col3=st.columns(3)
+    col1, col2, col3=st.columns([2,1,1])
     with col1:      
     # Add a message above the plot showing the trend
         st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})</h3>", unsafe_allow_html=True)
