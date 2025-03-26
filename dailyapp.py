@@ -461,8 +461,6 @@ def main():
         #st.error(f"Failed to fetch data for SPY. Please check the ticker and try again.")
         #return
     data_recent = data.tail(selected_datanumber)  # Use only the first 300 points after backtracking
-
-    st.write(data_recent.tail())
     
     if data_recent["Volume"].iloc[-1] >= 1.91*data_recent["Volume"].iloc[-2]:
         st.markdown("### High Volume!")
@@ -609,6 +607,7 @@ def main():
     data_recent = calculate_rsi(data_recent)
     data_recent = calculate_macd(data_recent)
 
+    st.write(data_recent.tail())
     ## add p.r. model y value
     data_recent['y_pred_poly'] = y_pred_poly
     
