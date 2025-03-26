@@ -576,7 +576,10 @@ def main():
 
     # Display the deviation message with the appropriate color
    # st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message} ({interval})</h3>", unsafe_allow_html=True)
-    dataSimple = data_recent["Date", "Close","Volume"]
+    
+    dataSimple = data_recent[["Close", "Volume"]]
+
+# Verify the result
     st.write(dataSimple.tail())
     
     col1, col2, col3=st.columns(3)
