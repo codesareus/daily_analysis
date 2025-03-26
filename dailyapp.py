@@ -464,10 +464,10 @@ def main():
 
     st.write(data_recent.tail())
     
-    if data_recent["Volume"].iloc[-1] >= 1*data_recent["Volume"].iloc[-2]:
+    if data_recent["Volume"].iloc[-1] >= 0.1*data_recent["Volume"].iloc[-2]:
         st.markdown(f"###High Volume!###")
 
-    st.write(f"None: {data_recent["Close"].isnull().sum()} ") 
+    st.write(data_recent["Close"].isnull().sum()) 
     data_recent = data_recent.dropna(subset=['Close'])
         
 ##########$$$############### tap function 
