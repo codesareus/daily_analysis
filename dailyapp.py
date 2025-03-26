@@ -590,6 +590,8 @@ def main():
     with col2:
         if data_recent["Volume"].iloc[-1] >= 1.91*data_recent["Volume"].iloc[-2]:
             st.markdown("### High Volume!")
+        else:
+            st.markdown("### …")
         
     with col3:
     #add button to toggle marker lines   
