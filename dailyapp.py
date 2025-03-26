@@ -461,9 +461,6 @@ def main():
         #st.error(f"Failed to fetch data for SPY. Please check the ticker and try again.")
         #return
     data_recent = data.tail(selected_datanumber)  # Use only the first 300 points after backtracking
-    
-    if data_recent["Volume"].iloc[-1] >= 1.91*data_recent["Volume"].iloc[-2]:
-        st.markdown("### High Volume!")
 
     st.write(data_recent["Close"].isnull().sum()) 
     data_recent = data_recent.dropna(subset=['Close'])
@@ -579,13 +576,19 @@ def main():
 
     # Display the deviation message with the appropriate color
    # st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message} ({interval})</h3>", unsafe_allow_html=True)
+    dataSimple = data_recent["Close","Volume"]
+    st.write(dataSimple.tail())
     
-    col1, col2=st.columns(2)
+    col1, col2, col3=st.columns(3)
     with col1:      
     # Add a message above the plot showing the trend
         st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})</h3>", unsafe_allow_html=True)
 
     with col2:
+        if data_recent["Volume"].iloc[-1] >= 1.91*data_recent["Volume"].iloc[-2]:
+            st.markdown("### High Volume!")
+        
+    with col3:
     #add button to toggle marker lines   
          # Align the button to the right using CSS
         st.markdown(
@@ -606,8 +609,6 @@ def main():
     # Calculate RSI before plotting
     data_recent = calculate_rsi(data_recent)
     data_recent = calculate_macd(data_recent)
-
-    st.write(data_recent.tail())
     ## add p.r. model y value
     data_recent['y_pred_poly'] = y_pred_poly
     
