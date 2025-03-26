@@ -438,8 +438,8 @@ def main():
 
     if interval == "1h" or interval == "30min":
         data = fetch_stock_data1mo("SPY", interval)
-        stock = yf.Ticker("SPY")
-        st.write(stock.history_metadata)
+       # stock = yf.Ticker("SPY")
+        #st.write(stock.history_metadata)
         if data.empty:
             st.error(f"Failed to fetch data for 1h. Please check the ticker and try again.")
             
@@ -500,6 +500,9 @@ def main():
 
     ##############################
     degree = 2
+    st.write(data_recent.info())  # Check for missing values and data types
+    data_recent = data_recent.dropna(subset=['Close'])
+    st.write(data_recent.isnull().sum())  # Count missing values in each column
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
