@@ -438,6 +438,7 @@ def main():
 
     if interval == "1h" or interval == "30min":
         data = fetch_stock_data1mo("SPY", interval)
+        stock = yf.Ticker("SPY")
         st.write(stock.history_metadata)
         if data.empty:
             st.error(f"Failed to fetch data for 1h. Please check the ticker and try again.")
