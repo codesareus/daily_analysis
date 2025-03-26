@@ -463,7 +463,12 @@ def main():
         #return
 
     data_recent = data.tail(selected_datanumber)  # Use only the first 300 points after backtracking
-    
+    if interval=="30m":
+        st.write(data_recent.info())  # Check for missing values and data types
+        st.write(data_recent.tail()) 
+        st.write(data_recent.isnull().sum())  # Cou
+        data_recent = data_recent.dropna(subset=['Close'])
+        st.write(data_recent.isnull().sum())  # Count missing values in each column
 ##########$$$############### tap function 
     
 ########$$$#data_recent = data_recent.head(100)  # Use only the first 300 points after backtracking
@@ -500,9 +505,7 @@ def main():
 
     ##############################
     degree = 2
-    st.write(data_recent.info())  # Check for missing values and data types
-    data_recent = data_recent.dropna(subset=['Close'])
-    st.write(data_recent.isnull().sum())  # Count missing values in each column
+    
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
