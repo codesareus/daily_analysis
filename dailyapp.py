@@ -588,7 +588,7 @@ def main():
         st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})</h3>", unsafe_allow_html=True)
 
     with col2:
-        if data_recent["Volume"].iloc[-1] >= 1.91*data_recent["Volume"].iloc[-2]:
+        if data_recent["Volume"].iloc[-1] > 1.91*data_recent["Volume"].iloc[-2]:
             st.markdown("### High Volume!")
         else:
             st.markdown("### …")
