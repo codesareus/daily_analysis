@@ -462,18 +462,11 @@ def main():
         #st.error(f"Failed to fetch data for SPY. Please check the ticker and try again.")
         #return
     data_recent = data.tail(selected_datanumber)  # Use only the first 300 points after backtracking
-    
-    showInfo=st.checkbox("showInfo",value=False)
-    if showInfo:
-        if data_recent["Close"].iloc[-1] > data_recent["Close"].iloc[-2]:
-            st.write("Higher!")
-        elif data_recent["Close"].iloc[-1] < data_recent["Close"].iloc[-2]:
-            st.write("Lower!")
             
     if data_recent["Volume"].iloc[-1] >= data_recent["Volume"].iloc[-2]:
-        st.write("High Volume!")
+        st.markdown("High Volume!")
 
-    st.write(f"None: {data_recent["Close"].isnull().sum()} will be dropped") 
+    st.write(f"None: {data_recent["Close"].isnull().sum()} ") 
     data_recent = data_recent.dropna(subset=['Close'])
         
 ##########$$$############### tap function 
