@@ -1266,8 +1266,9 @@ def main():
             st.rerun()
 
     with col5:
-        st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
-
+        if st.button(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}"):
+        #st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
+            st.rerun()
 ########################################
     if st.session_state.stop_sleep == 0:
         # Sleep for 8 seconds (simulating some processing)
