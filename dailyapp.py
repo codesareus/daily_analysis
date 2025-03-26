@@ -463,8 +463,8 @@ def main():
         #return
     data_recent = data.tail(selected_datanumber)  # Use only the first 300 points after backtracking
             
-    if data_recent["Volume"].iloc[-1] >= data_recent["Volume"].iloc[-2]:
-        st.markdown("High Volume!")
+    if data_recent["Volume"].iloc[-1] >= 1.9*data_recent["Volume"].iloc[-2]:
+        st.markdown("###High Volume!###")
 
     st.write(f"None: {data_recent["Close"].isnull().sum()} ") 
     data_recent = data_recent.dropna(subset=['Close'])
