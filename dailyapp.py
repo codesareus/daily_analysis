@@ -331,8 +331,7 @@ def plot_bars(price=0):
 # Streamlit app
 def main():
     st.title("Score Regression Analysis")
-    data5 = fetch_stock_data("SPY", "5m")
-    st.write(data5.tail())
+    
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
     
@@ -462,8 +461,10 @@ def main():
         #st.error(f"Failed to fetch data for SPY. Please check the ticker and try again.")
         #return
     data_recent = data.tail(selected_datanumber)  # Use only the first 300 points after backtracking
-            
-    if data_recent["Volume"].iloc[-1] >= 1.9*data_recent["Volume"].iloc[-2]:
+
+    st.write(data_recent.tail())
+    
+    if data_recent["Volume"].iloc[-1] >= 1*data_recent["Volume"].iloc[-2]:
         st.markdown("###High Volume!###")
 
     st.write(f"None: {data_recent["Close"].isnull().sum()} ") 
