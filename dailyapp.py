@@ -41,7 +41,7 @@ st.set_page_config(initial_sidebar_state="collapsed")
 #markerColor = "#4444FF"#dark blue
 #eastern = pytz.timezone("America/New")
 eastern = pytz.timezone("US/Eastern")
-bgcolor = "blue"
+bgcolor = "gray"
 
 # Function to calculate RSI
 def calculate_rsi(data, window1=14, window2=25):
