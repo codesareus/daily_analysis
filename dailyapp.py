@@ -1313,6 +1313,12 @@ def main():
     merged_df[numeric_cols] = merged_df[numeric_cols].round(2)
     
     # Display
+    def highlight_row(row):
+        return ['background: yellow' if row['Strike'] == closest_strike else '' for _ in row]
+
+    styled_df = merged_df.style.apply(highlight_row, axis=1)
+    st.write(styled_df.to_html(), unsafe_allow_html=True)
+    
     st.markdown(f"**Current Price:** ${current_price:.2f}")
     st.dataframe(
         merged_df,
