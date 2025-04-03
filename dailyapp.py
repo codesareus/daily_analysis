@@ -1297,19 +1297,19 @@ def main():
         put = get_option_data(puts, strike)
         
         merged_rows.append({
-            'Strike': strike,
-            'Call Bid': call.get('bid', None),
-            'Call Ask': call.get('ask', None),
-            'Call IV': call.get('impliedVolatility', None),
-            'Put Bid': put.get('bid', None),
-            'Put Ask': put.get('ask', None),
-            'Put IV': put.get('impliedVolatility', None)
+            'Call IV': round(call.get('impliedVolatility', None),0),
+            'Call Ask': round(call.get('ask', None),0),
+            'Call Bid': round(call.get('bid', None),0),
+            'Strike': round(strike,0),
+            'Put Bid': round(put.get('bid', None),0),
+            'Put Ask': round(put.get('ask', None),0),
+            'Put IV': round(put.get('impliedVolatility', None),0)
         })
     
     merged_df = pd.DataFrame(merged_rows)
     
     # Format numeric columns
-    numeric_cols = ['Call Bid', 'Call Ask', 'Call IV', 'Put Bid', 'Put Ask', 'Put IV']
+    #numeric_cols = ['Call Bid', 'Call Ask', 'Call IV', 'Put Bid', 'Put Ask', 'Put IV']
     #merged_df[numeric_cols] = merged_df[numeric_cols].round(2)
 
     closest_strike = all_strikes[closest_idx]  # <-- Define closest_strike
