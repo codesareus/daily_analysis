@@ -1281,9 +1281,9 @@ def main():
 # Display results
     st.write(f"Current Price: {current_price:.2f}\n")
     st.write("calls")
-    st.write(filtered_calls[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].head())
+    st.write(filtered_calls[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']])
     st.write("puts")
-    st.write(filtered_puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].head())
+    st.write(filtered_puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']])
 
     #######################################
     if st.session_state.stop_sleep == 0:
