@@ -1264,10 +1264,26 @@ def main():
     calls = options_chain.calls
     puts = options_chain.puts
 
+    def filter_strikes(df, current_price, num_strikes=10):
+    # Sort strikes by proximity to current price
+        df = df.sort_values("strike")
+    # Find the index of the strike closest to the current price
+        closest_idx = np.abs(df["strike"] - current_price).argmin()
+    # Select `num_strikes` below and above the closest strike
+        start_idx = max(0, closest_idx - num_strikes)
+        end_idx = min(len(df), closest_idx + num_strikes + 1)
+        return df.iloc[start_idx:end_idx]
+
+# Filter calls and puts
+    filtered_calls = filter_strikes(calls, current_price)
+    filtered_puts = filter_strikes(puts, current_price)
+
+# Display results
+    st.write(f"Current Price: {current_price:.2f}\n")
     st.write("calls")
-    st.write(calls[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].head())
+    st.write(filtered_calls[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].head())
     st.write("puts")
-    st.write(puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].head())
+    st.write(filtered_puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].head())
 
     #######################################
     if st.session_state.stop_sleep == 0:
