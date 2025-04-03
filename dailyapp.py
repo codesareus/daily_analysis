@@ -1259,7 +1259,19 @@ def main():
             st.rerun()
 
     ########## options
-
+    st.markdown('-----------------')
+    # Display results
+    col1, col2= st.columns(2)
+    with col1:
+        st.write(f"Current Price: {current_price:.2f}\n")
+    with col2:
+        if st.button('expiration 0' if st.session_state.expiration ==0 else 'expiration 1'):
+            if st.session_state.expiration == 0:
+                st.session_state.expiration = 1
+            else:
+                st.session_state.expiration = 0
+            st.rerun()
+            
     ticker = yf.Ticker("SPY")  # Example: Apple Inc.
     expiration_dates = ticker.options  # List of expiration dates (e.g., ['2023-12-15', ...])
     # Fetch data for the first available expiration date
@@ -1345,50 +1357,6 @@ def main():
     )
 
     #####################
-
-    def filter_strikes(df, current_price, num_strikes=10):
-    # Sort strikes by proximity to current price
-        df = df.sort_values("strike")
-    # Find the index of the strike closest to the current price
-        closest_idx = np.abs(df["strike"] - current_price).argmin()
-    # Select `num_strikes` below and above the closest strike
-        start_idx = max(0, closest_idx - num_strikes)
-        end_idx = min(len(df), closest_idx + num_strikes + 1)
-        return df.iloc[start_idx:end_idx]
-
-# Filter calls and puts
-    filtered_calls = filter_strikes(calls, current_price).sort_values("strike", ascending=False)
-    filtered_puts = filter_strikes(puts, current_price).sort_values("strike", ascending=False)
-
-# Display results
-    col1, col2= st.columns(2)
-    with col1:
-        st.write(f"Current Price: {current_price:.2f}\n")
-    with col2:
-        if st.button('expiration 0' if st.session_state.expiration ==0 else 'expiration 1'):
-            if st.session_state.expiration == 0:
-                st.session_state.expiration = 1
-            else:
-                st.session_state.expiration = 0
-            st.rerun()
-        
-  #  with col2:
-
-    if st.session_state.alloptions == True:
-        calls = filtered_calls[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']]
-        puts = filtered_puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']]
-    else:
-        calls = filtered_calls[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].head(11)
-        puts = filtered_puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].tail(11)
-        
-    st.write("calls")
-    st.table(calls.round(2))
-    st.write("puts")
-    
-    if st.button('showing all options' if st.session_state.alloptions == True else 'showing fewer options'):
-        st.session_state.alloptions = not st.session_state.alloptions 
-        st.rerun()
-    
     #######################################
     if st.session_state.stop_sleep == 0:
         # Sleep for 8 seconds (simulating some processing)
