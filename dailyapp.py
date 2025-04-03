@@ -336,6 +336,9 @@ def main():
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
 
+    if 'expiration' not in st.session_state:
+        st.session_state.expiration = 0
+    
     if 'alloptions' not in st.session_state:
         st.session_state.alloptions = True
     # Initialize session states
