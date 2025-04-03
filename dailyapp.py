@@ -1300,7 +1300,9 @@ def main():
             'Call IV': round(call.get('impliedVolatility', 0),2),
             'Call Ask': round(call.get('ask', 0),2),
             'Call Bid': round(call.get('bid', 0),2),
+            'Call Last': round(call.get('last', 0),2),
             'Strike': round(strike,0),
+            'Put Last': round(put.get('last', 0),2),
             'Put Bid': round(put.get('bid', 0),2),
             'Put Ask': round(put.get('ask', 0),2),
             'Put IV': round(put.get('impliedVolatility', 0),2)
@@ -1309,7 +1311,7 @@ def main():
     merged_df = pd.DataFrame(merged_rows)
     
     # Format numeric columns
-    numeric_cols = ['Call IV', 'Call Ask', 'Call Bid',  'Put Bid', 'Put Ask', 'Put IV']
+    numeric_cols = ['Call IV', 'Call Ask', 'Call Bid',  'Call Last','Put Last','Put Bid', 'Put Ask', 'Put IV']
    # merged_df['Strike'] = merged_df[numeric_cols].round(0)
     
     closest_strike = all_strikes[closest_idx] # <-- Define closest_strike
