@@ -1310,7 +1310,7 @@ def main():
     
     # Format numeric columns
     numeric_cols = ['Call Bid', 'Call Ask', 'Call IV', 'Put Bid', 'Put Ask', 'Put IV']
-    merged_df[numeric_cols] = merged_df[numeric_cols].round(2)
+    #merged_df[numeric_cols] = merged_df[numeric_cols].round(2)
 
     closest_strike = all_strikes[closest_idx]  # <-- Define closest_strike
 
