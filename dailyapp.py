@@ -1324,8 +1324,8 @@ def main():
     
     st.markdown(f"**Current Price:** ${current_price:.2f}")
     st.dataframe(
-        merged_df,
-        height=600,
+        styled_df,
+        height=800,
         use_container_width=True,
         column_config={
             "Call IV": st.column_config.NumberColumn("Call IV", format="%.2f"),
