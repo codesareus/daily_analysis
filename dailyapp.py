@@ -1297,13 +1297,13 @@ def main():
         put = get_option_data(puts, strike)
         
         merged_rows.append({
-            'Call IV': round(call.get('impliedVolatility', None),0),
-            'Call Ask': round(call.get('ask', None),0),
-            'Call Bid': round(call.get('bid', None),0),
+            'Call IV': round(call.get('impliedVolatility', 0),0),
+            'Call Ask': round(call.get('ask', 0),0),
+            'Call Bid': round(call.get('bid', 0),0),
             'Strike': round(strike,0),
-            'Put Bid': round(put.get('bid', None),0),
-            'Put Ask': round(put.get('ask', None),0),
-            'Put IV': round(put.get('impliedVolatility', None),0)
+            'Put Bid': round(put.get('bid', 0),0),
+            'Put Ask': round(put.get('ask', 0),0),
+            'Put IV': round(put.get('impliedVolatility', 0),0)
         })
     
     merged_df = pd.DataFrame(merged_rows)
