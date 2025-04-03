@@ -1260,8 +1260,10 @@ def main():
     ticker = yf.Ticker("SPY")  # Example: Apple Inc.
     expiration_dates = ticker.options  # List of expiration dates (e.g., ['2023-12-15', ...])
     # Fetch data for the first available expiration date
-    options_chain = ticker.option_chain(expiration_dates[0])
-
+    if st.session_state.expiration == 0 :
+        options_chain = ticker.option_chain(expiration_dates[0]) 
+    else:
+        options_chain = ticker.option_chain(expiration_dates[1]) 
     # Access calls and puts as pandas DataFrames
     calls = options_chain.calls
     puts = options_chain.puts
@@ -1281,9 +1283,17 @@ def main():
     filtered_puts = filter_strikes(puts, current_price).sort_values("strike", ascending=False)
 
 # Display results
-    #col1, col2= st.columns(2)
-    #with col1:
-    st.write(f"Current Price: {current_price:.2f}\n")
+    col1, col2= st.columns(2)
+    with col1:
+        st.write(f"Current Price: {current_price:.2f}\n")
+    with col2:
+        if st.button('expiration 0' if st.session_state.expiration ==0 else 'expiration 1')
+            if st.session_state.expiration == 0:
+                st.session_state.expiration = 1
+            else:
+                st.session_state.expiration = 0
+            st.rerun()
+        
   #  with col2:
     if st.button('showing all options' if st.session_state.alloptions == True else 'showing fewer options'):
         if st.session_state.alloptions == True:
