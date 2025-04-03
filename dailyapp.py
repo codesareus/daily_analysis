@@ -1307,9 +1307,9 @@ def main():
         puts = filtered_puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].tail(11)
         
     st.write("calls")
-    st.table(calls)
+    st.table(calls.round2))
     st.write("puts")
-    st.dataframe(puts, height=600)
+    st.table(puts.round(2))
     
     if st.button('showing all options' if st.session_state.alloptions == True else 'showing fewer options'):
         st.session_state.alloptions = not st.session_state.alloptions 
