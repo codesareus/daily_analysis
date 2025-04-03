@@ -1287,7 +1287,7 @@ def main():
     with col1:
         st.write(f"Current Price: {current_price:.2f}\n")
     with col2:
-        if st.button('expiration 0' if st.session_state.expiration ==0 else 'expiration 1')
+        if st.button('expiration 0' if st.session_state.expiration ==0 else 'expiration 1'):
             if st.session_state.expiration == 0:
                 st.session_state.expiration = 1
             else:
