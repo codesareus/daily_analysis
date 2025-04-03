@@ -1060,13 +1060,17 @@ def main():
     fig.savefig(buffer, format="png")  # Save as PNG (you can also use "pdf" or other formats)
     buffer.seek(0)  # Move the buffer's pointer to the beginning
 
-# Create a download button
-    st.download_button(
-        label="Download Plot as PNG",
-        data=buffer,
-        file_name="plot.png",  # Name of the downloaded file
-        mime="image/png"       # MIME type of the file
-    )
+    col1, col2 = st.columns(2)
+    with col1:
+        # Create a download button
+        st.download_button(
+            label="Download Plot as PNG",
+            data=buffer,
+            file_name="plot.png",  # Name of the downloaded file
+            mime="image/png"       # MIME type of the file
+        )
+    with col2:
+        st.write(f"### interval: {interval}")
 
     st.write("---------------------")
     #st.write(data_recent.tail(5))
