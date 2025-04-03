@@ -1252,7 +1252,24 @@ def main():
         if st.button(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}"):
         #st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
             st.rerun()
-########################################
+
+    ########## options
+
+    ticker = yf.Ticker("SPY")  # Example: Apple Inc.
+    expiration_dates = ticker.options  # List of expiration dates (e.g., ['2023-12-15', ...])
+    # Fetch data for the first available expiration date
+    options_chain = ticker.option_chain(expiration_dates[0])
+
+    # Access calls and puts as pandas DataFrames
+    calls = options_chain.calls
+    puts = options_chain.puts
+
+    st.write("calls")
+    st.write(calls[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].head())
+    st.write("puts")
+    st.write(puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].head())
+
+    #######################################
     if st.session_state.stop_sleep == 0:
         # Sleep for 8 seconds (simulating some processing)
         sleep(st.session_state.sleepGap)
