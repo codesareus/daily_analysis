@@ -1309,7 +1309,11 @@ def main():
     st.write("calls")
     st.table(calls.round(2))
     st.write("puts")
-    st.table(puts.round(2))
+    numeric_cols = puts.select_dtypes(include=[float, int]).columns
+    puts_rounded = puts.copy()
+    puts_rounded[numeric_cols] = puts_rounded[numeric_cols].round(2)
+
+    st.table(puts_rounded)
     
     if st.button('showing all options' if st.session_state.alloptions == True else 'showing fewer options'):
         st.session_state.alloptions = not st.session_state.alloptions 
