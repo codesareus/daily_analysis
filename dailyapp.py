@@ -1311,10 +1311,13 @@ def main():
     # Format numeric columns
     numeric_cols = ['Call Bid', 'Call Ask', 'Call IV', 'Put Bid', 'Put Ask', 'Put IV']
     merged_df[numeric_cols] = merged_df[numeric_cols].round(2)
-    
-    # Display
+
+    closest_strike = all_strikes[closest_idx]  # <-- Define closest_strike
+
+# Then modify the highlight function:
     def highlight_row(row):
-        return ['background: yellow' if row['Strike'] == closest_strike else '' for _ in row]
+        return ['background: #FFFACD' if row['Strike'] == closest_strike else '' for _ in row]
+    # Display
 
     styled_df = merged_df.style.apply(highlight_row, axis=1)
     st.write(styled_df.to_html(), unsafe_allow_html=True)
