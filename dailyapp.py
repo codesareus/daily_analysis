@@ -1070,7 +1070,7 @@ def main():
             mime="image/png"       # MIME type of the file
         )
     with col2:
-        st.write(f"### interval: {interval}")
+        st.write(f"interval: {interval}")
 
     st.write("---------------------")
     #st.write(data_recent.tail(5))
