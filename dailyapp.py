@@ -1312,7 +1312,7 @@ def main():
     numeric_cols = ['Call IV', 'Call Ask', 'Call Bid',  'Strike', 'Put Bid', 'Put Ask', 'Put IV']
     merged_df[numeric_cols] = merged_df[numeric_cols].round(0)
 
-    closest_strike = all_strikes[closest_idx].round(0) # <-- Define closest_strike
+    closest_strike = all_strikes[closest_idx] # <-- Define closest_strike
 
 # Then modify the highlight function:
     def highlight_row(row):
