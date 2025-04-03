@@ -1275,8 +1275,8 @@ def main():
         return df.iloc[start_idx:end_idx]
 
 # Filter calls and puts
-    filtered_calls = filter_strikes(calls, current_price)
-    filtered_puts = filter_strikes(puts, current_price)
+    filtered_calls = filter_strikes(calls, current_price).sort_values("strike", ascending=False)
+    filtered_puts = filter_strikes(puts, current_price).sort_values("strike", ascending=False)
 
 # Display results
     st.write(f"Current Price: {current_price:.2f}\n")
