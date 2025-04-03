@@ -1313,7 +1313,7 @@ def main():
     puts_rounded = puts.copy()
     puts_rounded[numeric_cols] = puts_rounded[numeric_cols].round(2)
 
-    st.table(puts_rounded[numeric_cols])
+    st.table(options_chain)
     
     if st.button('showing all options' if st.session_state.alloptions == True else 'showing fewer options'):
         st.session_state.alloptions = not st.session_state.alloptions 
