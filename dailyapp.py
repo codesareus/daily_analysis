@@ -1309,10 +1309,10 @@ def main():
     merged_df = pd.DataFrame(merged_rows)
     
     # Format numeric columns
-    #numeric_cols = ['Call Bid', 'Call Ask', 'Call IV', 'Put Bid', 'Put Ask', 'Put IV']
-    #merged_df[numeric_cols] = merged_df[numeric_cols].round(2)
+    numeric_cols = ['Call IV', 'Call Ask', 'Call Bid',  'strike', 'Put Bid', 'Put Ask', 'Put IV']
+    merged_df[numeric_cols] = merged_df[numeric_cols].round(0)
 
-    closest_strike = all_strikes[closest_idx]  # <-- Define closest_strike
+    closest_strike = all_strikes[closest_idx].round(0) # <-- Define closest_strike
 
 # Then modify the highlight function:
     def highlight_row(row):
