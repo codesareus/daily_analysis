@@ -1298,19 +1298,19 @@ def main():
         
         merged_rows.append({
             'Call IV': round(call.get('impliedVolatility', 0),2),
-            'Call Ask': round(call.get('ask', 0),0),
-            'Call Bid': round(call.get('bid', 0),0),
+            'Call Ask': round(call.get('ask', 0),2),
+            'Call Bid': round(call.get('bid', 0),2),
             'Strike': round(strike,0),
-            'Put Bid': round(put.get('bid', 0),0),
-            'Put Ask': round(put.get('ask', 0),0),
+            'Put Bid': round(put.get('bid', 0),2),
+            'Put Ask': round(put.get('ask', 0),2),
             'Put IV': round(put.get('impliedVolatility', 0),2)
         })
     
     merged_df = pd.DataFrame(merged_rows)
     
     # Format numeric columns
-    numeric_cols = ['Call IV', 'Call Ask', 'Call Bid',  'Strike', 'Put Bid', 'Put Ask', 'Put IV']
-    merged_df[numeric_cols] = merged_df[numeric_cols].round(0)
+    numeric_cols = ['Call IV', 'Call Ask', 'Call Bid',  'Put Bid', 'Put Ask', 'Put IV']
+   # merged_df['Strike'] = merged_df[numeric_cols].round(0)
     
     closest_strike = all_strikes[closest_idx] # <-- Define closest_strike
 
@@ -1325,8 +1325,8 @@ def main():
     styled_df = (
         merged_df.style
         .apply(highlight_row, axis=1)
-        .format("{:.0f}", subset=numeric_cols)  # Force integer display
-        .format("{:.2f}", subset=["Call IV", "Put IV"])  # Optional: Format IV differently
+        .format("{:.0f}", subset=["Strike"])  # Force integer display
+        .format("{:.2f}", subset=numeric_cols)  # Optional: Format IV differently
     )
     
     st.write(styled_df.to_html(), unsafe_allow_html=True)
