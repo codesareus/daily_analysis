@@ -1309,7 +1309,7 @@ def main():
     merged_df = pd.DataFrame(merged_rows)
     
     # Format numeric columns
-    numeric_cols = ['Call IV', 'Call Ask', 'Call Bid',  'strike', 'Put Bid', 'Put Ask', 'Put IV']
+    numeric_cols = ['Call IV', 'Call Ask', 'Call Bid',  'Strike', 'Put Bid', 'Put Ask', 'Put IV']
     merged_df[numeric_cols] = merged_df[numeric_cols].round(0)
 
     closest_strike = all_strikes[closest_idx].round(0) # <-- Define closest_strike
