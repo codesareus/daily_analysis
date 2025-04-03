@@ -1311,7 +1311,7 @@ def main():
     # Format numeric columns
     numeric_cols = ['Call IV', 'Call Ask', 'Call Bid',  'Strike', 'Put Bid', 'Put Ask', 'Put IV']
     merged_df[numeric_cols] = merged_df[numeric_cols].round(0)
-
+    
     closest_strike = all_strikes[closest_idx] # <-- Define closest_strike
 
 # Then modify the highlight function:
@@ -1319,7 +1319,16 @@ def main():
         return ['background: #7272FF' if row['Strike'] == closest_strike else '' for _ in row]
     # Display
 
-    styled_df = merged_df.style.apply(highlight_row, axis=1)
+    #styled_df = merged_df.style.apply(highlight_row, axis=1)
+
+      # Add formatting to remove decimals in display
+    styled_df = (
+        merged_df.style
+        .apply(highlight_row, axis=1)
+        .format("{:.0f}", subset=numeric_cols)  # Force integer display
+        .format("{:.2f}", subset=["Call IV", "Put IV"])  # Optional: Format IV differently
+    )
+    
     st.write(styled_df.to_html(), unsafe_allow_html=True)
     
     st.markdown(f"**Current Price:** ${current_price:.2f}")
