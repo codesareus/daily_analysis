@@ -1271,6 +1271,61 @@ def main():
     calls = options_chain.calls
     puts = options_chain.puts
 
+    #########
+    
+    # Get all unique sorted strikes
+    all_strikes = sorted(list(set(calls['strike'].tolist() + puts['strike'].tolist())))
+    
+    if not all_strikes:
+        st.error("No strikes found.")
+        st.stop()
+    
+    # Find closest strike to current price
+    closest_idx = np.abs(np.array(all_strikes) - current_price).argmin()
+    start_idx = max(0, closest_idx - 10)
+    end_idx = min(len(all_strikes), closest_idx + 11)  # +11 to include 10 above
+    selected_strikes = all_strikes[start_idx:end_idx]
+    
+    # Merge calls and puts data
+    def get_option_data(df, strike):
+        match = df[df['strike'] == strike]
+        return match.iloc[0] if not match.empty else pd.Series()
+    
+    merged_rows = []
+    for strike in selected_strikes:
+        call = get_option_data(calls, strike)
+        put = get_option_data(puts, strike)
+        
+        merged_rows.append({
+            'Strike': strike,
+            'Call Bid': call.get('bid', None),
+            'Call Ask': call.get('ask', None),
+            'Call IV': call.get('impliedVolatility', None),
+            'Put Bid': put.get('bid', None),
+            'Put Ask': put.get('ask', None),
+            'Put IV': put.get('impliedVolatility', None)
+        })
+    
+    merged_df = pd.DataFrame(merged_rows)
+    
+    # Format numeric columns
+    numeric_cols = ['Call Bid', 'Call Ask', 'Call IV', 'Put Bid', 'Put Ask', 'Put IV']
+    merged_df[numeric_cols] = merged_df[numeric_cols].round(2)
+    
+    # Display
+    st.markdown(f"**Current Price:** ${current_price:.2f}")
+    st.dataframe(
+        merged_df,
+        height=600,
+        use_container_width=True,
+        column_config={
+            "Call IV": st.column_config.NumberColumn("Call IV", format="%.2f"),
+            "Put IV": st.column_config.NumberColumn("Put IV", format="%.2f")
+        }
+    )
+
+    #####################
+
     def filter_strikes(df, current_price, num_strikes=10):
     # Sort strikes by proximity to current price
         df = df.sort_values("strike")
@@ -1309,11 +1364,6 @@ def main():
     st.write("calls")
     st.table(calls.round(2))
     st.write("puts")
-    numeric_cols = puts.select_dtypes(include=[float, int]).columns
-    puts_rounded = puts.copy()
-    puts_rounded[numeric_cols] = puts_rounded[numeric_cols].round(2)
-
-    st.table(options_chain)
     
     if st.button('showing all options' if st.session_state.alloptions == True else 'showing fewer options'):
         st.session_state.alloptions = not st.session_state.alloptions 
