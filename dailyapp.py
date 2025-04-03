@@ -1,6 +1,7 @@
 ### daily analysis 03-08-25
 
 import os
+import io
 import time
 from time import sleep
 from datetime import datetime, timedelta
@@ -23,6 +24,8 @@ from sklearn.metrics import r2_score
 import pandas_market_calendars as mcal
 #from gtts import gTTS  # Text-to-speech
 
+eastern_tz = pytz.timezone('US/Eastern') 
+current_date = datetime.now(eastern_tz).strftime("%Y-%m-%d %H:%M")
 
 marker_position = 540
 separationLen = 5
@@ -86,7 +89,7 @@ def fetch_stock_data(ticker, interval="5m"):
 def fetch_stock_data1mo(ticker, interval="1h"):
     # Fetch data for the specified stock with the given interval (including premarket)
     stock = yf.Ticker(ticker)
-    data = stock.history(period="1mo", interval="1h", prepost=True)  # no doest not Include premarket data
+    data = stock.history(period="1mo", interval=interval, prepost=True)  # no doest not Include premarket data
     return data
 
 # Function to fetch the previous 5 day's close price
@@ -254,7 +257,8 @@ def plot_bars(price=0):
     eastern = 'US/Eastern'  # Example timezone, replace with actual timezone if needed
 
     # Read the data
-    df = pd.read_csv("scoreT.csv", names=['tFrame', 'ema_trend', 'e100/200', 'pr_eAvg', 'rsi', 'macd', 'score',  'score_trend'])
+    df = pd.read_csv("scoreT.csv", names=['tFrame', 'ema_trend', 'e100/200', 'pr_eAvg', 'rsi', 'macd', 'score',  'score_trend', 'lrc_mid', 'lrc_tbm'])
+    df = df[['tFrame', 'ema_trend', 'e100/200', 'pr_eAvg', 'rsi', 'macd', 'lrc_mid']]
     
     # Define custom order
     timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo", "1y"]
@@ -275,7 +279,7 @@ def plot_bars(price=0):
   
     rsi_values = [df[df["tFrame"] == interval]["rsi"].mean() for interval in unique_intervals]
     macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
-    total_values = [df[df["tFrame"] == interval]["score"].mean() for interval in unique_intervals]
+    lrc_mid = [df[df["tFrame"] == interval]["lrc_mid"].mean() for interval in unique_intervals]
     
     # Define bar positions
     # Define the width of each bar
@@ -296,16 +300,16 @@ def plot_bars(price=0):
     plt.bar(x + offsets[2], premaAvg, width, color="darkred", edgecolor="black")
     plt.bar(x + offsets[3], rsi_values, width, color="navy", edgecolor="black")
     plt.bar(x + offsets[4], macd_values, width, color="orange", edgecolor="black", label="MACD")
-    plt.bar(x + offsets[5], total_values, width, color="gray", edgecolor="black")
+    plt.bar(x + offsets[5], lrc_mid, width, color="gray", edgecolor="black")
     
     # Add value labels
     for i, interval in enumerate(unique_intervals):
-        for offset, values in zip(offsets, [ema_trend, ema_values, premaAvg,rsi_values, macd_values, total_values]):
+        for offset, values in zip(offsets, [ema_trend, ema_values, premaAvg,rsi_values, macd_values, lrc_mid]):
             plt.text(x[i] + offset, values[i] + 0.2, f"{values[i]:.1f}", ha='center', fontsize=10)
     
     # Add threshold lines
-    plt.axhline(y=7, color="red", linestyle="--", linewidth=1)
-    plt.axhline(y=-7, color="green", linestyle="--", linewidth=1)
+    plt.axhline(y=3, color="red", linestyle="--", linewidth=1)
+    plt.axhline(y=-3, color="green", linestyle="--", linewidth=1)
     plt.axhline(y=0, color="gray", linestyle="-", linewidth=1)
     
     #current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
@@ -328,8 +332,7 @@ def plot_bars(price=0):
 # Streamlit app
 def main():
     st.title("Score Regression Analysis")
-    data5 = fetch_stock_data("SPY", "5m")
-    st.write(data5.tail(1))
+    
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
     
@@ -433,8 +436,10 @@ def main():
 
     # Fetch data for the user-specified stock and interval
 
-    if interval == "1h":
-        data = fetch_stock_data1mo("SPY", "1h")
+    if interval == "1h" or interval == "30min":
+        data = fetch_stock_data1mo("SPY", interval)
+       # stock = yf.Ticker("SPY")
+        #st.write(stock.history_metadata)
         if data.empty:
             st.error(f"Failed to fetch data for 1h. Please check the ticker and try again.")
             
@@ -456,9 +461,11 @@ def main():
     #if data.empty:
         #st.error(f"Failed to fetch data for SPY. Please check the ticker and try again.")
         #return
-
     data_recent = data.tail(selected_datanumber)  # Use only the first 300 points after backtracking
-    
+
+    st.write(data_recent["Close"].isnull().sum()) 
+    data_recent = data_recent.dropna(subset=['Close'])
+        
 ##########$$$############### tap function 
     
 ########$$$#data_recent = data_recent.head(100)  # Use only the first 300 points after backtracking
@@ -495,6 +502,7 @@ def main():
 
     ##############################
     degree = 2
+    
     # Perform linear regression (using only the most recent 300 points)
     X, y, y_pred_linear, r2_linear, data_recent = perform_regression(data_recent, degree=1)
 
@@ -570,12 +578,24 @@ def main():
     # Display the deviation message with the appropriate color
    # st.markdown(f"<h3 style='color:{deviation_color};'>{deviation_message} ({interval})</h3>", unsafe_allow_html=True)
     
-    col1, col2=st.columns(2)
+    dataSimple = data_recent[["Close", "Volume"]]
+    dataSimple['Close'] = dataSimple['Close'].round(2)
+
+# Verify the result
+    st.write(dataSimple.tail())
+    
+    col1, col2, col3=st.columns([2,1,1])
     with col1:      
     # Add a message above the plot showing the trend
         st.markdown(f"<h3 style='color:{trend_color};'>{ticker}_{trend_message} ({interval})</h3>", unsafe_allow_html=True)
 
     with col2:
+        if data_recent["Volume"].iloc[-1] > 1.91*data_recent["Volume"].iloc[-2]:
+            st.markdown("### High Volume!")
+        else:
+            st.markdown("### …")
+        
+    with col3:
     #add button to toggle marker lines   
          # Align the button to the right using CSS
         st.markdown(
@@ -596,7 +616,6 @@ def main():
     # Calculate RSI before plotting
     data_recent = calculate_rsi(data_recent)
     data_recent = calculate_macd(data_recent)
-
     ## add p.r. model y value
     data_recent['y_pred_poly'] = y_pred_poly
     
@@ -624,7 +643,7 @@ def main():
         
         ema_score = 0
 
-        if (ema100>= ema200):
+        if (current_price >= ema9):
             ema_score = 1
         else:
             ema_score = -1
@@ -958,13 +977,20 @@ def main():
             ax.plot(x_values[i], data_recent['Close'].iloc[i], 'v', markersize=5, color='red', lw=0)
 
     # Format x-axis to show only hours (or every 3 hours for 30-minute interval)
+    
     ax.set_xticks(x_values)  # Set ticks for all time points
     ax.set_xticklabels(simplified_time_labels)  # Show only hours or every 3 hours
     ax.set_xlabel("Time (HH:MM)")
     ax.set_ylabel(f"{ticker} Price")
-    ax.set_title(f"Combined Linear and Polynomial Regression for {ticker} (tFrame: {interval})")
     ax.legend()
 
+    ax.set_title(
+        f"{current_date} Linear and Polynomial Regression for {ticker} (tFrame: {interval})",
+        fontsize=20,          # Font size
+        fontweight='bold',    # Bold text
+        color='navy',         # Text color
+        fontfamily='sans-serif'  # Font family (e.g., 'serif', 'monospace')
+    )
 ##########. try cloud for today
     if st.session_state.index <5 and st.session_state.index >0:
         time_frame = tfAll[st.session_state.index]  # Change this to 1, 5, 15, etc. (minutes per data point)
@@ -995,7 +1021,11 @@ def main():
     ax2.axhline(y=70, color="red", linestyle="--")
     ax2.axhline(y=30, color="green", linestyle="--")
     ax2.axhline(y=50, color="gray", linestyle="--")
-    ax2.set_title(f"RSI ({interval})")
+    ax2.set_title(f"{current_date} RSI ({interval})",
+        fontsize=20,          # Font size
+        fontweight='bold',    # Bold text
+        color='navy',         # Text color
+        fontfamily='sans-serif')
     ax2.legend()
 
     # === MACD Plot (Only If Timeframe Is Valid) ===
@@ -1014,12 +1044,30 @@ def main():
         ax3.bar(x_values, histogram_values, color=['green' if val > 0 else 'red' for val in histogram_values], alpha=0.5)
         ax3.set_facecolor(bgcolor)
         
-        ax3.set_title(f"MACD ({interval})")
+        ax3.set_title(f"{current_date} MACD ({interval})", 
+            fontsize=20,          # Font size
+            fontweight='bold',    # Bold text
+            color='navy',         # Text color
+            fontfamily='sans-serif')
         ax3.legend()
 
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
     st.pyplot(fig)  ## finally plot all 3 figures
-   
+
+    # === Add Download Button ===
+# Save the figure to a BytesIO buffer
+    buffer = io.BytesIO()
+    fig.savefig(buffer, format="png")  # Save as PNG (you can also use "pdf" or other formats)
+    buffer.seek(0)  # Move the buffer's pointer to the beginning
+
+# Create a download button
+    st.download_button(
+        label="Download Plot as PNG",
+        data=buffer,
+        file_name="plot.png",  # Name of the downloaded file
+        mime="image/png"       # MIME type of the file
+    )
+
     st.write("---------------------")
     #st.write(data_recent.tail(5))
 
@@ -1106,17 +1154,31 @@ def main():
         pr_eAvg = 1
     else:
         pr_eAvg = -1
-    # total == score (above) 
+    # total == score (above)
+
+    ########## get current_price divergence from lr_channel mid
+    mid_diff = current_price - mid[-1]
+    rangeHere = (upper_lr[-1] - mid[-1])
+    lrc_mid = 10* (mid_diff/rangeHere)
+    
+    if lrc_mid >= 0:
+        lrc_tbm = rangeHere
+    else:
+        lrc_tbm = -rangeHere
+    
     new_data = pd.DataFrame([{
         "tFrame": f"{interval}",
         "ema9/20": round(ema_trend, 2),
-        "e100/200": round(ema_score, 2),
+        "e100/200": round(ema_score, 2),  # actually current_price >= ema9
         "pr_E20": pr_eAvg,
         "rsi": round(rsi_score, 2),
         "macd": round(macd_score, 2),
         "score": (score + pr_eAvg),
         "score_trend": score_trend,
+        "lrc_mid": round(lrc_mid, 2),
+        "lrc_tbm": round(lrc_tbm, 2),
     }])
+    
     #new_data.to_csv(scoreT_file, mode="a", header=False, index=False)
     new_data.to_csv(scoreT_file, mode="a", header=False, index=False, float_format="%.2f") ## chatGPT
 
@@ -1133,63 +1195,21 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema9/20', 'e100/200', 'pr_E20', 'rsi', 'macd', 'score',  'score_trend']
-        
+    df.columns = ['tFrame', 'ema9/20', 'pr_E9', 'pr_E20', 'rsi', 'macd', 'score',  'score_trend', 'lrc_mid', 'lrc_tbm']
+    df1 = df[['tFrame', 'ema9/20',  'pr_E9', 'pr_E20', 'rsi',  'macd', 'lrc_mid', 'lrc_tbm']]
     #display table
-    st.dataframe(df, hide_index=True) #original table looks neater
+    st.dataframe(df1, hide_index=True) #original table looks neater
 
     plot_bars(current_price)
 
     ################### all control buttons ###########################################################
     current_price = round(data_recent['Close'].iloc[-1], 2)
     now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  # Correct format
-  #  ema_trend_1m = df[df["tFrame"] == "1m"]["ema_trend"].values[0]
- #   ema_trend_5m = df[df["tFrame"] == "5m"]["ema_trend"].values[0]
-    pr1=df[df["tFrame"] == "1m"]["e100/200"].values[0]
-    pr5=df[df["tFrame"] == "5m"]["e100/200"].values[0]
-    
-    st.write(f"interval: {interval}__rerun:{ st.session_state.rerun_count}")
-    # Extract "score_trend" for "1m"  ## 
-    
-    if pr1 ==1:
-        message = "___B OK 1"
-        color = "green"
-    elif pr1==-1:
-        message = "___S OK -1"
-        color = "red"
-    else:
-        message = "Hold it"
-        color = "orange"
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">e100/200 1min: {message}</s></p>', unsafe_allow_html=True)
-    if pr5 ==1:
-        message = "___B OK 1"
-        color = "green"
-    elif pr5==-1:
-        message = "___S OK -1"
-        color = "red"
-    else:
-        message = "Hold it"
-        color = "orange"
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">e100/200 5min: {message}</s></p>', unsafe_allow_html=True)
-
-    sum_score_trend_rest = df[~df["tFrame"].isin(["1m", "6mo"])]["score_trend"].sum()
-    
-    if sum_score_trend_rest >=4:
-        message = "___B OK >=4"
-        color = "green"
-    elif sum_score_trend_rest <= -4:
-        message = "___S OK <=-4"
-        color = "red"
-    else:
-        message = "Hold it"
-        color = "orange"
-    #st.write(f"score_trend_others: ||... {sum_score_trend_rest} ___ {message}")
-    st.markdown(f'<p style="color:{color}; font-weight:bold;">score_trend_others: {message}__{sum_score_trend_rest}</s></p>', unsafe_allow_html=True)
-
+  
     #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
     
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4,col5 = st.columns(5)
     with col1:
         # delete data button
         if st.button(" 1min"):
@@ -1224,8 +1244,10 @@ def main():
             st.session_state.index = 1
             st.rerun()
 
-    st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
-
+    with col5:
+        if st.button(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}"):
+        #st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
+            st.rerun()
 ########################################
     if st.session_state.stop_sleep == 0:
         # Sleep for 8 seconds (simulating some processing)
