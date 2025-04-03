@@ -1316,7 +1316,7 @@ def main():
 
 # Then modify the highlight function:
     def highlight_row(row):
-        return ['background: #FFFACD' if row['Strike'] == closest_strike else '' for _ in row]
+        return ['background: #7272FF' if row['Strike'] == closest_strike else '' for _ in row]
     # Display
 
     styled_df = merged_df.style.apply(highlight_row, axis=1)
