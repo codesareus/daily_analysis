@@ -340,7 +340,7 @@ def main():
         st.session_state.expiration = 0
     
     if 'alloptions' not in st.session_state:
-        st.session_state.alloptions = True
+        st.session_state.alloptions = False
     # Initialize session states
     if 'index' not in st.session_state:
         st.session_state.index = 0
@@ -1298,23 +1298,23 @@ def main():
             st.rerun()
         
   #  with col2:
+
+    if st.session_state.alloptions == True:
+        calls = filtered_calls[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']]
+        puts = filtered_puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']]
+    else:
+        calls = filtered_calls[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].head(11)
+        puts = filtered_puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].tail(11)
+        
+    st.write("calls")
+    st.write(calls)
+    st.write("puts")
+    st.write(puts)
+    
     if st.button('showing all options' if st.session_state.alloptions == True else 'showing fewer options'):
-        if st.session_state.alloptions == True:
-            calls = filtered_calls[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']]
-            puts = filtered_puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']]
-        else:
-            calls = filtered_calls[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].head(11)
-            puts = filtered_puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].tail(11)
-        
-        st.write("calls")
-        st.write(calls)
-        st.write("puts")
-        st.write(puts)
         st.session_state.alloptions = not st.session_state.alloptions 
-        
         st.rerun()
     
-
     #######################################
     if st.session_state.stop_sleep == 0:
         # Sleep for 8 seconds (simulating some processing)
