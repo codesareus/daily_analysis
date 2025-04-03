@@ -1292,11 +1292,12 @@ def main():
         else:
             calls = filtered_calls[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].head(11)
             puts = filtered_puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].tail(11)
-            st.session_state.alloptions == False
+        
         st.write("calls")
         st.write(calls)
         st.write("puts")
         st.write(puts)
+        st.session_state.alloptions = not st.session_state.alloptions 
         
         st.rerun()
     
