@@ -1307,7 +1307,7 @@ def main():
         puts = filtered_puts[['strike', 'lastPrice', 'bid','ask', 'impliedVolatility', 'volume']].tail(11)
         
     st.write("calls")
-    st.dataframe(calls,height=600)
+    st.table(calls)
     st.write("puts")
     st.dataframe(puts, height=600)
     
