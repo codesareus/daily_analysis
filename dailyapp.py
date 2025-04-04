@@ -1294,8 +1294,8 @@ def main():
     
     # Find closest strike to current price
     closest_idx = np.abs(np.array(all_strikes) - current_price).argmin()
-    start_idx = max(0, closest_idx - 10)
-    end_idx = min(len(all_strikes), closest_idx + 11)  # +11 to include 10 above
+    start_idx = max(0, closest_idx - 15)
+    end_idx = min(len(all_strikes), closest_idx + 16)  # +11 to include 10 above
     selected_strikes = all_strikes[start_idx:end_idx]
     
     # Merge calls and puts data
