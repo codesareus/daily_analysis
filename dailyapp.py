@@ -1348,6 +1348,30 @@ def main():
     
     st.write(styled_df.to_html(), unsafe_allow_html=True)
 
+    ######### order
+
+    if st.button('B'):
+    # Show confirmation dialog
+        st.session_state['confirm_action'] = True
+
+    if st.session_state.get('confirm_action'):
+    # Display message
+        st.warning("Are you sure you want to proceed?")
+    
+    # Create columns for buttons
+        col1, col2 = st.columns(2)
+    
+        with col1:
+            if st.button('Yes'):
+            # Perform your action here
+                st.success("Action confirmed!")
+                st.session_state.confirm_action = False  # Reset state
+            
+        with col2:
+            if st.button('No'):
+                st.session_state.confirm_action = False  # Reset state
+        
+    
     #####################
     #######################################
     if st.session_state.stop_sleep == 0:
