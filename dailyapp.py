@@ -1348,7 +1348,7 @@ def main():
         .format("{:.0f}", subset=["Strike"])  # Force integer display
         .format("{:.2f}", subset=numeric_cols)  # Optional: Format IV differently
     )
-    
+    styled_df.reset_index(drop=True, inplace=True)
     st.write(styled_df.to_html(), unsafe_allow_html=True)
 
     ######### order
