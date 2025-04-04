@@ -1332,13 +1332,16 @@ def main():
     def highlight_row(row):
         return ['background: #7272FF' if row['Strike'] == closest_strike else '' for _ in row]
     # Display
-
+    # Add this function to apply bold formatting to the 'Strike' column
+    def bold_strike_column(row):
+        return ['font-weight: bold' if col == 'Strike' else '' for col in row.index]
     #styled_df = merged_df.style.apply(highlight_row, axis=1)
 
       # Add formatting to remove decimals in display
     styled_df = (
         merged_df.style
         .apply(highlight_row, axis=1)
+        .apply(bold_strike_column, axis=1)  # New: Bold strike column
         .format("{:.0f}", subset=["Strike"])  # Force integer display
         .format("{:.2f}", subset=numeric_cols)  # Optional: Format IV differently
     )
