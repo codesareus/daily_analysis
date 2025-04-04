@@ -335,7 +335,10 @@ def main():
     
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
-
+    
+    if 'permission' not in st.session_state:
+        st.session_state.permission = 2
+    
     if 'expiration' not in st.session_state:
         st.session_state.expiration = 0
     
@@ -1349,7 +1352,14 @@ def main():
     st.write(styled_df.to_html(), unsafe_allow_html=True)
 
     ######### order
-
+    if st.session_state.permission==1:
+        messagehere = "OK"
+    elif  st.session_state.permission==0:
+        messagehere = "NOT OK"
+    else:
+        messagehere = ""
+    st.write(messagehere)
+    
     if st.button('B'):
     # Show confirmation dialog
         st.session_state['confirm_action'] = True
@@ -1364,13 +1374,15 @@ def main():
         with col1:
             if st.button('Yes'):
             # Perform your action here
-                st.success("Action confirmed!")
+                st.session_state.permission=1
                 st.session_state.confirm_action = False  # Reset state
+                st.rerun()
             
         with col2:
             if st.button('No'):
+                st.session_state.permission=0
                 st.session_state.confirm_action = False  # Reset state
-        
+                st.rerun()
     
     #####################
     #######################################
