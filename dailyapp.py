@@ -1349,7 +1349,7 @@ def main():
         .format("{:.2f}", subset=numeric_cols)  # Optional: Format IV differently
     )
     
-    st.write(styled_df.to_html(), unsafe_allow_html=True)
+    st.write(styled_df.to_html(index=False), unsafe_allow_html=True)
 
     ######### order
     
