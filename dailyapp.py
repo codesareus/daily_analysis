@@ -1300,9 +1300,9 @@ def main():
     start_idx = max(0, closest_idx - 15)
     end_idx = min(len(all_strikes), closest_idx + 16)  # +11 to include 10 above
     calls = calls[start_idx:end_idx]
-    calls = calls[['last','bid','ask','iv'   ]]
+    calls = calls[['bid','ask','implied volatility'   ]]
     puts = puts[start_idx:end_idx]
-    puts = puts[['last','bid','ask','iv'   ]]
+    puts = puts[['bid','ask','implied volatility'   ]]
     
     # Merge calls and puts data
     
