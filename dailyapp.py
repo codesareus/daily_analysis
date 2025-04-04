@@ -1299,57 +1299,12 @@ def main():
     closest_idx = np.abs(np.array(all_strikes) - current_price).argmin()
     start_idx = max(0, closest_idx - 15)
     end_idx = min(len(all_strikes), closest_idx + 16)  # +11 to include 10 above
-    selected_strikes = all_strikes[start_idx:end_idx]
+    calls = calls[start_idx:end_idx]
+    puts = puts[start_idx:end_idx]
     
     # Merge calls and puts data
-    def get_option_data(df, strike):
-        match = df[df['strike'] == strike]
-        return match.iloc[0] if not match.empty else pd.Series()
     
-    merged_rows = []
-    for strike in selected_strikes:
-        call = get_option_data(calls, strike)
-        put = get_option_data(puts, strike)
-        
-        merged_rows.append({
-            'Call IV': round(call.get('impliedVolatility', 0),2),
-            'Call Ask': round(call.get('ask', 0),2),
-            'Call Bid': round(call.get('bid', 0),2),
-            'Call Last': call.get('last', 0),
-            'Strike': round(strike,0),
-            'Put Last': put.get('last', 0),
-            'Put Bid': round(put.get('bid', 0),2),
-            'Put Ask': round(put.get('ask', 0),2),
-            'Put IV': round(put.get('impliedVolatility', 0),2)
-        })
-    
-    merged_df = pd.DataFrame(merged_rows)
-    
-    # Format numeric columns
-    numeric_cols = ['Call IV', 'Call Ask', 'Call Bid',  'Call Last','Put Last','Put Bid', 'Put Ask', 'Put IV']
-   # merged_df['Strike'] = merged_df[numeric_cols].round(0)
-    
-    closest_strike = all_strikes[closest_idx] # <-- Define closest_strike
-
-# Then modify the highlight function:
-    def highlight_row(row):
-        return ['background: #7272FF' if row['Strike'] == closest_strike else '' for _ in row]
-    # Display
-    # Add this function to apply bold formatting to the 'Strike' column
-    def bold_strike_column(row):
-        return ['font-weight: bold' if col == 'Strike' else '' for col in row.index]
-    #styled_df = merged_df.style.apply(highlight_row, axis=1)
-    merged_df.reset_index(drop=True, inplace=True)
-      # Add formatting to remove decimals in display
-    styled_df = (
-        merged_df.style
-        .apply(highlight_row, axis=1)
-        .apply(bold_strike_column, axis=1)  # New: Bold strike column
-        .format("{:.0f}", subset=["Strike"])  # Force integer display
-        .format("{:.2f}", subset=numeric_cols)  # Optional: Format IV differently
-    )
-    
-    st.write(styled_df.to_html(index=False), unsafe_allow_html=True)
+    st.table(f"### Calls", calls)
 
     ######### order
     
