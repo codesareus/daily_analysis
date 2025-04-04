@@ -1352,13 +1352,6 @@ def main():
     st.write(styled_df.to_html(), unsafe_allow_html=True)
 
     ######### order
-    if st.session_state.permission==1:
-        messagehere = "OK"
-    elif  st.session_state.permission==0:
-        messagehere = "NOT OK"
-    else:
-        messagehere = ""
-    st.write(messagehere)
     
     if st.button('B'):
     # Show confirmation dialog
@@ -1383,6 +1376,14 @@ def main():
                 st.session_state.permission=0
                 st.session_state.confirm_action = False  # Reset state
                 st.rerun()
+
+    if st.session_state.permission==1:
+        messagehere = "OK"
+    elif  st.session_state.permission==0:
+        messagehere = "NOT OK"
+    else:
+        messagehere = "table here"
+    st.write(messagehere)
     
     #####################
     #######################################
