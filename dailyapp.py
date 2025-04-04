@@ -1304,7 +1304,7 @@ def main():
     
     # Merge calls and puts data
     
-    st.table(f"### Calls", calls)
+    st.table(calls)
 
     ######### order
     
