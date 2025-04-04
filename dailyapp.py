@@ -1315,9 +1315,9 @@ def main():
             'Call IV': round(call.get('impliedVolatility', 0),2),
             'Call Ask': round(call.get('ask', 0),2),
             'Call Bid': round(call.get('bid', 0),2),
-            'Call Last': round(call.get('last', 0),2),
+            'Call Last': call.get('last', 0),
             'Strike': round(strike,0),
-            'Put Last': round(put.get('last', 0),2),
+            'Put Last': put.get('last', 0),
             'Put Bid': round(put.get('bid', 0),2),
             'Put Ask': round(put.get('ask', 0),2),
             'Put IV': round(put.get('impliedVolatility', 0),2)
