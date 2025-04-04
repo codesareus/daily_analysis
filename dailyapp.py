@@ -1287,21 +1287,33 @@ def main():
     puts = options_chain.puts
 
     #########
+
+    def filter_strikes(df, current_price, contract_type, num_strikes=10):
+    # Sort strikes ascending
+        df = df.sort_values("strike").reset_index(drop=True)
     
-    # Get all unique sorted strikes
-    all_strikes = sorted(list(set(calls['strike'].tolist() + puts['strike'].tolist())))
+    # Find closest strike index to current price
+        closest_idx = np.abs(df["strike"] - current_price).argmin()
     
-    if not all_strikes:
-        st.error("No strikes found.")
-        st.stop()
+        if contract_type == "call":
+        # For calls: Start from closest index, include `num_strikes` above
+            start_idx = closest_idx
+            end_idx = min(len(df), closest_idx + num_strikes + 1)
+        elif contract_type == "put":
+        # For puts: Start from `num_strikes` below, include closest index
+            start_idx = max(0, closest_idx - num_strikes)
+            end_idx = closest_idx + 1  # +1 to include closest strike
+        else:
+            raise ValueError("contract_type must be 'call' or 'put'")
     
-    # Find closest strike to current price
-    closest_idx = np.abs(np.array(all_strikes) - current_price).argmin()
-    start_idx = max(0, closest_idx - 15)
-    end_idx = min(len(all_strikes), closest_idx + 16)  # +11 to include 10 above
-    calls = calls[start_idx:end_idx]
+        return df.iloc[start_idx:end_idx]
+    # Fetch data
+
+# Apply filtering
+    calls = filter_strikes(calls, current_price, "call")
+    puts = filter_strikes(puts, current_price, "put")
+    
     calls = calls[['strike', 'bid','ask','impliedVolatility'   ]]
-    puts = puts[start_idx:end_idx]
     puts = puts[['strike','bid','ask','impliedVolatility'   ]]
     
     # Merge calls and puts data
