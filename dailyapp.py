@@ -1339,7 +1339,7 @@ def main():
     def bold_strike_column(row):
         return ['font-weight: bold' if col == 'Strike' else '' for col in row.index]
     #styled_df = merged_df.style.apply(highlight_row, axis=1)
-
+    merged_df.reset_index(drop=True, inplace=True)
       # Add formatting to remove decimals in display
     styled_df = (
         merged_df.style
@@ -1348,7 +1348,7 @@ def main():
         .format("{:.0f}", subset=["Strike"])  # Force integer display
         .format("{:.2f}", subset=numeric_cols)  # Optional: Format IV differently
     )
-    styled_df.reset_index(drop=True, inplace=True)
+    
     st.write(styled_df.to_html(), unsafe_allow_html=True)
 
     ######### order
