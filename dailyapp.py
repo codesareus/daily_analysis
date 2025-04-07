@@ -1213,7 +1213,7 @@ def main():
     st.dataframe(df1, hide_index=True) #original table looks neater
     current_price = round(data_recent['Close'].iloc[-1], 2)
     now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  
-    st.write(f"{current_price}_{interval}_{now}")
+    st.write(f"{current_price}_({interval})_{now}")
     
     plot_bars(current_price)
 
