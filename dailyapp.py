@@ -1273,7 +1273,7 @@ def main():
             
     with col3:
         if st.button("check all"):
-            
+            st.session_state.stop_sleep = 0
             st.session_state.index = 0
             st.session_state.rerun_count = 0
             st.session_state.sleepGap = 5
@@ -1281,7 +1281,7 @@ def main():
 
     with col4:
         if st.button("stop slp"):
-            st.session_state.stop_sleep =1
+            st.session_state.stop_sleep = 1
             st.session_state.index = 1
             st.rerun()
 
