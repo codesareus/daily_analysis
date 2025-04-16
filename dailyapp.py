@@ -1,4 +1,4 @@
-### daily analysis 03-08-25
+### daily analysis 04-03-25
 
 import os
 import io
@@ -181,6 +181,12 @@ def calculate_emas(data):
     data['EMA_100'] = data['Close'].ewm(span=100, adjust=False).mean()
     data['EMA_200'] = data['Close'].ewm(span=200, adjust=False).mean()
     return data
+
+def calculate_pe200(data):
+    
+    data['pe200'] = data['Close'] - data['EMA_200']
+
+    return data
     
 # Function to perform regression analysis and plot
 def regression_analysis(data_recent, interval):
@@ -257,8 +263,8 @@ def plot_bars(price=0):
     eastern = 'US/Eastern'  # Example timezone, replace with actual timezone if needed
 
     # Read the data
-    df = pd.read_csv("scoreT.csv", names=['tFrame', 'ema_trend', 'e100/200', 'pr_eAvg', 'rsi', 'macd', 'score',  'score_trend', 'lrc_mid', 'lrc_tbm'])
-    df = df[['tFrame', 'ema_trend', 'e100/200', 'pr_eAvg', 'rsi', 'macd', 'lrc_mid']]
+    df = pd.read_csv("scoreT.csv", names=['tFrame', 'ema_trend', 'e100/200', 'pr_eAvg', 'pe200', 'rsi', 'macd', 'score',  'score_trend', 'lrc_mid', 'lrc_tbm'])
+    df = df[['tFrame', 'ema_trend', 'e100/200', 'pr_eAvg', 'pe200', 'rsi', 'macd', 'lrc_mid']]
     
     # Define custom order
     timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo", "1y"]
@@ -270,23 +276,24 @@ def plot_bars(price=0):
     # Prepare data
     unique_intervals = df["tFrame"].unique()
     x = np.arange(len(unique_intervals))
-    width = 0.15
+    #width = 0.15
     
     # Calculate metric values
     ema_trend = [df[df["tFrame"] == interval]["ema_trend"].mean() for interval in unique_intervals]
     ema_values = [df[df["tFrame"] == interval]["e100/200"].mean() for interval in unique_intervals]
     premaAvg = [df[df["tFrame"] == interval]["pr_eAvg"].mean() for interval in unique_intervals]
-  
+    pe200 = [df[df["tFrame"] == interval]["pe200"].mean() for interval in unique_intervals]
+    
     rsi_values = [df[df["tFrame"] == interval]["rsi"].mean() for interval in unique_intervals]
     macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
     lrc_mid = [df[df["tFrame"] == interval]["lrc_mid"].mean() for interval in unique_intervals]
     
     # Define bar positions
     # Define the width of each bar
-    width = 0.15
+    width = 0.13
 
 # Generate offsets for six bars (equally spaced)
-    offsets = [-3 * width, -2 * width, -width, 0, width, 2 * width]
+    offsets = [-3 * width, -2 * width, -width, 0, width, 2 * width, 3 * width]
 
 # Now you can use this `offsets` list for your six bars
 
@@ -297,19 +304,20 @@ def plot_bars(price=0):
     
     plt.bar(x + offsets[0], ema_trend, width, color="red", edgecolor="black")
     plt.bar(x + offsets[1], ema_values, width, color="darkred", edgecolor="black")
-    plt.bar(x + offsets[2], premaAvg, width, color="darkred", edgecolor="black")
-    plt.bar(x + offsets[3], rsi_values, width, color="navy", edgecolor="black")
-    plt.bar(x + offsets[4], macd_values, width, color="orange", edgecolor="black", label="MACD")
-    plt.bar(x + offsets[5], lrc_mid, width, color="gray", edgecolor="black")
+    plt.bar(x + offsets[2], premaAvg, width, color="yellow", edgecolor="black")
+    plt.bar(x + offsets[3], pe200, width, color="green", edgecolor="black", label="pe200")
+    plt.bar(x + offsets[4], rsi_values, width, color="navy", edgecolor="black")
+    plt.bar(x + offsets[5], macd_values, width, color="orange", edgecolor="black")
+    plt.bar(x + offsets[6], lrc_mid, width, color="gray", edgecolor="black", label="p_lrc_mid")
     
     # Add value labels
-    for i, interval in enumerate(unique_intervals):
-        for offset, values in zip(offsets, [ema_trend, ema_values, premaAvg,rsi_values, macd_values, lrc_mid]):
-            plt.text(x[i] + offset, values[i] + 0.2, f"{values[i]:.1f}", ha='center', fontsize=10)
+    #for i, interval in enumerate(unique_intervals):
+        #for offset, values in zip(offsets, [ema_trend, ema_values, premaAvg,rsi_values, macd_values, lrc_mid]):
+            #plt.text(x[i] + offset, values[i] + 0.2, f"{values[i]:.1f}", ha='center', fontsize=10)
     
     # Add threshold lines
-    plt.axhline(y=3, color="red", linestyle="--", linewidth=1)
-    plt.axhline(y=-3, color="green", linestyle="--", linewidth=1)
+    plt.axhline(y=5, color="red", linestyle="--", linewidth=1)
+    plt.axhline(y=-5, color="green", linestyle="--", linewidth=1)
     plt.axhline(y=0, color="gray", linestyle="-", linewidth=1)
     
     #current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
@@ -336,6 +344,14 @@ def main():
     # Input box for user to enter stock ticker
     ticker = st.text_input("Enter Stock Ticker (e.g., SPY, AAPL, TSLA):", value="SPY").upper()
     
+    if 'permission' not in st.session_state:
+        st.session_state.permission = 2
+    
+    if 'expiration' not in st.session_state:
+        st.session_state.expiration = 0
+    
+    if 'alloptions' not in st.session_state:
+        st.session_state.alloptions = False
     # Initialize session states
     if 'index' not in st.session_state:
         st.session_state.index = 0
@@ -616,6 +632,8 @@ def main():
     # Calculate RSI before plotting
     data_recent = calculate_rsi(data_recent)
     data_recent = calculate_macd(data_recent)
+    data_recent = calculate_pe200(data_recent) # price - ema200
+    
     ## add p.r. model y value
     data_recent['y_pred_poly'] = y_pred_poly
     
@@ -1060,16 +1078,21 @@ def main():
     fig.savefig(buffer, format="png")  # Save as PNG (you can also use "pdf" or other formats)
     buffer.seek(0)  # Move the buffer's pointer to the beginning
 
-# Create a download button
-    st.download_button(
-        label="Download Plot as PNG",
-        data=buffer,
-        file_name="plot.png",  # Name of the downloaded file
-        mime="image/png"       # MIME type of the file
-    )
+    col1, col2 = st.columns(2)
+    with col1:
+        # Create a download button
+        st.download_button(
+            label="Download Plot as PNG",
+            data=buffer,
+            file_name="plot.png",  # Name of the downloaded file
+            mime="image/png"       # MIME type of the file
+        )
+    with col2:
+        st.write(f"interval: {interval}")
 
     st.write("---------------------")
     #st.write(data_recent.tail(5))
+    st.write(f"pe200_raw: {round(data_recent['pe200'].iloc[-1], 2)}...interval: {interval}")
 
     ### get scores functions
     def get_scores():
@@ -1101,11 +1124,26 @@ def main():
         y_pred_poly = data_recent['y_pred_poly'].iloc[-1]
         y_pred_poly1 = data_recent['y_pred_poly'].iloc[-2]
 
-        return price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal, y_pred_poly, y_pred_poly1
+        col_pe200 = data_recent['pe200']
+
+        # Get the maximum value
+        max_value = col_pe200.max()
+
+        # Get the minimum value
+        min_value = col_pe200.min()
+
+        pe200_raw = current_price - data_recent["EMA_200"].iloc[-1]
+        
+        if pe200_raw >= 0:
+            pe200 = round((pe200_raw / max_value),2) * 10
+        else:
+            pe200 = - round((pe200_raw / min_value),2) * 10
+
+        return price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal, y_pred_poly, y_pred_poly1, pe200
 
     #get all scores:
-    ema_score, ema_trend, rsi_score, macd_score, score, dev_from_std = get_scores()
-    price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal, y_pred_poly, y_pred_poly1 = get_scores_more()
+    ema_score, ema_trend, rsi_score, macd_score, score, dev_from_std= get_scores()
+    price, ema9, ema20, ema50, ema100, ema200, rsi, rsi2, macd, signal, y_pred_poly, y_pred_poly1, pe200= get_scores_more()
 
     # File path
     file_path = 'scoreT.csv'
@@ -1128,7 +1166,7 @@ def main():
         # If the file doesn't exist or is empty, create a new DataFrame
         print("File does not exist or is empty. Creating a new file.")
 
-        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'e100/200', 'pr_eAvg','rsi','macd', 'score', 'score_trend'])
+        df = pd.DataFrame(columns=['tFrame', 'ema_trend', 'e100/200', 'pr_eAvg','pe200','rsi','macd', 'score', 'score_trend'])
 
         # Save the empty DataFrame to the CSV file
         df.to_csv(file_path, index=False, header=False)
@@ -1171,6 +1209,7 @@ def main():
         "ema9/20": round(ema_trend, 2),
         "e100/200": round(ema_score, 2),  # actually current_price >= ema9
         "pr_E20": pr_eAvg,
+        "pe200": round(pe200,2),
         "rsi": round(rsi_score, 2),
         "macd": round(macd_score, 2),
         "score": (score + pr_eAvg),
@@ -1195,16 +1234,18 @@ def main():
     df = df.sort_values(by=0)
 
     #add column names
-    df.columns = ['tFrame', 'ema9/20', 'pr_E9', 'pr_E20', 'rsi', 'macd', 'score',  'score_trend', 'lrc_mid', 'lrc_tbm']
-    df1 = df[['tFrame', 'ema9/20',  'pr_E9', 'pr_E20', 'rsi',  'macd', 'lrc_mid', 'lrc_tbm']]
+    df.columns = ['tFrame', 'ema9/20', 'pr_E9', 'pr_E20', 'pe200','rsi', 'macd', 'score',  'score_trend', 'lrc_mid', 'lrc_tbm']
+    df1 = df[['tFrame', 'ema9/20',  'pr_E9', 'pr_E20','pe200', 'rsi',  'macd', 'lrc_mid', 'lrc_tbm']]
     #display table
     st.dataframe(df1, hide_index=True) #original table looks neater
-
+    current_price = round(data_recent['Close'].iloc[-1], 2)
+    now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  
+    st.write(f"{current_price}_({interval})_{now}")
+    
     plot_bars(current_price)
 
     ################### all control buttons ###########################################################
-    current_price = round(data_recent['Close'].iloc[-1], 2)
-    now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  # Correct format
+
   
     #display message about app status
     sleep_status = 'on' if st.session_state.stop_sleep == 0 else "off"
@@ -1248,7 +1289,9 @@ def main():
         if st.button(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}"):
         #st.write(f"slp: {st.session_state.sleepGap}_stop:{st.session_state.stop_sleep}")
             st.rerun()
-########################################
+    
+    #####################
+    #######################################
     if st.session_state.stop_sleep == 0:
         # Sleep for 8 seconds (simulating some processing)
         sleep(st.session_state.sleepGap)
