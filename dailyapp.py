@@ -355,7 +355,7 @@ def plot_bars(price=0, index = 0):
     for i, label in enumerate(unique_intervals):
         if label.get_text() == interval:
         # Highlight the area (from top to bottom)
-        ax.axvspan(i - 0.4, i + 0.4, ymin=0, ymax=1, color=cloud_color, alpha=0.3, zorder=0)
+            ax.axvspan(i - 0.4, i + 0.4, ymin=0, ymax=1, color=cloud_color, alpha=0.3, zorder=0)
         # Style the tick
     
     # Add legend and adjust layout
