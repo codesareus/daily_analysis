@@ -345,6 +345,7 @@ def plot_bars(price=0, index = 0):
             #ax.axvspan(i - 0.4, i + 0.4, ymin=0, ymax=1, color=cloud_color, alpha=0.3, zorder=0)
 
     # Add tick labels
+    ax = plt.gca()
     ax.set_xticks(x)
     ax.set_xticklabels(unique_intervals, rotation=45)
     cloud_color = 'gray'
