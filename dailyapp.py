@@ -332,7 +332,7 @@ def plot_bars(price=0, index = 0):
  #########
     ax = plt.gca()
     xtick_labels = ax.get_xticklabels()
-    cloud_color = 'lightblue'
+    cloud_color = 'gray'
 
 # Apply color formatting based on condition
     for label in xtick_labels:
