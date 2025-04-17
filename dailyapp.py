@@ -334,6 +334,8 @@ def plot_bars(price=0, index = 0):
     for tick, label in zip(ax.get_xticks(), ax.get_xticklabels()):
         if label.get_text() == interval:  # Your condition here
             label.set_color('red')
+            label.set_fontsize(16)   # Make it larger
+            label.set_fontweight('bold')
     
     # Add legend and adjust layout
     plt.legend()
