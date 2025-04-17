@@ -258,7 +258,7 @@ def regression_analysis(data_recent, interval):
     # Show plot in Streamlit
     st.pyplot(plt)
 
-def plot_bars(price=0):
+def plot_bars(price=0, index = 0):
     # Assuming 'eastern' timezone is defined elsewhere
     eastern = 'US/Eastern'  # Example timezone, replace with actual timezone if needed
 
@@ -268,6 +268,7 @@ def plot_bars(price=0):
     
     # Define custom order
     timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo", "1y"]
+    interval = timeframe_order[index]
     
     # Convert 'tFrame' to categorical with order
     df["tFrame"] = pd.Categorical(df["tFrame"], categories=timeframe_order, ordered=True)
@@ -327,6 +328,12 @@ def plot_bars(price=0):
     
     # Format x-axis
     plt.xticks(x, unique_intervals, rotation=45)
+
+ #########
+    ax = plt.gca()
+    for tick, label in zip(ax.get_xticks(), ax.get_xticklabels()):
+        if label.get_text() == interval:  # Your condition here
+            label.set_color('red')
     
     # Add legend and adjust layout
     plt.legend()
@@ -1242,7 +1249,7 @@ def main():
     now = datetime.now(eastern).strftime('%m-%d %I:%M:%S %p')  
     st.write(f"{current_price}_({interval})_{now}")
     
-    plot_bars(current_price)
+    plot_bars(current_price, st.session_state.index)
 
     ################### all control buttons ###########################################################
 
