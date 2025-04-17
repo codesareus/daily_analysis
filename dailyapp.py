@@ -331,7 +331,12 @@ def plot_bars(price=0, index = 0):
 
  #########
     ax = plt.gca()
-    for tick, label in zip(ax.get_xticks(), ax.get_xticklabels()):
+    xtick_labels = ax.get_xticklabels()
+
+# Apply color formatting based on condition
+    for label in xtick_labels:
+    
+   # for tick, label in zip(ax.get_xticks(), ax.get_xticklabels()):
         if label.get_text() == interval:  # Your condition here
             label.set_color('red')
             label.set_fontsize(16)   # Make it larger
