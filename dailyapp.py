@@ -332,6 +332,7 @@ def plot_bars(price=0, index = 0):
  #########
     ax = plt.gca()
     xtick_labels = ax.get_xticklabels()
+    cloud_color = 'lightblue'
 
 # Apply color formatting based on condition
     for label in xtick_labels:
@@ -341,6 +342,21 @@ def plot_bars(price=0, index = 0):
             label.set_color('red')
             label.set_fontsize(16)   # Make it larger
             label.set_fontweight('bold')
+            ax.axvspan(i - 0.4, i + 0.4, ymin=0, ymax=1, color=cloud_color, alpha=0.3, zorder=0)
+
+    # Add tick labels
+    #ax.set_xticks(x)
+    #ax.set_xticklabels(unique_intervals, rotation=45)
+
+# Condition and index for cloud
+
+    
+
+    #for i, label in enumerate(unique_intervals):
+        #if label.get_text() == interval:
+        # Highlight the area (from top to bottom)
+        #ax.axvspan(i - 0.4, i + 0.4, ymin=0, ymax=1, color=cloud_color, alpha=0.3, zorder=0)
+        # Style the tick
     
     # Add legend and adjust layout
     plt.legend()
