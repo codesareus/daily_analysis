@@ -1160,9 +1160,9 @@ def main():
     ax4.axhline(y=0, color="gray", linestyle="-", linewidth=1)
     
     #current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
-    ax4.xlabel("Time Frame")
-    ax4.ylabel("Score")
-    ax4.title(f"Trend Scores by Interval (pr now: {price:.2f})")
+    #ax4.xlabel("Time Frame")
+    #ax4.ylabel("Score")
+    #ax4.title(f"Trend Scores by Interval (pr now: {price:.2f})")
     
     # Format x-axis
     ax4.xticks(x, unique_intervals, rotation=45)
