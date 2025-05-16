@@ -1107,7 +1107,7 @@ def main():
     
     # Define custom order
     timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo", "1y"]
-    interval = timeframe_order[index]
+    interval = timeframe_order[st.session_state.index]
     
     # Convert 'tFrame' to categorical with order
     df["tFrame"] = pd.Categorical(df["tFrame"], categories=timeframe_order, ordered=True)
