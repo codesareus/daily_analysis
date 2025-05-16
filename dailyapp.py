@@ -1097,7 +1097,7 @@ def main():
             color='navy',         # Text color
             fontfamily='sans-serif')
         ax3.legend()
-
+    plot_bars(current_price, st.session_state.index)
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
     st.pyplot(fig)  ## finally plot all 3 figures
 
