@@ -1158,6 +1158,7 @@ def main():
     ax4.axhline(y=5, color="red", linestyle="--", linewidth=1)
     ax4.axhline(y=-5, color="green", linestyle="--", linewidth=1)
     ax4.axhline(y=0, color="gray", linestyle="-", linewidth=1)
+    ax4.set_facecolor(bgcolor)
     
     #current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
     #ax4.xlabel("Time Frame")
