@@ -1165,7 +1165,7 @@ def main():
     #ax4.title(f"Trend Scores by Interval (pr now: {price:.2f})")
     
     # Format x-axis
-    ax4.xticks(x, unique_intervals, rotation=45)
+   # ax4.xticks(x, unique_intervals, rotation=45)
 
  #########
     ax10 = plt.gca()
