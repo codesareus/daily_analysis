@@ -1198,7 +1198,7 @@ def main():
     # Add legend and adjust layout
     ax4.legend()
     #ax4.tight_layout()
-    ax4.gca().set_facecolor(bgcolor)
+    #ax4.gca().set_facecolor(bgcolor)
     
 
     ####################
