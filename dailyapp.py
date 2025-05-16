@@ -752,7 +752,7 @@ def main():
     valid_macd_timeframes = ["1m","5m","15m","30m","1h", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "max"]
 
     #if interval in valid_macd_timeframes:
-    fig, (ax2, ax3, ax) = plt.subplots(3, 1, figsize=(20, 25), gridspec_kw={'height_ratios': [ 1, 1, 4 ]})
+    fig, (ax2, ax3, ax,ax4) = plt.subplots(4, 1, figsize=(20, 30), gridspec_kw={'height_ratios': [ 1, 1, 4 , 1]})
    
     # Use numeric x-axis for plotting to avoid duplicate time issues
     x_values = np.arange(len(data_recent))  # Numeric x-axis
@@ -1097,7 +1097,111 @@ def main():
             color='navy',         # Text color
             fontfamily='sans-serif')
         ax3.legend()
-    plot_bars(current_price, st.session_state.index)
+
+    ######################
+    eastern = 'US/Eastern'  # Example timezone, replace with actual timezone if needed
+
+    # Read the data
+    df = pd.read_csv("scoreT.csv", names=['tFrame', 'ema_trend', 'e100/200', 'pr_eAvg', 'pe200', 'rsi', 'macd', 'score',  'score_trend', 'lrc_mid', 'lrc_tbm'])
+    df = df[['tFrame', 'ema_trend', 'e100/200', 'pr_eAvg', 'pe200', 'rsi', 'macd', 'lrc_mid']]
+    
+    # Define custom order
+    timeframe_order = ["1m", "5m", "15m", "30m", "1h", "3mo", "6mo", "1y"]
+    interval = timeframe_order[index]
+    
+    # Convert 'tFrame' to categorical with order
+    df["tFrame"] = pd.Categorical(df["tFrame"], categories=timeframe_order, ordered=True)
+    df = df.sort_values("tFrame")
+    
+    # Prepare data
+    unique_intervals = df["tFrame"].unique()
+    x = np.arange(len(unique_intervals))
+    #width = 0.15
+    
+    # Calculate metric values
+    ema_trend = [df[df["tFrame"] == interval]["ema_trend"].mean() for interval in unique_intervals]
+    ema_values = [df[df["tFrame"] == interval]["e100/200"].mean() for interval in unique_intervals]
+    premaAvg = [df[df["tFrame"] == interval]["pr_eAvg"].mean() for interval in unique_intervals]
+    pe200 = [df[df["tFrame"] == interval]["pe200"].mean() for interval in unique_intervals]
+    
+    rsi_values = [df[df["tFrame"] == interval]["rsi"].mean() for interval in unique_intervals]
+    macd_values = [df[df["tFrame"] == interval]["macd"].mean() for interval in unique_intervals]
+    lrc_mid = [df[df["tFrame"] == interval]["lrc_mid"].mean() for interval in unique_intervals]
+    
+    # Define bar positions
+    # Define the width of each bar
+    width = 0.13
+
+# Generate offsets for six bars (equally spaced)
+    offsets = [-3 * width, -2 * width, -width, 0, width, 2 * width, 3 * width]
+
+# Now you can use this `offsets` list for your six bars
+
+    #offsets = [-2 * width, -width, 0, width, 2 * width]
+    
+    # Plot bars
+    
+    ax4.bar(x + offsets[0], ema_trend, width, color="red", edgecolor="black")
+    ax4.bar(x + offsets[1], ema_values, width, color="darkred", edgecolor="black")
+    ax4.bar(x + offsets[2], premaAvg, width, color="yellow", edgecolor="black")
+    ax4.bar(x + offsets[3], pe200, width, color="green", edgecolor="black", label="pe200")
+    ax4.bar(x + offsets[4], rsi_values, width, color="navy", edgecolor="black")
+    ax4.bar(x + offsets[5], macd_values, width, color="orange", edgecolor="black")
+    ax4.bar(x + offsets[6], lrc_mid, width, color="gray", edgecolor="black", label="p_lrc_mid")
+    
+    # Add value labels
+    #for i, interval in enumerate(unique_intervals):
+        #for offset, values in zip(offsets, [ema_trend, ema_values, premaAvg,rsi_values, macd_values, lrc_mid]):
+            #plt.text(x[i] + offset, values[i] + 0.2, f"{values[i]:.1f}", ha='center', fontsize=10)
+    
+    # Add threshold lines
+    ax4.axhline(y=5, color="red", linestyle="--", linewidth=1)
+    ax4.axhline(y=-5, color="green", linestyle="--", linewidth=1)
+    ax4.axhline(y=0, color="gray", linestyle="-", linewidth=1)
+    
+    #current_time = datetime.now(eastern).strftime('%m/%d/%Y %H:%M')
+    ax4.xlabel("Time Frame")
+    ax4.ylabel("Score")
+    ax4.title(f"Trend Scores by Interval (pr now: {price:.2f})")
+    
+    # Format x-axis
+    ax4.xticks(x, unique_intervals, rotation=45)
+
+ #########
+    ax10 = plt.gca()
+    xtick_labels = ax10.get_xticklabels()
+    
+
+# Apply color formatting based on condition
+    for label in xtick_labels:
+    
+   # for tick, label in zip(ax.get_xticks(), ax.get_xticklabels()):
+        if label.get_text() == interval:  # Your condition here
+            label.set_color('red')
+            label.set_fontsize(16)   # Make it larger
+            label.set_fontweight('bold')
+            #ax.axvspan(i - 0.4, i + 0.4, ymin=0, ymax=1, color=cloud_color, alpha=0.3, zorder=0)
+
+    # Add tick labels
+    
+    ax4.set_xticks(x)
+    ax4.set_xticklabels(unique_intervals, rotation=45)
+    cloud_color = 'gray'
+
+# Condition and index for cloud
+    for i, label in enumerate(unique_intervals):
+        if label == interval:
+        # Highlight the area (from top to bottom)
+            ax4.axvspan(i - 0.4, i + 0.4, ymin=0, ymax=1, color=cloud_color, alpha=0.3, zorder=0)
+        # Style the tick
+    
+    # Add legend and adjust layout
+    ax4.legend()
+    ax4.tight_layout()
+    ax4.gca().set_facecolor(bgcolor)
+    
+
+    ####################
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readabil
     st.pyplot(fig)  ## finally plot all 3 figures
 
